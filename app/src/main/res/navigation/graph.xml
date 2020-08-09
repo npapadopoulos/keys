@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/graph.xml"
+    app:startDestination="@id/signIn2">
+
+    <activity
+        android:id="@+id/signIn2"
+        android:name="com.property.keys.SignIn"
+        android:label="activity_signin"
+        tools:layout="@layout/activity_signin" />
+    <activity
+        android:id="@+id/forgotPassword2"
+        android:name="com.property.keys.ForgotPassword"
+        android:label="activity_forgot_password"
+        tools:layout="@layout/activity_forgot_password" />
+    <activity
+        android:id="@+id/verify"
+        android:name="com.property.keys.Verify"
+        android:label="activity_verify"
+        tools:layout="@layout/activity_verify" />
+    <activity
+        android:id="@+id/resetPassword"
+        android:name="com.property.keys.ResetPassword"
+        android:label="ResetPassword" />
+    <activity
+        android:id="@+id/signUp2"
+        android:name="com.property.keys.SignUp"
+        android:label="activity_sign_up"
+        tools:layout="@layout/activity_sign_up" />
+    <fragment
+        android:id="@+id/dashboard3"
+        android:name="com.property.keys.fragments.Dashboard"
+        android:label="fragment_dashboard"
+        tools:layout="@layout/fragment_dashboard" />
+    <fragment
+        android:id="@+id/properties2"
+        android:name="com.property.keys.fragments.Properties"
+        android:label="fragment_properties"
+        tools:layout="@layout/fragment_properties" />
+    <fragment
+        android:id="@+id/scanner2"
+        android:name="com.property.keys.fragments.Scanner"
+        android:label="fragment_scanner"
+        tools:layout="@layout/fragment_scanner" />
+    <fragment
+        android:id="@+id/favourite2"
+        android:name="com.property.keys.fragments.Favourite"
+        android:label="fragment_favourite"
+        tools:layout="@layout/fragment_favourite" />
+    <fragment
+        android:id="@+id/profile"
+        android:name="com.property.keys.fragments.Profile"
+        android:label="fragment_profile"
+        tools:layout="@layout/fragment_profile" />
+    <activity
+        android:id="@+id/propertyDetails"
+        android:name="com.property.keys.PropertyDetails"
+        android:label="activity_property_details"
+        tools:layout="@layout/activity_property_details" />
+</navigation>

@@ -1,0 +1,44 @@
+<resources>
+    <string name="app_name">Keys</string>
+    <string name="new_account_sign_up">Don\'t have an account? Sign Up</string>
+    <string name="already_have_an_account_sign_in">Already have an account? Sign In</string>
+    <string name="signIn">Sign In</string>
+    <string name="password">Password</string>
+    <string name="phone_number">Phone Number</string>
+    <string name="email_address">Email</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="signUp">Sign Up</string>
+    <string name="verify_phone_number">Verify Phone Number</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="properties">Properties</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="favourite">Favourite</string>
+    <string name="enter_otp">Enter OTP</string>
+    <string name="verify">Verify</string>
+    <string name="enter_your_phone_number">Enter your phone number</string>
+    <string name="profile">Profile</string>
+    <string name="edit">Edit</string>
+    <string name="toast_image_intent_null">Image picker option is missing!</string>
+    <string name="lbl_set_profile_photo">Set profile image</string>
+    <string name="lbl_take_camera_picture">Take a picture</string>
+    <string name="lbl_choose_from_gallery">Choose from gallery</string>
+    <string name="history">History</string>
+    <string name="notifications">Notifications</string>
+    <string name="logout">Logout</string>
+    <string name="submit">Submit</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="enter_new_password">Enter new password</string>
+    <string name="confirm_new_password">Confirm new password</string>
+    <string name="create_new_account">Create new account</string>
+    <string name="confirm_password">Confirm Password</string>
+    <string name="having_trouble_get_help">Having Trouble? Get Help</string>
+    <string name="scan">Scan</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="qr_code_scanner">QR Code Scanner</string>
+    <string name="busy">Busy</string>
+    <string name="default_property_address">Ypostratigou Tassou Markou Ave 65/1</string>
+    <string name="default_property_name">Jewel Villa at Javania Coral</string>
+    <string name="back">Back</string>
+</resources>
