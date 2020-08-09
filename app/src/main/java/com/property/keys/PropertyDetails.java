@@ -43,7 +43,7 @@ public class PropertyDetails extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         property = getIntent().getParcelableExtra("property");
 
-        if (!CollectionUtils.isEmpty(property.getKeys())) {
+        if (property != null && !CollectionUtils.isEmpty(property.getKeys())) {
             try {
                 Key key = property.getKeys().get(0);
                 QRCodeUtils.generate(key, 350, 350, key.getId());

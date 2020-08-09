@@ -195,12 +195,8 @@ public class ImagePicker extends AppCompatActivity {
     }
 
     private void cropImage(Uri sourceUri) {
-//        Uri destinationUri = Uri.fromFile(new File(getCacheDir(), queryName(getContentResolver(), sourceUri)));
-
         File newFile = ImageUtils.newFile(getExternalCacheDir(), userId);
         Uri destinationUri = Uri.fromFile(newFile);
-        //WHEN TODO CACHE CLEARANCE
-//        ImageUtils.clearCache(getApplicationContext(), null, newFile.getName());
 
         UCrop.Options options = new UCrop.Options();
         options.setCompressionQuality(IMAGE_COMPRESSION);
@@ -233,7 +229,7 @@ public class ImagePicker extends AppCompatActivity {
         intent.putExtra("path", imagePath);
         setResult(Activity.RESULT_OK, intent);
         finish();
-
+        ImageUtils.clearCache(getApplicationContext(), null, imagePath.getPath().substring(imagePath.getPath().lastIndexOf("/") + 1));
     }
 
     private void setResultCancelled() {
