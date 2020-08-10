@@ -16,7 +16,7 @@
         android:layout_width="100dp"
         android:layout_height="100dp"
         android:layout_gravity="center"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="20dp"
         android:src="@drawable/logo" />
 
     <LinearLayout
@@ -165,14 +165,14 @@
     <RelativeLayout
         android:id="@+id/footer"
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:gravity="bottom">
+        android:layout_height="wrap_content">
 
         <Button
             android:id="@+id/signIn"
             style="@style/Widget.MaterialComponents.Button.TextButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:fontFamily="@font/lato"
             android:text="@string/already_have_an_account_sign_in"
             android:textAllCaps="false"

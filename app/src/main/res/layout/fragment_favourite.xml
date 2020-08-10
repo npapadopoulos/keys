@@ -8,25 +8,32 @@
     android:padding="20dp"
     tools:context=".fragments.Favourite">
 
-    <ImageView
-        android:id="@+id/headerMenuIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerVertical="true"
-        android:src="@drawable/menu" />
 
-    <TextView
-        android:id="@+id/headerLabel"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:fontFamily="@font/lato"
-        android:text="@string/favourite"
-        android:textColor="@color/colorBlack"
-        android:textSize="22sp"
-        android:textStyle="bold" />
+        android:layout_marginTop="20dp">
+
+        <ImageView
+            android:id="@+id/headerMenuIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/menu" />
+
+        <TextView
+            android:id="@+id/headerLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:fontFamily="@font/lato"
+            android:text="@string/favourite"
+            android:textColor="@color/colorBlack"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+    </RelativeLayout>
 </RelativeLayout>

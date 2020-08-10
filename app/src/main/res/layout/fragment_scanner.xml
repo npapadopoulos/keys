@@ -9,56 +9,63 @@
     android:padding="20dp"
     tools:context=".fragments.Scanner">
 
-    <ImageView
-        android:id="@+id/headerMenuIcon"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_centerVertical="true"
-        android:src="@drawable/menu" />
 
-    <TextView
-        android:id="@+id/headerLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:fontFamily="@font/lato"
-        android:text="@string/qr_code_scanner"
-        android:textColor="@color/colorBlack"
-        android:textSize="22sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/qrCode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_centerVertical="true"
-        android:layout_marginTop="50dp"
-        android:fontFamily="@font/lato"
-        android:textColor="@color/colorBlack"
-        android:textSize="22sp"
-        android:textStyle="bold" />
-
-    <com.budiyev.android.codescanner.CodeScannerView
-        android:id="@+id/scanner_view"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="100dp"
-        app:autoFocusButtonColor="@android:color/white"
-        app:autoFocusButtonVisible="true"
-        app:flashButtonColor="@android:color/white"
-        app:flashButtonVisible="true"
-        app:frameAspectRatioHeight="1"
-        app:frameAspectRatioWidth="1"
-        app:frameColor="@android:color/white"
-        app:frameCornersRadius="0dp"
-        app:frameCornersSize="50dp"
-        app:frameSize="0.75"
-        app:frameThickness="2dp"
-        app:maskColor="#77000000" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp">
+
+        <ImageView
+            android:id="@+id/headerMenuIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/menu" />
+
+        <TextView
+            android:id="@+id/headerLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:fontFamily="@font/lato"
+            android:text="@string/qr_code_scanner"
+            android:textColor="@color/colorBlack"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/qrCode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:layout_marginTop="50dp"
+            android:fontFamily="@font/lato"
+            android:textColor="@color/colorBlack"
+            android:textSize="22sp"
+            android:textStyle="bold" />
+
+        <com.budiyev.android.codescanner.CodeScannerView
+            android:id="@+id/scanner_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="100dp"
+            app:autoFocusButtonColor="@android:color/white"
+            app:autoFocusButtonVisible="true"
+            app:flashButtonColor="@android:color/white"
+            app:flashButtonVisible="true"
+            app:frameAspectRatioHeight="1"
+            app:frameAspectRatioWidth="1"
+            app:frameColor="@android:color/white"
+            app:frameCornersRadius="0dp"
+            app:frameCornersSize="50dp"
+            app:frameSize="0.75"
+            app:frameThickness="2dp"
+            app:maskColor="#77000000" />
+    </RelativeLayout>
 </RelativeLayout>

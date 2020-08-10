@@ -13,5 +13,4 @@ public class History {
     private Action action;
     private String date;
     private String notes;
-    private String userId;
 }

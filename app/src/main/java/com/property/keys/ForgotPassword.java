@@ -30,28 +30,25 @@ public class ForgotPassword extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
         binding = ActivityForgotPasswordBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.submit.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-                in.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        binding.submit.setOnClickListener(v -> {
+            InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            in.hideSoftInputFromWindow(v.getWindowToken(), 0);
 
-                binding.progressBar.setVisibility(View.VISIBLE);
-                binding.submit.setEnabled(false);
+            binding.progressBar.setVisibility(View.VISIBLE);
+            binding.submit.setEnabled(false);
 
-                if (!Utils.validatePhoneNumber(binding.phoneNumber)) {
-                    binding.progressBar.setVisibility(View.GONE);
-                    binding.submit.setEnabled(true);
-                    return;
-                }
-                Intent verify = new Intent(getApplicationContext(), Verify.class);
-                verify.putExtra("phoneNumber", binding.phoneNumber.getEditText().getText().toString());
-                startActivity(verify);
+            if (!Utils.validatePhoneNumber(binding.phoneNumber)) {
+                binding.progressBar.setVisibility(View.GONE);
+                binding.submit.setEnabled(true);
+                return;
             }
+            Intent verify = new Intent(getApplicationContext(), Verify.class);
+            verify.putExtra("phoneNumber", binding.phoneNumber.getEditText().getText().toString());
+            startActivity(verify);
         });
     }
 }
