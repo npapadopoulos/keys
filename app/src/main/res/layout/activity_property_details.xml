@@ -7,6 +7,7 @@
     android:orientation="vertical"
     tools:context=".PropertyDetails">
 
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="300dp"
@@ -15,9 +16,29 @@
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/propertyDetailsToolbar"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="20dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:titleTextColor="@color/colorWhite" />
+
+        <com.github.ivbaranov.mfb.MaterialFavoriteButton
+            android:id="@+id/setFavourite"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="20dp"
+            android:tint="@color/colorWhite"
+            android:transitionName="favourite"
+            app:mfb_animate_favorite="true"
+            app:mfb_animate_unfavorite="false"
+            app:mfb_bounce_duration="300"
+            app:mfb_favorite_image="@drawable/favourite_selected"
+            app:mfb_not_favorite_image="@drawable/favourite_default"
+            app:mfb_rotation_angle="360"
+            app:mfb_type="heart" />
 
         <com.mikhaellopez.circularimageview.CircularImageView
             android:id="@+id/propertyImage"
@@ -173,10 +194,6 @@
                     android:textSize="14sp" />
 
             </RelativeLayout>
-
         </com.google.android.material.card.MaterialCardView>
-
-
     </LinearLayout>
-
 </LinearLayout>

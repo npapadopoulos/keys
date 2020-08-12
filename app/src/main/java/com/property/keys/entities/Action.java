@@ -1,5 +1,5 @@
 package com.property.keys.entities;
 
 public enum Action {
-    CHECK_IN, CHECK_OUT
+    ADD_FAVOURED, REMOVED_FAVOURED, CHECK_IN, CHECK_OUT
 }

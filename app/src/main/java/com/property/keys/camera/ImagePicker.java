@@ -3,15 +3,11 @@ package com.property.keys.camera;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.ContentResolver;
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.provider.OpenableColumns;
 import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Toast;
@@ -49,18 +45,20 @@ public class ImagePicker extends AppCompatActivity {
     public static final int REQUEST_GALLERY_IMAGE = 1;
     private static final String TAG = ImagePicker.class.getSimpleName();
     private final long FILE_NAME = Instant.now().toEpochMilli();
-    private String userId;
+
     private boolean lockAspectRatio = false, setBitmapMaxWidthHeight = false;
     private int ASPECT_RATIO_X = 16, ASPECT_RATIO_Y = 9, bitmapMaxWidth = 1000, bitmapMaxHeight = 1000;
     private int IMAGE_COMPRESSION = 100;
 
-    public static void showImagePickerOptions(Context context, PickerOptionListener listener) {
+    private String id;
+
+    public static void showImagePickerOptions(Activity activity, PickerOptionListener listener) {
         // setup the alert builder
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(context.getString(R.string.lbl_set_profile_photo));
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle(activity.getString(R.string.lbl_set_profile_photo));
 
         // add a list
-        String[] options = {context.getString(R.string.lbl_take_camera_picture), context.getString(R.string.lbl_choose_from_gallery)};
+        String[] options = {activity.getString(R.string.lbl_take_camera_picture), activity.getString(R.string.lbl_choose_from_gallery)};
         builder.setItems(options, (dialog, which) -> {
             switch (which) {
                 case 0:
@@ -77,25 +75,15 @@ public class ImagePicker extends AppCompatActivity {
         dialog.show();
     }
 
-    private static String queryName(ContentResolver resolver, Uri uri) {
-        Cursor returnCursor = resolver.query(uri, null, null, null, null);
-        assert returnCursor != null;
-        int nameIndex = returnCursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
-        returnCursor.moveToFirst();
-        String name = returnCursor.getString(nameIndex);
-        returnCursor.close();
-        return name;
-    }
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         setContentView(R.layout.activity_image_picker);
 
         Intent intent = getIntent();
         if (intent == null) {
-            Toast.makeText(getApplicationContext(), "getString(R.string.toast_image_intent_null)", Toast.LENGTH_LONG).show();
+            Toast.makeText(getApplicationContext(), getString(R.string.toast_image_intent_null), Toast.LENGTH_LONG).show();
             return;
         }
 
@@ -107,7 +95,7 @@ public class ImagePicker extends AppCompatActivity {
         bitmapMaxWidth = intent.getIntExtra(INTENT_BITMAP_MAX_WIDTH, bitmapMaxWidth);
         bitmapMaxHeight = intent.getIntExtra(INTENT_BITMAP_MAX_HEIGHT, bitmapMaxHeight);
 
-        userId = intent.getStringExtra("userId");
+        id = intent.getStringExtra("id");
 
         int requestCode = intent.getIntExtra(INTENT_IMAGE_PICKER_OPTION, -1);
         if (requestCode == REQUEST_IMAGE_CAPTURE) {
@@ -118,7 +106,7 @@ public class ImagePicker extends AppCompatActivity {
     }
 
     private void takeCameraImage() {
-        Dexter.withActivity(this)
+        Dexter.withContext(this)
                 .withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .withListener(new MultiplePermissionsListener() {
                     @Override
@@ -141,7 +129,7 @@ public class ImagePicker extends AppCompatActivity {
     }
 
     private void chooseImageFromGallery() {
-        Dexter.withActivity(this)
+        Dexter.withContext(this)
                 .withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .withListener(new MultiplePermissionsListener() {
                     @Override
@@ -195,7 +183,7 @@ public class ImagePicker extends AppCompatActivity {
     }
 
     private void cropImage(Uri sourceUri) {
-        File newFile = ImageUtils.newFile(getExternalCacheDir(), userId);
+        File newFile = ImageUtils.newFile(getExternalCacheDir(), id);
         Uri destinationUri = Uri.fromFile(newFile);
 
         UCrop.Options options = new UCrop.Options();
@@ -241,7 +229,7 @@ public class ImagePicker extends AppCompatActivity {
     private Uri getCacheImagePath() {
         File userDirectory = new File(getExternalCacheDir(), "images");
         if (!userDirectory.exists()) userDirectory.mkdirs();
-        userDirectory = new File(userDirectory, userId);
+        userDirectory = new File(userDirectory, id);
         if (!userDirectory.exists()) userDirectory.mkdirs();
         File image = new File(userDirectory, FILE_NAME + ".jpg");
         return getUriForFile(ImagePicker.this, getPackageName() + ".provider", image);

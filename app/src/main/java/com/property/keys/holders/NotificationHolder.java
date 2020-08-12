@@ -1,5 +1,6 @@
 package com.property.keys.holders;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.view.View;
@@ -17,21 +18,24 @@ import com.property.keys.utils.ImageUtils;
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class NotificationHolder extends RecyclerView.ViewHolder {
 
-    private TextView event;
+    private TextView description;
     private TextView date;
     private CircularImageView userImage;
 
-    public NotificationHolder(@NonNull View itemView) {
+    private Activity activity;
+
+    public NotificationHolder(@NonNull View itemView, Activity activity) {
         super(itemView);
 
-        event = itemView.findViewById(R.id.event);
+        description = itemView.findViewById(R.id.description);
         date = itemView.findViewById(R.id.date);
         userImage = itemView.findViewById(R.id.userImage);
 
+        this.activity = activity;
     }
 
     public void bind(@NonNull Context context, @NonNull Notification notification) {
-        event.setText(notification.getEvent());
+        description.setText(notification.getDescription());
         date.setText(notification.getDate());
         ImageUtils.syncAndloadImages(context, notification.getUserId(), userImage);
     }

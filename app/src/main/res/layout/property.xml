@@ -4,8 +4,8 @@
     android:id="@+id/propertyContainer"
     android:layout_width="match_parent"
     android:layout_height="150dp"
-    android:background="@drawable/property_background"
-    android:padding="20dp">
+    android:paddingTop="20dp"
+    android:paddingBottom="20dp">
 
     <com.mikhaellopez.circularimageview.CircularImageView
         android:id="@+id/propertyImage"
@@ -80,7 +80,7 @@
         android:layout_marginStart="160dp"
         android:layout_marginBottom="20dp"
         android:fontFamily="@font/lato"
-        android:text="1"
+        android:text="0"
         android:textColor="@color/colorBlack"
         android:textSize="22sp" />
 
@@ -108,15 +108,24 @@
         android:textColor="@color/colorBlack"
         android:textSize="22sp" />
 
-
-    <ImageButton
-        android:id="@+id/goToDetails"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+    <com.github.ivbaranov.mfb.MaterialFavoriteButton
+        android:id="@+id/setFavourite"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
+        android:transitionName="favourite"
+        app:mfb_animate_favorite="true"
+        app:mfb_animate_unfavorite="false"
+        app:mfb_bounce_duration="300"
+        app:mfb_favorite_image="@drawable/favourite_selected"
+        app:mfb_not_favorite_image="@drawable/favourite_default"
+        app:mfb_rotation_angle="360"
+        app:mfb_type="heart" />
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="5dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="20dp"
-        android:background="@color/colorWhite"
-        android:src="@drawable/favourite" />
+        android:src="@drawable/line" />
 </RelativeLayout>

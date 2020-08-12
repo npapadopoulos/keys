@@ -12,9 +12,7 @@ import androidx.fragment.app.FragmentActivity;
 
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
-import com.property.keys.R;
 import com.property.keys.databinding.FragmentScannerBinding;
-import com.property.keys.utils.NavigationUtils;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class Scanner extends Fragment {
@@ -28,11 +26,9 @@ public class Scanner extends Fragment {
         FragmentScannerBinding binding = FragmentScannerBinding.inflate(getLayoutInflater(), container, false);
         FragmentActivity activity = getActivity();
 
-        NavigationUtils.onMenuClick(activity.findViewById(R.id.drawer_layout), binding.headerMenuIcon);
-
         CodeScannerView scannerView = binding.scannerView;
         mCodeScanner = new CodeScanner(activity, scannerView);
-        mCodeScanner.setDecodeCallback(result -> activity.runOnUiThread(() -> binding.qrCode.setText(result.getText())));
+        mCodeScanner.setDecodeCallback(result -> activity.runOnUiThread(() -> System.out.println("QR Code: " + result.getText())));
         scannerView.setOnClickListener(view -> mCodeScanner.startPreview());
 
         return binding.getRoot();

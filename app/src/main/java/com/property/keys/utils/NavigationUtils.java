@@ -9,9 +9,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.drawerlayout.widget.DrawerLayout.SimpleDrawerListener;
 
 import com.google.android.material.navigation.NavigationView;
-import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 import com.property.keys.R;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
@@ -25,15 +25,18 @@ public class NavigationUtils {
     }
 
     public static void initNavigation(NavigationView view,
-                                      ChipNavigationBar bottomNavigationMenu,
                                       DrawerLayout drawerLayout,
                                       RelativeLayout content) {
 
         view.bringToFront();
         view.setCheckedItem(R.id.navigationDashboard);
 
-        drawerLayout.setScrimColor(view.getResources().getColor(R.color.colorPrimary));
-        drawerLayout.addDrawerListener(new DrawerLayout.SimpleDrawerListener() {
+//        drawerLayout.setScrimColor(view.getResources().getColor(R.color.colorPrimaryLight));
+//        createOnDrawSlidListener(drawerLayout, content);
+    }
+
+    private static void createOnDrawSlidListener(DrawerLayout drawerLayout, RelativeLayout content) {
+        drawerLayout.addDrawerListener(new SimpleDrawerListener() {
             @Override
             public void onDrawerSlide(@NonNull View drawerView, float slideOffset) {
                 final float diffScaledOfset = slideOffset * (1 - END_SCALE);
@@ -49,6 +52,7 @@ public class NavigationUtils {
         });
     }
 
+    @Deprecated
     public static void onMenuClick(DrawerLayout drawerLayout, ImageView headerMenuIcon) {
         headerMenuIcon.setOnClickListener(view1 -> {
             if (drawerLayout.isDrawerVisible(GravityCompat.START)) {

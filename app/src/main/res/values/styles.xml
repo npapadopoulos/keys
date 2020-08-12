@@ -3,17 +3,19 @@
 
     <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">#4458DB</item>
-        <item name="colorPrimaryDark">#111111</item>
-        <item name="colorAccent">#fff</item>
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorBlack</item>
+        <item name="colorAccent">@color/colorGrey</item>
         <item name="fontFamily">@font/lato</item>
         <item name="colorControlNormal">@color/colorWhite</item>
+        <item name="colorOnSecondary">@color/colorWhite</item>
         <item name="android:windowContentTransitions">true</item>
         <item name="android:windowDrawsSystemBarBackgrounds">false</item>
         <item name="android:windowTranslucentStatus">true</item>
+        <item name="android:statusBarColor">@color/colorTransparent</item>
     </style>
 
-    <style name="AppLeftMenuTheme">
+    <style name="AppLeftMenuTheme" parent="AppTheme">
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorBlack</item>
         <item name="colorControlHighlight">@color/colorPrimary</item>

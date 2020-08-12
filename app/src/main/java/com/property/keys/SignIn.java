@@ -10,17 +10,17 @@ import android.util.Pair;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.property.keys.databinding.ActivitySigninBinding;
-import com.property.keys.utils.LoginUtils;
+import com.property.keys.utils.UserUtils;
 import com.property.keys.utils.Utils;
 
 import java.util.function.Consumer;
@@ -48,7 +48,7 @@ public class SignIn extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         binding = ActivitySigninBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -95,13 +95,14 @@ public class SignIn extends AppCompatActivity {
         String password = Utils.hash(binding.password.getEditText().getText().toString());
 
         Consumer<Intent> startDashboardActivity = intent -> {
+//            PropertyUtils.getOrSetNotificationCount(getApplicationContext(), 0L);
             startActivity(intent);
             finish();
         };
 
         Consumer<Exception> onFailed = (Exception e) -> {
             Log.e(TAG, "Failed to start Dashboard activity.", e);
-            Toast.makeText(SignIn.this, "Authentication failed. Try again later.", Toast.LENGTH_SHORT).show();
+            Snackbar.make(binding.main, "Authentication failed. Try again later.", Snackbar.LENGTH_SHORT).show();
             binding.progressBar.setVisibility(View.GONE);
             binding.submit.setEnabled(true);
         };
@@ -119,11 +120,11 @@ public class SignIn extends AppCompatActivity {
             } else {
                 // If sign in fails, display a message to the user.
                 Log.w(TAG, "Authentication failed: ", task.getException());
-                Toast.makeText(SignIn.this, "Authentication failed. Try again later", Toast.LENGTH_SHORT).show();
+                Snackbar.make(binding.main, "Authentication failed. Try again later", Snackbar.LENGTH_SHORT).show();
             }
             binding.progressBar.setVisibility(View.GONE);
             binding.submit.setEnabled(true);
         };
-        LoginUtils.authenticate(this, getApplicationContext(), email, password, startDashboardActivity, onAuthenticationFailed, onFailed);
+        UserUtils.authenticate(this, getApplicationContext(), email, password, startDashboardActivity, onAuthenticationFailed, onFailed);
     }
 }

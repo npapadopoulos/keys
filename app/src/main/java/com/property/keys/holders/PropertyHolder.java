@@ -15,11 +15,14 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.ivbaranov.mfb.MaterialFavoriteButton;
 import com.mikhaellopez.circularimageview.CircularImageView;
 import com.property.keys.PropertyDetails;
 import com.property.keys.R;
 import com.property.keys.entities.Property;
 import com.property.keys.utils.ImageUtils;
+import com.property.keys.utils.PropertyUtils;
+import com.property.keys.utils.UserUtils;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class PropertyHolder extends RecyclerView.ViewHolder {
@@ -28,8 +31,10 @@ public class PropertyHolder extends RecyclerView.ViewHolder {
     private TextView address;
     private CircularImageView propertyImage;
     private ImageView availableSumImage, busySumImage;
+    private MaterialFavoriteButton setFavourite;
+    private Property property;
 
-    public PropertyHolder(RecyclerView.Adapter adapter, @NonNull Activity activity, @NonNull View itemView) {
+    public PropertyHolder(@NonNull Activity activity, @NonNull View itemView) {
         super(itemView);
 
         name = itemView.findViewById(R.id.name);
@@ -38,24 +43,21 @@ public class PropertyHolder extends RecyclerView.ViewHolder {
         availableSumImage = itemView.findViewById(R.id.availableSumImage);
         busySumImage = itemView.findViewById(R.id.busySumImage);
 
+        setFavourite = itemView.findViewById(R.id.setFavourite);
+        setFavourite.setOnFavoriteChangeListener((buttonView, favorite) -> PropertyUtils.update(activity, property, favorite));
+
         itemView.setOnClickListener(view -> {
-            Pair[] pairs = new Pair[5];
+            Pair[] pairs = new Pair[6];
             pairs[0] = new Pair<View, String>(propertyImage, "propertyImage");
             pairs[1] = new Pair<View, String>(name, "propertyName");
             pairs[2] = new Pair<View, String>(address, "propertyAddress");
             pairs[3] = new Pair<View, String>(availableSumImage, "propertyKeyAvailableSumImage");
             pairs[4] = new Pair<View, String>(busySumImage, "propertyKeyBusySumImage");
+            pairs[5] = new Pair<View, String>(setFavourite, "favourite");
 
             Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(activity, pairs).toBundle();
-
-            int position = getAdapterPosition();
-
-//            if (position != RecyclerView.NO_POSITION && listener != null) {
-//                listener.onItemClick(getSnapshots().getSnapshot(position), position);
-//            }
-
             Intent propertyDetails = new Intent(itemView.getContext(), PropertyDetails.class);
-//            propertyDetails.putExtra("property", )
+            propertyDetails.putExtra("property", property);
 
             view.getContext().startActivity(propertyDetails, bundle);
         });
@@ -65,6 +67,9 @@ public class PropertyHolder extends RecyclerView.ViewHolder {
     public void bind(@NonNull Context context, @NonNull Property property) {
         name.setText(property.getName());
         address.setText(property.getAddress());
+        this.property = property;
         ImageUtils.syncAndloadImages(context, property.getId(), propertyImage);
+        setFavourite.setFavoriteSuppressListener(property.getFavouredBy().containsKey(UserUtils.getUser(context).getId()));
+
     }
 }

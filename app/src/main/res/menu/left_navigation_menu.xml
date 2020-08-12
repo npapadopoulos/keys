@@ -4,7 +4,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/navigationDashboard"
-            android:background="@color/colorGrey"
+            android:background="@color/colorWhite"
             android:icon="@drawable/dashboard"
             android:title="@string/dashboard" />
         <item
@@ -17,7 +17,7 @@
             android:title="@string/notifications" />
         <item
             android:id="@+id/navigationLogout"
-            android:background="@color/colorGrey"
+            android:background="@color/colorWhite"
             android:icon="@drawable/logout"
             android:title="@string/logout" />
     </group>

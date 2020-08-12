@@ -3,9 +3,6 @@ package com.property.keys.entities;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -34,7 +31,6 @@ public class User implements Parcelable {
     private String email;
     private String phoneNumber;
     private String password;
-    private List<Key> favourites;
 
     protected User(Parcel in) {
         id = in.readString();
@@ -43,9 +39,6 @@ public class User implements Parcelable {
         email = in.readString();
         phoneNumber = in.readString();
         password = in.readString();
-
-        favourites = new ArrayList<>();
-        in.readList(favourites, Key.class.getClassLoader());
     }
 
     @Override
@@ -61,6 +54,5 @@ public class User implements Parcelable {
         parcel.writeString(email);
         parcel.writeString(phoneNumber);
         parcel.writeString(password);
-        parcel.writeList(favourites);
     }
 }

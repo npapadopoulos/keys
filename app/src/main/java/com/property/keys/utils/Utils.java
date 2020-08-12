@@ -1,22 +1,26 @@
 package com.property.keys.utils;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.os.Build;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.property.keys.entities.User;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
+
+    private final static AtomicInteger CHANGE_COUNTER = new AtomicInteger(0);
 
     private final static String EMAIL_PATTERN = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     private final static String PASSWORD_PATTERN = "^" +
@@ -29,26 +33,14 @@ public class Utils {
         throw new AssertionError("No instance for you!");
     }
 
-    public static Boolean validateFirstName(TextInputLayout firstName) {
-        String value = firstName.getEditText().getText().toString();
+    public static Boolean validateText(TextInputLayout textInputLayout) {
+        String value = textInputLayout.getEditText().getText().toString();
         if (value.isEmpty()) {
-            Log.v(TAG, "First Name cannot be empty: '" + value + "'");
-            firstName.setError("cannot be empty");
+            Log.v(TAG, "Cannot be empty: '" + value + "'");
+            textInputLayout.setError("cannot be empty");
             return false;
         } else {
-            reset(firstName);
-            return true;
-        }
-    }
-
-    public static Boolean validateLastName(TextInputLayout lastName) {
-        String value = lastName.getEditText().getText().toString();
-        if (value.isEmpty()) {
-            Log.v(TAG, "Last Name cannot be empty: '" + value + "'");
-            lastName.setError("cannot be empty");
-            return false;
-        } else {
-            reset(lastName);
+            reset(textInputLayout);
             return true;
         }
     }
@@ -75,7 +67,7 @@ public class Utils {
             Log.v(TAG, "Phone Number cannot be empty: '" + value + "'");
             phoneNumber.setError("cannot be empty");
             return false;
-        } else if (value.length() != 8) {
+        } else if (value.length() != 8 && !(value.length() == 12 && value.startsWith("+357")) && !(value.length() == 13 && value.startsWith("00357"))) {
             Log.v(TAG, "Phone Number is not valid: '" + value + "'");
             phoneNumber.setError("is not valid");
             return false;
@@ -162,25 +154,27 @@ public class Utils {
         return result.toString();
     }
 
-    public static User getUser(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
-        return User.builder()
-                .id(sharedPreferences.getString("id", ""))
-                .firstName(sharedPreferences.getString("firstName", ""))
-                .lastName(sharedPreferences.getString("lastName", ""))
-                .email(sharedPreferences.getString("email", ""))
-                .phoneNumber(sharedPreferences.getString("phoneNumber", ""))
-                .build();
-    }
+    public static void addOnTextChangeListener(MaterialButton button, TextInputEditText textInputEditText, String original) {
+        textInputEditText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
 
-    public static void saveUser(User user, Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString("id", user.getId());
-        editor.putString("firstName", user.getFirstName());
-        editor.putString("lastName", user.getLastName());
-        editor.putString("email", user.getEmail());
-        editor.putString("phoneNumber", user.getPhoneNumber());
-        editor.apply();
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if (charSequence.toString().equals(original) && !original.equals("")) {
+                    button.setEnabled(false);
+                    CHANGE_COUNTER.decrementAndGet();
+                } else {
+                    button.setEnabled(true);
+                    CHANGE_COUNTER.incrementAndGet();
+                }
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+            }
+        });
     }
 }

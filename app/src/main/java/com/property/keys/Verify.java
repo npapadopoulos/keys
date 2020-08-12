@@ -5,13 +5,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.TaskExecutors;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.FirebaseException;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthProvider;
@@ -53,7 +53,7 @@ public class Verify extends AppCompatActivity {
 
         @Override
         public void onVerificationFailed(@NonNull FirebaseException e) {
-            Toast.makeText(Verify.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+            Snackbar.make(binding.main, e.getMessage(), Snackbar.LENGTH_SHORT).show();
             binding.progressBar.setVisibility(View.GONE);
             binding.submit.setEnabled(true);
         }
@@ -72,7 +72,7 @@ public class Verify extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         binding = ActivityVerifyBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -106,9 +106,9 @@ public class Verify extends AppCompatActivity {
     }
 
     private void verifyCode(String code) {
-        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationCodeBySystem, code);
+        PhoneAuthCredential credentialByPhone = PhoneAuthProvider.getCredential(verificationCodeBySystem, code);
         Intent resetPassword = new Intent(getApplicationContext(), ResetPassword.class);
-        resetPassword.putExtra("credential", credential);
+        resetPassword.putExtra("credentialByPhone", credentialByPhone);
         resetPassword.putExtra("phoneNumber", phoneNumber);
 
         startActivity(resetPassword);

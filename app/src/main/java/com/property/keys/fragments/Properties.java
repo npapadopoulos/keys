@@ -1,5 +1,6 @@
 package com.property.keys.fragments;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -17,30 +18,34 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.property.keys.AddProperty;
 import com.property.keys.R;
 import com.property.keys.databinding.FragmentPropertiesBinding;
 import com.property.keys.entities.Property;
 import com.property.keys.holders.PropertyHolder;
-import com.property.keys.utils.NavigationUtils;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class Properties extends Fragment implements FirebaseAuth.AuthStateListener {
+
+    private static final String TAG = Properties.class.getSimpleName();
+
     /**
      * Get the last 50 chat messages.
      */
     @NonNull
     protected static final Query propertiesQuery = FirebaseDatabase.getInstance().getReference().child("properties").limitToLast(10);
-    private static final String TAG = Properties.class.getSimpleName();
     private FragmentPropertiesBinding binding;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentPropertiesBinding.inflate(getLayoutInflater(), container, false);
-        NavigationUtils.onMenuClick(getActivity().findViewById(R.id.drawer_layout), binding.headerMenuIcon);
-
         binding.propertyList.setHasFixedSize(true);
         binding.propertyList.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        binding.addNewProperty.setOnClickListener(view -> {
+            startActivity(new Intent(getContext(), AddProperty.class));
+        });
 
         //TODO
         // Enabling Offline Capabilities on Android
@@ -54,28 +59,6 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
         // Work with Lists of Data on Android
         // Filtering, Sorting, Ordering
         // https://firebase.google.com/docs/database/android/lists-of-data
-
-
-//        List<Key> keys = new ArrayList<>();
-//        keys.add(Key.builder()
-//                .id(UUID.randomUUID().toString())
-//                .name("Key 1").
-//                        build());
-//
-//        for (int i = 0; i < 20; i++) {
-//            PropertyDetails property = PropertyDetails.builder()
-//                    .id(UUID.randomUUID().toString())
-//                    .address(getString(R.string.default_property_address))
-//                    .name(getString(R.string.default_property_name))
-//                    .keys(keys)
-//                    .build();
-//
-//            propertiesQuery.getRef().push().setValue(property, (error, reference) -> {
-//                if (error != null) {
-//                    Log.e(TAG, "Failed to add property", error.toException());
-//                }
-//            });
-//        }
 
 
         return binding.getRoot();
@@ -125,7 +108,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
         return new FirebaseRecyclerAdapter<Property, PropertyHolder>(options) {
             @Override
             public PropertyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                return new PropertyHolder(binding.propertyList.getAdapter(), getActivity(), LayoutInflater.from(parent.getContext())
+                return new PropertyHolder(getActivity(), LayoutInflater.from(parent.getContext())
                         .inflate(R.layout.property, parent, false));
             }
 
@@ -137,10 +120,6 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
             @Override
             public void onDataChanged() {
                 // If there are no more notifications do nothing.
-            }
-
-            public Property getProperty(int position) {
-                return (Property) getSnapshots().getSnapshot(position).getValue();
             }
         };
     }

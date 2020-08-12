@@ -7,9 +7,7 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-
-    <!--    TODO handle no internet connectivity, firsth thing app should not be crushed and then if possible to work offline  -->
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- TODO handle no internet connectivity, firsth thing app should not be crushed and then if possible to work offline -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application
@@ -19,6 +17,7 @@
         android:roundIcon="@drawable/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".AddProperty" />
         <activity
             android:name=".PropertyDetails"
             android:parentActivityName=".Container"
@@ -52,15 +51,11 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-
-        <!-- uCrop cropping activity -->
+        </activity> <!-- uCrop cropping activity -->
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/AppTheme" />
-
-        <!-- cache directory file provider paths -->
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" /> <!-- cache directory file provider paths -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -71,5 +66,4 @@
                 android:resource="@xml/file_paths" />
         </provider>
     </application>
-
 </manifest>

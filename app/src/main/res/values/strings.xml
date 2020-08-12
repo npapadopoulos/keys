@@ -13,7 +13,6 @@
     <string name="forgot_password">Forgot Password?</string>
     <string name="properties">Properties</string>
     <string name="dashboard">Dashboard</string>
-    <string name="favourite">Favourite</string>
     <string name="enter_otp">Enter OTP</string>
     <string name="verify">Verify</string>
     <string name="enter_your_phone_number">Enter your phone number</string>
@@ -41,4 +40,12 @@
     <string name="default_property_address">Ypostratigou Tassou Markou Ave 65/1</string>
     <string name="default_property_name">Jewel Villa at Javania Coral</string>
     <string name="back">Back</string>
+    <string name="close">Close</string>
+    <string name="open">Open</string>
+    <string name="help">Having Trouble? Get Help</string>
+    <string name="update">Update</string>
+    <string name="loading">Loading...</string>
+    <string name="add_new_property">Add new property</string>
+    <string name="name">Name</string>
+    <string name="address" translatable="true">Address</string>
 </resources>

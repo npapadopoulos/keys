@@ -8,16 +8,16 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.property.keys.databinding.ActivityResetPasswordBinding;
-import com.property.keys.utils.LoginUtils;
+import com.property.keys.utils.UserUtils;
 import com.property.keys.utils.Utils;
 
 import java.util.function.Consumer;
@@ -38,7 +38,7 @@ public class ResetPassword extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         binding = ActivityResetPasswordBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -57,7 +57,7 @@ public class ResetPassword extends AppCompatActivity {
 
             String phoneNumber = getIntent().getStringExtra("phoneNumber");
             String password = binding.password.getEditText().getText().toString();
-            PhoneAuthCredential credential = getIntent().getParcelableExtra("credential");
+            PhoneAuthCredential credentialByPhone = getIntent().getParcelableExtra("credentialByPhone");
 
             Consumer<Intent> startDashboardActivity = intent -> {
                 startActivity(intent);
@@ -67,12 +67,12 @@ public class ResetPassword extends AppCompatActivity {
             Consumer<Task<AuthResult>> onResetFailed = (Task<AuthResult> task) -> {
                 // If sign in fails, display a message to the user.
                 Log.i(TAG, "Password reset for " + phoneNumber + " is failed.", task.getException());
-                Toast.makeText(ResetPassword.this, "Password reset for " + phoneNumber + " is failed.", Toast.LENGTH_LONG).show();
+                Snackbar.make(binding.main, "Password reset for " + phoneNumber + " is failed.", Snackbar.LENGTH_SHORT).show();
                 binding.progressBar.setVisibility(View.GONE);
                 binding.submit.setEnabled(true);
             };
 
-            LoginUtils.resetPassword(getApplicationContext(), phoneNumber, password, credential, startDashboardActivity, onResetFailed);
+            UserUtils.resetPassword(getApplicationContext(), phoneNumber, password, credentialByPhone, startDashboardActivity, onResetFailed);
         });
     }
 }
