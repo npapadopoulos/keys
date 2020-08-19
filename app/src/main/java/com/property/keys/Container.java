@@ -7,8 +7,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -16,18 +20,23 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.core.view.GravityCompat;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.material.switchmaterial.SwitchMaterial;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.mikhaellopez.circularimageview.CircularImageView;
+import com.google.firebase.database.ValueEventListener;
+import com.property.keys.adapters.PropertyAdapter;
 import com.property.keys.databinding.ActivityContainerBinding;
+import com.property.keys.entities.Property;
+import com.property.keys.entities.UnreadNotification;
 import com.property.keys.entities.User;
+import com.property.keys.filters.FirebaseRecyclerAdapter;
 import com.property.keys.fragments.Dashboard;
 import com.property.keys.fragments.History;
 import com.property.keys.fragments.Notifications;
@@ -41,9 +50,6 @@ import com.property.keys.utils.UserUtils;
 
 import org.jetbrains.annotations.NotNull;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
@@ -53,8 +59,8 @@ public class Container extends AppCompatActivity {
 
     private final int REQUEST_CODE_SIGN_IN = 100;
 
-    public static final Map<String, Boolean> UNREAD = new HashMap<>();
-    private final Query notificationsQuery = FirebaseDatabase.getInstance().getReference().child("notifications").limitToLast(10).orderByKey();
+    private final static DatabaseReference unreadNotificationsQuery = FirebaseDatabase.getInstance()
+            .getReference();
 
     private ActivityContainerBinding binding;
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -64,6 +70,7 @@ public class Container extends AppCompatActivity {
     private OnActionBroadcastReceiver onActionBroadcastReceiver;
     private IntentFilter actionFilter;
     private IntentFilter imageChangedFilter;
+    private Menu menu;
 
     @Override
     public void onBackPressed() {
@@ -123,24 +130,13 @@ public class Container extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         View view = binding.navigation.getHeaderView(0);
-        CircularImageView navigationProfileImage = view.findViewById(R.id.navigationProfileImage);
+        ImageView navigationProfileImage = view.findViewById(R.id.navigationProfileImage);
         TextView firstNameLabel = view.findViewById(R.id.firstName);
         TextView lastNameLabel = view.findViewById(R.id.lastName);
 
-        User user = UserUtils.getUser(getApplicationContext());
+        User user = UserUtils.getLocalUser(getApplicationContext());
         firstNameLabel.setText(user.getFirstName());
         lastNameLabel.setText(user.getLastName());
-
-        //TODO when back is pressed. eg. from Properties Details
-        String selectedMenu = getIntent().getStringExtra("selected");
-
-        if (selectedMenu != null && selectedMenu.equalsIgnoreCase("Properties")) {
-            binding.toolbar.setTitle("Properties");
-            fragment = new Properties();
-        } else {
-            binding.toolbar.setTitle("Dashboard");
-            fragment = new Dashboard();
-        }
 
         setSupportActionBar(binding.toolbar);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, R.string.open, R.string.close);
@@ -163,12 +159,77 @@ public class Container extends AppCompatActivity {
         actionFilter = new IntentFilter();
         actionFilter.addAction(getPackageName() + ".ACTION_PERFORMED");
 
-        getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
-        binding.bottomNavigationMenu.setItemSelected(R.id.bottom_navigation_dashboard, true);
+        //TODO when back is pressed. eg. from Properties Details
 
         bottomMenu();
         leftMenu();
-        initNotificationQuery(true);
+        setOnUnreadNotificationListener();
+
+        String selectedMenu = getIntent().getStringExtra("selected");
+        if (selectedMenu != null && selectedMenu.equalsIgnoreCase("Properties")) {
+            binding.bottomNavigationMenu.setItemSelected(R.id.bottom_navigation_properties, true);
+        } else {
+            binding.bottomNavigationMenu.setItemSelected(R.id.bottom_navigation_dashboard, true);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
+        this.menu = menu;
+
+        getMenuInflater().inflate(R.menu.top_bar_menu, menu);
+        MenuItem searchProperties = menu.findItem(R.id.searchProperties);
+        MenuItem filterFavourites = menu.findItem(R.id.filterFavourites);
+        SwitchMaterial filterView = (SwitchMaterial) filterFavourites.getActionView();
+        SearchView searchView = (SearchView) searchProperties.getActionView();
+        searchView.setIconified(false);
+        searchView.onActionViewExpanded();
+
+        EditText txtSearch = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
+        txtSearch.setHintTextColor(getResources().getColor(R.color.colorBlack));
+        txtSearch.setTextColor(getResources().getColor(R.color.colorBlack));
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+                PropertyAdapter adapter = ((Properties) fragment).getAdapter();
+                FirebaseRecyclerAdapter.SearchFilter searchFilter = (FirebaseRecyclerAdapter.SearchFilter) adapter.getFilter();
+                searchFilter.setShowOnlyFavourites(filterView.isChecked());
+                searchFilter.filter(query);
+                return false;
+            }
+        });
+
+        filterView.setOnCheckedChangeListener((button, checked) -> {
+            PropertyAdapter adapter = ((Properties) fragment).getAdapter();
+            FirebaseRecyclerAdapter.SearchFilter searchFilter = (FirebaseRecyclerAdapter.SearchFilter) adapter.getFilter();
+            searchFilter.setShowOnlyFavourites(checked);
+            searchFilter.filter(searchView.getQuery());
+        });
+
+        searchable(false);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    private void searchable(boolean showMenu) {
+        if (menu == null)
+            return;
+        menu.setGroupVisible(R.id.searchPropertiesMenuItem, showMenu);
+
+        if (!showMenu) {
+            MenuItem searchProperties = menu.findItem(R.id.searchProperties);
+            searchProperties.collapseActionView();
+            MenuItem filterFavourites = menu.findItem(R.id.filterFavourites);
+            SwitchMaterial filterFavouritesActionView = (SwitchMaterial) filterFavourites.getActionView();
+            if (filterFavouritesActionView.isChecked()) {
+                filterFavouritesActionView.setChecked(false);
+            }
+        }
     }
 
     private void bottomMenu() {
@@ -177,27 +238,32 @@ public class Container extends AppCompatActivity {
                 case R.id.bottom_navigation_dashboard:
                     binding.navigation.setCheckedItem(R.id.navigationDashboard);
                     binding.toolbar.setTitle("Dashboard");
+                    searchable(false);
                     fragment = new Dashboard();
                     break;
                 case R.id.bottom_navigation_properties:
                     binding.navigation.getCheckedItem().setChecked(false);
                     binding.toolbar.setTitle("Properties");
+                    searchable(true);
                     fragment = new Properties();
                     break;
                 case R.id.bottom_navigation_scanner:
                     binding.navigation.getCheckedItem().setChecked(false);
                     binding.toolbar.setTitle("Scanner");
+                    searchable(false);
                     fragment = new Scanner();
                     break;
                 case R.id.bottom_navigation_notification:
                     binding.navigation.getCheckedItem().setChecked(false);
                     resetBadge();
                     binding.toolbar.setTitle("Notifications");
+                    searchable(false);
                     fragment = new Notifications();
                     break;
                 case R.id.bottom_navigation_profile:
                     binding.navigation.getCheckedItem().setChecked(false);
                     binding.toolbar.setTitle("Profile");
+                    searchable(false);
                     fragment = new Profile();
                     break;
             }
@@ -243,72 +309,53 @@ public class Container extends AppCompatActivity {
         });
     }
 
+    private void resetBadge() {
+        PropertyUtils.dismissBadge(this);
+    }
+
+    private void setOnUnreadNotificationListener() {
+        Activity activity = this;
+
+        User user = UserUtils.getLocalUser(getApplicationContext());
+        unreadNotificationsQuery.child("unread_notifications")
+                .orderByChild("userId")
+                .equalTo(user.getId())
+                .addValueEventListener(new ValueEventListener() {
+
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        snapshot.getChildren().forEach(s -> {
+                            UnreadNotification unreadNotification = s.getValue(UnreadNotification.class);
+                            long count = unreadNotification.getNotificationIds().values().stream().filter(Boolean::booleanValue).count();
+                            updateBadge(activity, count);
+                        });
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+    }
+
+    private void updateBadge(Activity activity, long count) {
+        if (count > 0)
+            PropertyUtils.showBadge(activity, count);
+        else
+            PropertyUtils.dismissBadge(activity);
+    }
+
     @NoArgsConstructor
     @Setter
     public final static class OnImageChangedBroadcastReceiver extends BroadcastReceiver {
 
         private String userId;
-        private CircularImageView imageView;
+        private ImageView imageView;
 
         @Override
         public void onReceive(Context context, Intent intent) {
             ImageUtils.syncAndloadImages(context, userId, imageView);
         }
-    }
-
-    private void resetBadge() {
-        PropertyUtils.dismissBadge(this);
-        UNREAD.entrySet().forEach(notification -> notification.setValue(false));
-    }
-
-    public Query getNotificationQuery() {
-        return initNotificationQuery(false);
-    }
-
-    private Query initNotificationQuery(boolean initialize) {
-        if (initialize) {
-
-            resetBadge();
-            PropertyUtils.getNotificationCount(getApplicationContext()).forEach(id -> {
-                UNREAD.put(id, true);
-            });
-
-            Activity activity = this;
-            notificationsQuery.getRef().addChildEventListener(new ChildEventListener() {
-
-                @Override
-                public void onChildAdded(@NonNull DataSnapshot notification, @Nullable String previousChildName) {
-                    Boolean unread = UNREAD.get(notification.getKey());
-                    if (unread == null) {
-                        UNREAD.put(notification.getKey(), true);
-                    } else if (!unread) {
-                        UNREAD.put(notification.getKey(), false);
-                    }
-                    PropertyUtils.showBadge(activity, UNREAD.entrySet().stream().filter(Map.Entry::getValue).count());
-                }
-
-                @Override
-                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                }
-
-                @Override
-                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                }
-
-                @Override
-                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
-        }
-        return notificationsQuery;
     }
 
     @NoArgsConstructor
@@ -319,9 +366,10 @@ public class Container extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            String userId = intent.getStringExtra("userId");
             String description = intent.getStringExtra("description");
-            PropertyUtils.notify(activity, description, userId);
+            Property property = intent.getParcelableExtra("property");
+            String action = intent.getStringExtra("action");
+            PropertyUtils.notify(activity, description, property, action);
         }
     }
 }

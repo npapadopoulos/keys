@@ -49,6 +49,7 @@ public class ForgotPassword extends AppCompatActivity {
             Intent verify = new Intent(getApplicationContext(), Verify.class);
             verify.putExtra("phoneNumber", binding.phoneNumber.getEditText().getText().toString());
             startActivity(verify);
+            finish();
         });
     }
 }

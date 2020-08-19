@@ -49,7 +49,7 @@ public class UserAuthenticateTask extends AbstractAsyncTask {
                     if (task.isSuccessful()) {
                         DatabaseReference users = firebaseDatabase.getReference("users");
                         Query query = users.child(firebaseAuth.getCurrentUser().getUid());
-                        query.addValueEventListener(new ValueEventListener() {
+                        query.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot user) {
                                 if (user.exists()) {

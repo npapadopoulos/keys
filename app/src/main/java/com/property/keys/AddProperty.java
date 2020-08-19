@@ -13,6 +13,7 @@ import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.snackbar.Snackbar;
 import com.property.keys.databinding.ActivityAddPropertyBinding;
 import com.property.keys.entities.Property;
@@ -41,9 +42,16 @@ public class AddProperty extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
         binding = ActivityAddPropertyBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        MaterialToolbar propertyToolbar = binding.addPropertyToolbar;
+        setSupportActionBar(propertyToolbar);
+        getSupportActionBar().setTitle("Back");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        propertyToolbar.setNavigationOnClickListener(view -> finish());
 
         binding.submit.setOnClickListener(view -> {
             InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);

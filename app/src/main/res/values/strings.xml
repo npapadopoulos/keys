@@ -48,4 +48,8 @@
     <string name="add_new_property">Add new property</string>
     <string name="name">Name</string>
     <string name="address" translatable="true">Address</string>
+    <string name="add_key">Add Key</string>
+    <string name="searchHint">Name or Address</string>
+    <string name="search">Search</string>
+    <string name="filter_favourites">Filter Favourites</string>
 </resources>

@@ -55,6 +55,6 @@ public class Property implements Parcelable {
         parcel.writeString(id);
         parcel.writeString(name);
         parcel.writeString(address);
-        parcel.writeMap(favouredBy);
+        parcel.writeMap(favouredBy == null ? new HashMap<>() : favouredBy);
     }
 }

@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.util.Log;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -23,7 +24,6 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
-import com.mikhaellopez.circularimageview.CircularImageView;
 import com.property.keys.camera.ImagePicker;
 
 import java.io.File;
@@ -72,19 +72,19 @@ public class ImageUtils {
         return null;
     }
 
-    public static void loadImages(Context context, String name, CircularImageView... imageViews) {
+    public static void loadImages(Context context, String name, ImageView... imageViews) {
         Arrays.stream(imageViews).forEach(imageView -> {
             loadImage(context, name, imageView);
         });
     }
 
-    public static void loadImages(Context context, File image, CircularImageView... imageViews) {
+    public static void loadImages(Context context, File image, ImageView... imageViews) {
         Arrays.stream(imageViews).forEach(imageView -> {
             loadImage(context, image, imageView);
         });
     }
 
-    public static void loadImage(Context context, String name, CircularImageView imageView) {
+    public static void loadImage(Context context, String name, ImageView imageView) {
         File image = getImage(context, name);
         if (image == null) {
             Log.i(TAG, "No Image found for: " + name);
@@ -94,7 +94,7 @@ public class ImageUtils {
         loadImage(context, image, imageView);
     }
 
-    public static void loadImage(Context context, File image, CircularImageView imageView) {
+    public static void loadImage(Context context, File image, ImageView imageView) {
         Glide.with(context)
                 .load(image)
                 .dontTransform()
@@ -124,12 +124,12 @@ public class ImageUtils {
         }
     }
 
-    public static void syncAndloadImages(Context context, @NonNull String name, CircularImageView... imageViews) {
+    public static void syncAndloadImages(Context context, @NonNull String name, ImageView... imageViews) {
         File image = getImage(context, name);
         if (image != null) {
             loadImages(context, image, imageViews);
         } else {
-            StorageUtils.downloadAndSaveImage(context, name, imageViews);
+            StorageUtils.downloadAndSaveImage(context, name, "profile", imageViews);
         }
     }
 

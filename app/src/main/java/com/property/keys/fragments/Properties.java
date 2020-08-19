@@ -12,39 +12,60 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.OnScrollListener;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.property.keys.AddProperty;
-import com.property.keys.R;
+import com.property.keys.adapters.PropertyAdapter;
 import com.property.keys.databinding.FragmentPropertiesBinding;
 import com.property.keys.entities.Property;
-import com.property.keys.holders.PropertyHolder;
+
+import lombok.Getter;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class Properties extends Fragment implements FirebaseAuth.AuthStateListener {
 
     private static final String TAG = Properties.class.getSimpleName();
 
-    /**
-     * Get the last 50 chat messages.
-     */
     @NonNull
-    protected static final Query propertiesQuery = FirebaseDatabase.getInstance().getReference().child("properties").limitToLast(10);
+    protected static final Query propertiesQuery = FirebaseDatabase.getInstance().getReference().child("properties").orderByChild("name").limitToLast(20);
     private FragmentPropertiesBinding binding;
+
+    @Getter
+    private PropertyAdapter adapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentPropertiesBinding.inflate(getLayoutInflater(), container, false);
         binding.propertyList.setHasFixedSize(true);
-        binding.propertyList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
+        linearLayoutManager.setStackFromEnd(true);
+        linearLayoutManager.setReverseLayout(true);
+        binding.propertyList.setLayoutManager(linearLayoutManager);
 
         binding.addNewProperty.setOnClickListener(view -> {
             startActivity(new Intent(getContext(), AddProperty.class));
+        });
+
+        binding.propertyList.addOnScrollListener(new OnScrollListener() {
+            @Override
+            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                super.onScrollStateChanged(recyclerView, newState);
+            }
+
+            @Override
+            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                super.onScrolled(recyclerView, dx, dy);
+                if (dy < 0) {
+                    binding.addNewProperty.show();
+                } else if (dy > 0) {
+                    binding.addNewProperty.hide();
+                }
+            }
         });
 
         //TODO
@@ -85,9 +106,15 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
     }
 
     private void attachRecyclerViewAdapter() {
-        final RecyclerView.Adapter adapter = newAdapter();
+        FirebaseRecyclerOptions<Property> options =
+                new FirebaseRecyclerOptions.Builder<Property>()
+                        .setQuery(propertiesQuery, Property.class)
+                        .setLifecycleOwner(this)
+                        .build();
 
-        // Scroll to bottom on new messages
+
+        adapter = new PropertyAdapter(options, this.getActivity());
+        // Scroll to bottom on new properties
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
             public void onItemRangeInserted(int positionStart, int itemCount) {
@@ -95,32 +122,5 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
             }
         });
         binding.propertyList.setAdapter(adapter);
-    }
-
-    @NonNull
-    protected RecyclerView.Adapter newAdapter() {
-        FirebaseRecyclerOptions<Property> options =
-                new FirebaseRecyclerOptions.Builder<Property>()
-                        .setQuery(propertiesQuery, Property.class)
-                        .setLifecycleOwner(this)
-                        .build();
-
-        return new FirebaseRecyclerAdapter<Property, PropertyHolder>(options) {
-            @Override
-            public PropertyHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                return new PropertyHolder(getActivity(), LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.property, parent, false));
-            }
-
-            @Override
-            protected void onBindViewHolder(@NonNull PropertyHolder holder, int position, @NonNull Property model) {
-                holder.bind(getActivity(), model);
-            }
-
-            @Override
-            public void onDataChanged() {
-                // If there are no more notifications do nothing.
-            }
-        };
     }
 }

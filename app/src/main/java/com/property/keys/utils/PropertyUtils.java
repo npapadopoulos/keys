@@ -3,7 +3,6 @@ package com.property.keys.utils;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
@@ -12,13 +11,12 @@ import com.google.android.gms.tasks.Task;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 import com.property.keys.R;
 import com.property.keys.entities.Property;
+import com.property.keys.tasks.KeyGenerateTask;
 import com.property.keys.tasks.NotificationCreateTask;
 import com.property.keys.tasks.PropertyCreateTask;
 import com.property.keys.tasks.PropertyUpdateTask;
 import com.property.keys.tasks.TaskExecutor;
 
-import java.util.Collections;
-import java.util.Set;
 import java.util.function.Consumer;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
@@ -40,20 +38,12 @@ public class PropertyUtils {
         new TaskExecutor().executeAsync(new PropertyUpdateTask(activity, property, favorite));
     }
 
-    public static void notify(Activity activity, String description, String userId) {
-        new TaskExecutor().executeAsync(new NotificationCreateTask(activity, description, userId));
+    public static void notify(Activity activity, String description, Property property, String action) {
+        new TaskExecutor().executeAsync(new NotificationCreateTask(activity, description, property, action));
     }
 
-    public static Set<String> getNotificationCount(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
-        return sharedPreferences.getStringSet("unreadNotificationIds", Collections.emptySet());
-    }
-
-    public static void setNotificationCount(Context context, Set<String> unreadNotificationIds) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putStringSet("unreadNotificationIds", unreadNotificationIds);
-        editor.apply();
+    public static void generateKey(Activity activity, Property property) {
+        new TaskExecutor().executeAsync(new KeyGenerateTask(activity, property));
     }
 
     public static void dismissBadge(Activity activity) {

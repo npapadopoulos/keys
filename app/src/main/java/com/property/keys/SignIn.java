@@ -73,10 +73,12 @@ public class SignIn extends AppCompatActivity {
 
             ActivityOptions options = ActivityOptions.makeSceneTransitionAnimation(SignIn.this, pairs);
             startActivity(new Intent(SignIn.this, SignUp.class), options.toBundle());
+            finish();
         });
 
         binding.forgotPassword.setOnClickListener(v -> {
             startActivity(new Intent(SignIn.this, ForgotPassword.class));
+            finish();
         });
     }
 
@@ -95,7 +97,6 @@ public class SignIn extends AppCompatActivity {
         String password = Utils.hash(binding.password.getEditText().getText().toString());
 
         Consumer<Intent> startDashboardActivity = intent -> {
-//            PropertyUtils.getOrSetNotificationCount(getApplicationContext(), 0L);
             startActivity(intent);
             finish();
         };

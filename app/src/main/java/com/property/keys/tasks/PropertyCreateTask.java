@@ -12,6 +12,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.property.keys.Container;
+import com.property.keys.entities.Action;
 import com.property.keys.entities.Property;
 import com.property.keys.entities.User;
 import com.property.keys.utils.UserUtils;
@@ -35,7 +36,7 @@ public class PropertyCreateTask extends AbstractAsyncTask {
 
     @Override
     public void runInBackground() {
-        User user = UserUtils.getUser(activity.getApplicationContext());
+        User user = UserUtils.getLocalUser(activity.getApplicationContext());
         DatabaseReference properties = firebaseDatabase.getReference("properties");
         properties.child(property.getId()).setValue(property)
                 .addOnCompleteListener(activity, task -> {
@@ -44,10 +45,13 @@ public class PropertyCreateTask extends AbstractAsyncTask {
                             Intent intent = new Intent();
                             intent.putExtra("userId", user.getId());
                             intent.putExtra("description", user.getFirstName() + " added new property '" + property.getName() + "'.");
+                            intent.putExtra("action", Action.ADDED_PROPERTY.name());
+                            intent.putExtra("property", property);
                             intent.setAction("com.property.keys.ACTION_PERFORMED");
                             activity.sendBroadcast(intent);
 
                             Intent next = new Intent(context, Container.class);
+                            next.putExtra("selected", "Properties");
                             next.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity.accept(next);
                         } catch (Exception e) {

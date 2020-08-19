@@ -7,6 +7,7 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.google.firebase.database.FirebaseDatabase;
+import com.property.keys.entities.Action;
 import com.property.keys.entities.Property;
 import com.property.keys.entities.User;
 import com.property.keys.utils.UserUtils;
@@ -27,17 +28,19 @@ public class PropertyUpdateTask extends AbstractAsyncTask {
     @Override
     public void runInBackground() {
         //update real time database
-        User user = UserUtils.getUser(activity.getApplicationContext());
+        User user = UserUtils.getLocalUser(activity.getApplicationContext());
 
         Intent intent = new Intent();
-        intent.putExtra("userId", user.getId());
         if (favorite) {
+            intent.putExtra("action", Action.ADDED_FAVOURED.name());
             property.getFavouredBy().put(user.getId(), Boolean.TRUE);
             intent.putExtra("description", user.getFirstName() + " is now following '" + property.getName() + "'.");
         } else {
+            intent.putExtra("action", Action.REMOVED_FAVOURED.name());
             property.getFavouredBy().remove(user.getId());
             intent.putExtra("description", user.getFirstName() + " stopped following '" + property.getName() + "'.");
         }
+        intent.putExtra("property", property);
         intent.setAction("com.property.keys.ACTION_PERFORMED");
         activity.sendBroadcast(intent);
 

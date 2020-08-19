@@ -14,7 +14,7 @@
         app:cnb_backgroundColor="@color/colorPrimary" />
     <item
         android:id="@+id/bottom_navigation_scanner"
-        android:icon="@drawable/qr_code_scann"
+        android:icon="@drawable/ic_code_scanner_auto_focus_off"
         android:title="@string/scan"
         app:cnb_backgroundColor="@color/colorPrimary" />
     <item

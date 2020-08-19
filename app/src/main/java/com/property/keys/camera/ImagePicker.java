@@ -188,7 +188,7 @@ public class ImagePicker extends AppCompatActivity {
 
         UCrop.Options options = new UCrop.Options();
         options.setCompressionQuality(IMAGE_COMPRESSION);
-        options.setToolbarColor(ContextCompat.getColor(this, R.color.colorWhite));
+        options.setToolbarColor(ContextCompat.getColor(this, R.color.colorGrey));
         options.setStatusBarColor(ContextCompat.getColor(this, R.color.colorBlack));
         options.setActiveControlsWidgetColor(ContextCompat.getColor(this, R.color.colorPrimary));
 

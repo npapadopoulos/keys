@@ -15,7 +15,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
-import com.property.keys.Container;
 import com.property.keys.entities.User;
 import com.property.keys.tasks.ResetPasswordTask;
 import com.property.keys.tasks.TaskExecutor;
@@ -23,10 +22,7 @@ import com.property.keys.tasks.UserAuthenticateTask;
 import com.property.keys.tasks.UserCreateTask;
 import com.property.keys.tasks.UserUpdateTask;
 
-import java.util.Map;
 import java.util.function.Consumer;
-
-import static java.util.stream.Collectors.toSet;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class UserUtils {
@@ -56,7 +52,6 @@ public class UserUtils {
         new TaskExecutor().executeAsync(new UserUpdateTask(fragment, currentUser, newUser, onUpdateFailed, onUpdateSucceeded));
     }
 
-
     public static void resetPassword(Context context, String phoneNumber, String password, PhoneAuthCredential credentialByPhone,
                                      Consumer<Intent> startActivity,
                                      Consumer<Task<AuthResult>> onResetFailed) {
@@ -64,11 +59,10 @@ public class UserUtils {
     }
 
     public static void signOut(Context context) {
-        PropertyUtils.setNotificationCount(context, Container.UNREAD.entrySet().stream().filter(Map.Entry::getValue).map(Map.Entry::getKey).collect(toSet()));
         firebaseAuth.signOut();
     }
 
-    public static User getUser(Context context) {
+    public static User getLocalUser(Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
         return User.builder()
                 .id(sharedPreferences.getString("id", firebaseAuth.getCurrentUser() == null ? "" : firebaseAuth.getCurrentUser().getUid()))

@@ -5,7 +5,7 @@
     android:id="@+id/properties"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorWhite"
+    android:background="@color/colorGrey"
     android:orientation="vertical"
     android:padding="20dp"
     tools:context=".fragments.Properties">
@@ -14,7 +14,8 @@
         android:id="@+id/propertyList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="40dp"
         android:clipToPadding="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:listitem="@layout/property" />
@@ -23,10 +24,11 @@
         android:id="@+id/addNewProperty"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="end|bottom"
+        android:layout_gravity="bottom|end"
         android:layout_marginBottom="50dp"
         android:contentDescription="@string/add_new_property"
         android:src="@drawable/plus"
         android:tint="@color/colorWhite"
+        android:transitionName="addNew"
         app:backgroundTint="@color/colorPrimary" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -4,7 +4,7 @@
     android:id="@+id/dashboard"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorWhite"
+    android:background="@color/colorGrey"
     android:padding="20dp"
     tools:context=".fragments.Dashboard">
 </RelativeLayout>

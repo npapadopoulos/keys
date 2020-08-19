@@ -1,4 +1,4 @@
-package com.property.keys.holders;
+package com.property.keys.adapters;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
@@ -16,7 +16,6 @@ import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.ivbaranov.mfb.MaterialFavoriteButton;
-import com.mikhaellopez.circularimageview.CircularImageView;
 import com.property.keys.PropertyDetails;
 import com.property.keys.R;
 import com.property.keys.entities.Property;
@@ -29,7 +28,7 @@ public class PropertyHolder extends RecyclerView.ViewHolder {
 
     private TextView name;
     private TextView address;
-    private CircularImageView propertyImage;
+    private ImageView propertyImage;
     private ImageView availableSumImage, busySumImage;
     private MaterialFavoriteButton setFavourite;
     private Property property;
@@ -60,6 +59,7 @@ public class PropertyHolder extends RecyclerView.ViewHolder {
             propertyDetails.putExtra("property", property);
 
             view.getContext().startActivity(propertyDetails, bundle);
+            //FIXME probably back button on details has to do with the above. ACTIVITY STARTS FROM PROPERTY_HOLDER INSTEAD OF THE CONTAINER
         });
 
     }
@@ -69,7 +69,6 @@ public class PropertyHolder extends RecyclerView.ViewHolder {
         address.setText(property.getAddress());
         this.property = property;
         ImageUtils.syncAndloadImages(context, property.getId(), propertyImage);
-        setFavourite.setFavoriteSuppressListener(property.getFavouredBy().containsKey(UserUtils.getUser(context).getId()));
-
+        setFavourite.setFavoriteSuppressListener(property.getFavouredBy().containsKey(UserUtils.getLocalUser(context).getId()));
     }
 }

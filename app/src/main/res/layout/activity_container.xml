@@ -1,33 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorWhite"
     android:fitsSystemWindows="true"
     tools:context=".Container"
     tools:openDrawer="start">
 
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@color/colorGrey"
+        android:theme="@style/AppLeftMenuTheme"
+        app:headerLayout="@layout/left_menu_header"
+        app:menu="@menu/left_navigation_menu" />
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/toolbar"
-            style="@style/Widget.MaterialComponents.Toolbar.Surface"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            app:headerLayout="@layout/left_menu_header"
-            app:menu="@menu/left_navigation_menu"
-            app:navigationIcon="@drawable/ic_menu_24dp" />
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-
-    <androidx.drawerlayout.widget.DrawerLayout
-        android:id="@+id/drawerLayout"
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:focusable="true"
@@ -49,21 +41,26 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:background="@color/colorWhite"
+                android:background="@color/colorGrey"
                 android:elevation="8dp"
                 app:cnb_menuResource="@menu/bottom_navigation_menu"
                 app:cnb_orientationMode="horizontal"
                 app:cnb_radius="5dp" />
         </RelativeLayout>
 
-        <com.google.android.material.navigation.NavigationView
-            android:id="@+id/navigation"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_gravity="start"
-            android:background="@color/colorGrey"
-            android:theme="@style/AppLeftMenuTheme"
-            app:headerLayout="@layout/left_menu_header"
-            app:menu="@menu/left_navigation_menu" />
-    </androidx.drawerlayout.widget.DrawerLayout>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <com.google.android.material.appbar.AppBarLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/toolbar"
+                style="@style/ActionBarTheme"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorGrey"
+                app:headerLayout="@layout/left_menu_header"
+                app:menu="@menu/left_navigation_menu"
+                app:navigationIcon="@drawable/ic_menu_24dp" />
+        </com.google.android.material.appbar.AppBarLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.drawerlayout.widget.DrawerLayout>

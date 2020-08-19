@@ -6,6 +6,7 @@
     <color name="colorBlack">#000</color>
     <color name="colorWhite">#fff</color>
     <color name="colorGrey">#F6F6F6</color>
+    <color name="colorAccent">@color/colorGrey</color>
     <color name="colorTransparent">#00000000</color>
     <color name="colorPurple">#B444DB</color>
     <color name="colorPink">#FE4365</color>

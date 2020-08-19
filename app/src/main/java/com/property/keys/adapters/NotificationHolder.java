@@ -1,4 +1,4 @@
-package com.property.keys.holders;
+package com.property.keys.adapters;
 
 import android.app.Activity;
 import android.content.Context;

@@ -17,7 +17,9 @@
         android:roundIcon="@drawable/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".AddProperty" />
+        <activity
+            android:name=".AddProperty"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".PropertyDetails"
             android:parentActivityName=".Container"
@@ -66,4 +68,5 @@
                 android:resource="@xml/file_paths" />
         </provider>
     </application>
+
 </manifest>

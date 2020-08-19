@@ -52,7 +52,7 @@ public class ResetPasswordTask extends AbstractAsyncTask {
 
                         DatabaseReference users = firebaseDatabase.getReference("users");
                         Query query = users.orderByChild("phoneNumber").equalTo(phoneNumber);
-                        query.addValueEventListener(new ValueEventListener() {
+                        query.addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(@NonNull DataSnapshot user) {
                                 if (user.exists()) {

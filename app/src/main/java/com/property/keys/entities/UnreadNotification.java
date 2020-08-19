@@ -2,6 +2,9 @@ package com.property.keys.entities;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,11 +15,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Key {
-    private String id;
-    private String name;
-    private String propertyId;
-
-    //TODO https://firebase.google.com/docs/database/android/read-and-write#save_data_as_transactions
-    //when checkin/out the key
+public class UnreadNotification {
+    private String userId;
+    private Map<String, Boolean> notificationIds = new HashMap<>();
 }

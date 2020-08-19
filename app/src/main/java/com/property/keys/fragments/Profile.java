@@ -58,7 +58,7 @@ public class Profile extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentProfileBinding.inflate(inflater, container, false);
 
-        user = UserUtils.getUser(getActivity().getApplicationContext());
+        user = UserUtils.getLocalUser(getActivity().getApplicationContext());
 
         TextInputEditText firstNameEditText = (TextInputEditText) binding.firstName.getEditText();
         TextInputEditText lastNameEditText = (TextInputEditText) binding.lastName.getEditText();
@@ -130,7 +130,7 @@ public class Profile extends Fragment {
                     Bitmap image = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), data.getParcelableExtra("path"));
                     ImageUtils.clearCache(getContext());
                     ImageUtils.saveImage(getContext(), image, user.getId());
-                    StorageUtils.uploadImage(user.getId(), image);
+                    StorageUtils.uploadImage(user.getId(), "profile", image);
                     ImageUtils.loadImages(getActivity(), user.getId(), binding.profileImage);
 
                     Intent intent = new Intent();
