@@ -1,19 +1,29 @@
 package com.property.keys.utils;
 
+import android.content.Context;
+import android.content.res.ColorStateList;
 import android.os.Build;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.widget.ProgressBar;
 
 import androidx.annotation.RequiresApi;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.property.keys.R;
+import com.property.keys.helpers.RecyclerItemTouchHelper;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
@@ -21,6 +31,7 @@ public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
 
     private final static AtomicInteger CHANGE_COUNTER = new AtomicInteger(0);
+    private final static Map<String, ProgressBar> PROGRESS_BARS = new HashMap<>();
 
     private final static String EMAIL_PATTERN = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     private final static String PASSWORD_PATTERN = "^" +
@@ -34,7 +45,7 @@ public class Utils {
     }
 
     public static Boolean validateText(TextInputLayout textInputLayout) {
-        String value = textInputLayout.getEditText().getText().toString();
+        String value = textInputLayout.getEditText().getText().toString().trim();
         if (value.isEmpty()) {
             Log.v(TAG, "Cannot be empty: '" + value + "'");
             textInputLayout.setError("cannot be empty");
@@ -46,7 +57,7 @@ public class Utils {
     }
 
     public static Boolean validateEmail(TextInputLayout email) {
-        String value = email.getEditText().getText().toString();
+        String value = email.getEditText().getText().toString().trim();
         if (value.isEmpty()) {
             Log.v(TAG, "Email cannot be empty: '" + value + "'");
             email.setError("cannot be empty");
@@ -62,7 +73,7 @@ public class Utils {
     }
 
     public static Boolean validatePhoneNumber(TextInputLayout phoneNumber) {
-        String value = phoneNumber.getEditText().getText().toString();
+        String value = phoneNumber.getEditText().getText().toString().trim();
         if (value.isEmpty()) {
             Log.v(TAG, "Phone Number cannot be empty: '" + value + "'");
             phoneNumber.setError("cannot be empty");
@@ -84,7 +95,7 @@ public class Utils {
         if (passwords.length == 2) {
             confirmPassword = passwords[1];
         }
-        String value = password.getEditText().getText().toString();
+        String value = password.getEditText().getText().toString().trim();
         if (value.isEmpty()) {
             password.setError("cannot be empty");
             return false;
@@ -176,5 +187,22 @@ public class Utils {
             public void afterTextChanged(Editable editable) {
             }
         });
+    }
+
+    public static void updateFavourite(Context context, FloatingActionButton view, boolean isFavourite) {
+        if (isFavourite) {
+            view.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.accentColor)));
+        } else {
+            view.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.primaryColor)));
+        }
+    }
+
+    public static void initSwipeProperty(RecyclerView view, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener listener) {
+        // adding item touch helper
+        // only ItemTouchHelper.LEFT added to detect Right to Left swipe
+        // if you want both Right -> Left and Left -> Right
+        // add pass ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT as param
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, listener);
+        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(view);
     }
 }

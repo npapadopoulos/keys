@@ -44,12 +44,15 @@
     <string name="open">Open</string>
     <string name="help">Having Trouble? Get Help</string>
     <string name="update">Update</string>
-    <string name="loading">Loading...</string>
+    <string name="loading">Loading…</string>
     <string name="add_new_property">Add new property</string>
+    <string name="add_new_key">Add new key</string>
     <string name="name">Name</string>
     <string name="address" translatable="true">Address</string>
     <string name="add_key">Add Key</string>
     <string name="searchHint">Name or Address</string>
-    <string name="search">Search</string>
+    <string name="search">Search…</string>
     <string name="filter_favourites">Filter Favourites</string>
+    <string name="haven_t_received_the_code_click_here_to_resend">Haven’t received the code? Click here to resend</string>
+    <string name="delete">Delete</string>
 </resources>

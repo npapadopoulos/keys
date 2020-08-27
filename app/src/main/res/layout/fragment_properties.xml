@@ -6,29 +6,73 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorGrey"
+    android:fitsSystemWindows="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:orientation="vertical"
     android:padding="20dp"
     tools:context=".fragments.Properties">
+
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/searchBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorGrey"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+        app:elevation="0dp">
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:background="@color/colorGrey" />
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clipToPadding="false"
+            android:textSize="18sp" />
+    </androidx.core.widget.NestedScrollView>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/propertyList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="30dp"
-        android:layout_marginBottom="40dp"
+        android:layout_marginBottom="?attr/actionBarSize"
         android:clipToPadding="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:listitem="@layout/property" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addNewProperty"
+        style="@style/FloatingActionBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="50dp"
         android:contentDescription="@string/add_new_property"
         android:src="@drawable/plus"
-        android:tint="@color/colorWhite"
-        android:transitionName="addNew"
-        app:backgroundTint="@color/colorPrimary" />
+        android:transitionName="addNew" />
+
+    <com.arlib.floatingsearchview.FloatingSearchView
+        android:id="@+id/floatingSearchView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:transitionName="toolbar"
+        app:floatingSearch_close_search_on_keyboard_dismiss="false"
+        app:floatingSearch_dimBackground="false"
+        app:floatingSearch_dismissOnOutsideTouch="true"
+        app:floatingSearch_leftActionMode="showHamburger"
+        app:floatingSearch_menu="@menu/top_bar_menu"
+        app:floatingSearch_searchHint="Search..."
+        app:floatingSearch_showSearchKey="true"
+        app:floatingSearch_suggestionsListAnimDuration="250" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

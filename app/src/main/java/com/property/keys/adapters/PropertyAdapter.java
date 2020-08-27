@@ -18,7 +18,6 @@ import com.property.keys.utils.UserUtils;
 public class PropertyAdapter extends FirebaseRecyclerAdapter<Property, PropertyHolder> {
     @NonNull
     private Activity activity;
-    private boolean onlyFavourites = false;
 
     public PropertyAdapter(@NonNull FirebaseRecyclerOptions<Property> options, Activity activity) {
         super(options);

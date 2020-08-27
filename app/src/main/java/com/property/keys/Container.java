@@ -7,12 +7,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -20,23 +20,22 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.SearchView;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 
-import com.google.android.material.switchmaterial.SwitchMaterial;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.property.keys.adapters.PropertyAdapter;
 import com.property.keys.databinding.ActivityContainerBinding;
 import com.property.keys.entities.Property;
 import com.property.keys.entities.UnreadNotification;
 import com.property.keys.entities.User;
-import com.property.keys.filters.FirebaseRecyclerAdapter;
 import com.property.keys.fragments.Dashboard;
 import com.property.keys.fragments.History;
 import com.property.keys.fragments.Notifications;
@@ -54,7 +53,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
-public class Container extends AppCompatActivity {
+public class Container extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private static final String TAG = Container.class.getSimpleName();
 
     private final int REQUEST_CODE_SIGN_IN = 100;
@@ -70,7 +69,6 @@ public class Container extends AppCompatActivity {
     private OnActionBroadcastReceiver onActionBroadcastReceiver;
     private IntentFilter actionFilter;
     private IntentFilter imageChangedFilter;
-    private Menu menu;
 
     @Override
     public void onBackPressed() {
@@ -125,10 +123,12 @@ public class Container extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        updateStatusBarOptions();
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
         binding = ActivityContainerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        binding.navigation.setNavigationItemSelectedListener(this);
         View view = binding.navigation.getHeaderView(0);
         ImageView navigationProfileImage = view.findViewById(R.id.navigationProfileImage);
         TextView firstNameLabel = view.findViewById(R.id.firstName);
@@ -138,7 +138,9 @@ public class Container extends AppCompatActivity {
         firstNameLabel.setText(user.getFirstName());
         lastNameLabel.setText(user.getLastName());
 
+        binding.toolbar.setTitle("Dashboard");
         setSupportActionBar(binding.toolbar);
+
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, R.string.open, R.string.close);
         binding.drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
@@ -161,8 +163,8 @@ public class Container extends AppCompatActivity {
 
         //TODO when back is pressed. eg. from Properties Details
 
+        updateStatusBarOptions();
         bottomMenu();
-        leftMenu();
         setOnUnreadNotificationListener();
 
         String selectedMenu = getIntent().getStringExtra("selected");
@@ -173,139 +175,49 @@ public class Container extends AppCompatActivity {
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(@NonNull Menu menu) {
-        this.menu = menu;
-
-        getMenuInflater().inflate(R.menu.top_bar_menu, menu);
-        MenuItem searchProperties = menu.findItem(R.id.searchProperties);
-        MenuItem filterFavourites = menu.findItem(R.id.filterFavourites);
-        SwitchMaterial filterView = (SwitchMaterial) filterFavourites.getActionView();
-        SearchView searchView = (SearchView) searchProperties.getActionView();
-        searchView.setIconified(false);
-        searchView.onActionViewExpanded();
-
-        EditText txtSearch = searchView.findViewById(androidx.appcompat.R.id.search_src_text);
-        txtSearch.setHintTextColor(getResources().getColor(R.color.colorBlack));
-        txtSearch.setTextColor(getResources().getColor(R.color.colorBlack));
-
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
-            @Override
-            public boolean onQueryTextSubmit(String s) {
-                return false;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String query) {
-                PropertyAdapter adapter = ((Properties) fragment).getAdapter();
-                FirebaseRecyclerAdapter.SearchFilter searchFilter = (FirebaseRecyclerAdapter.SearchFilter) adapter.getFilter();
-                searchFilter.setShowOnlyFavourites(filterView.isChecked());
-                searchFilter.filter(query);
-                return false;
-            }
-        });
-
-        filterView.setOnCheckedChangeListener((button, checked) -> {
-            PropertyAdapter adapter = ((Properties) fragment).getAdapter();
-            FirebaseRecyclerAdapter.SearchFilter searchFilter = (FirebaseRecyclerAdapter.SearchFilter) adapter.getFilter();
-            searchFilter.setShowOnlyFavourites(checked);
-            searchFilter.filter(searchView.getQuery());
-        });
-
-        searchable(false);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    private void searchable(boolean showMenu) {
-        if (menu == null)
-            return;
-        menu.setGroupVisible(R.id.searchPropertiesMenuItem, showMenu);
-
-        if (!showMenu) {
-            MenuItem searchProperties = menu.findItem(R.id.searchProperties);
-            searchProperties.collapseActionView();
-            MenuItem filterFavourites = menu.findItem(R.id.filterFavourites);
-            SwitchMaterial filterFavouritesActionView = (SwitchMaterial) filterFavourites.getActionView();
-            if (filterFavouritesActionView.isChecked()) {
-                filterFavouritesActionView.setChecked(false);
-            }
-        }
+    private void updateStatusBarOptions() {
+        Window window = this.getWindow();
+        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorGrey));
     }
 
     private void bottomMenu() {
+        binding.drawerLayout.closeDrawers();
         binding.bottomNavigationMenu.setOnItemSelectedListener(i -> {
+            binding.toolbar.setEnabled(true);
+            binding.toolbar.setVisibility(View.VISIBLE);
             switch (i) {
                 case R.id.bottom_navigation_dashboard:
                     binding.navigation.setCheckedItem(R.id.navigationDashboard);
+                    binding.navigation.getCheckedItem().setChecked(true);
                     binding.toolbar.setTitle("Dashboard");
-                    searchable(false);
                     fragment = new Dashboard();
                     break;
                 case R.id.bottom_navigation_properties:
                     binding.navigation.getCheckedItem().setChecked(false);
-                    binding.toolbar.setTitle("Properties");
-                    searchable(true);
+                    binding.toolbar.setEnabled(false);
+                    binding.toolbar.setVisibility(View.GONE);
                     fragment = new Properties();
                     break;
                 case R.id.bottom_navigation_scanner:
                     binding.navigation.getCheckedItem().setChecked(false);
                     binding.toolbar.setTitle("Scanner");
-                    searchable(false);
                     fragment = new Scanner();
                     break;
                 case R.id.bottom_navigation_notification:
                     binding.navigation.getCheckedItem().setChecked(false);
                     resetBadge();
                     binding.toolbar.setTitle("Notifications");
-                    searchable(false);
                     fragment = new Notifications();
                     break;
                 case R.id.bottom_navigation_profile:
                     binding.navigation.getCheckedItem().setChecked(false);
                     binding.toolbar.setTitle("Profile");
-                    searchable(false);
                     fragment = new Profile();
                     break;
             }
             getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
-        });
-    }
-
-    private void leftMenu() {
-        binding.navigation.setNavigationItemSelectedListener(item -> {
-
-            switch (item.getItemId()) {
-                case R.id.navigationDashboard:
-                    binding.bottomNavigationMenu.setItemSelected(R.id.bottom_navigation_dashboard, true);
-                    break;
-                case R.id.navigationHistory:
-                    binding.bottomNavigationMenu.setItemSelected(binding.bottomNavigationMenu.getSelectedItemId(), false);
-                    binding.toolbar.setTitle("History");
-                    fragment = new History();
-                    break;
-                case R.id.navigationNotifications:
-                    binding.bottomNavigationMenu.setItemSelected(R.id.bottom_navigation_notification, true);
-                    resetBadge();
-                    binding.toolbar.setTitle("Notifications");
-                    fragment = new Notifications();
-                    break;
-                case R.id.navigationLogout:
-                    fragment = null;
-                    UserUtils.signOut(getApplicationContext());
-                    finish();
-                    break;
-
-            }
-
-            if (fragment != null) {
-                item.setChecked(true);
-                binding.drawerLayout.closeDrawers();
-
-                getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
-                return true;
-            }
-
-            return false;
         });
     }
 
@@ -343,6 +255,51 @@ public class Container extends AppCompatActivity {
             PropertyUtils.showBadge(activity, count);
         else
             PropertyUtils.dismissBadge(activity);
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.navigationDashboard:
+                binding.bottomNavigationMenu.setItemSelected(R.id.bottom_navigation_dashboard, true);
+                binding.toolbar.setTitle("Dashboard");
+                break;
+            case R.id.navigationHistory:
+                binding.bottomNavigationMenu.setItemSelected(binding.bottomNavigationMenu.getSelectedItemId(), false);
+                binding.toolbar.setTitle("History");
+                fragment = new History();
+                break;
+            case R.id.navigationNotifications:
+                binding.bottomNavigationMenu.setItemSelected(R.id.bottom_navigation_notification, true);
+                resetBadge();
+                binding.toolbar.setTitle("Notifications");
+                fragment = new Notifications();
+                break;
+            case R.id.navigationLogout:
+                fragment = null;
+                UserUtils.signOut(getApplicationContext());
+                finish();
+                break;
+
+        }
+
+        if (fragment != null) {
+            item.setChecked(true);
+            binding.drawerLayout.closeDrawers();
+
+            getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
+            return true;
+        }
+
+        return false;
+    }
+
+    public RelativeLayout getContentLayout() {
+        return binding.content;
+    }
+
+    public DrawerLayout getDrawerLayout() {
+        return binding.drawerLayout;
     }
 
     @NoArgsConstructor

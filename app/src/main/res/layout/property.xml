@@ -1,124 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/propertyContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="20dp">
+    android:layout_marginTop="10dp">
 
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/card"
+    <RelativeLayout
+        android:id="@+id/propertyBackground"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:cardForegroundColor="@color/colorTransparent">
+        android:layout_height="match_parent"
+        android:background="@drawable/red_card_background">
 
-        <RelativeLayout
+        <ImageView
+            android:id="@+id/deleteIcon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/delete" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@id/deleteIcon"
+            android:textColor="@color/white_50"
+            android:textSize="13dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/propertyForeground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/white_card_background">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card"
+            style="@style/MaterialCardView"
             android:layout_width="match_parent"
-            android:layout_height="100dp">
+            android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/propertyImage"
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:scaleType="centerCrop"
-                app:srcCompat="@drawable/default_property_image" />
-
-            <com.github.ivbaranov.mfb.MaterialFavoriteButton
-                android:id="@+id/setFavourite"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="75dp"
-                android:padding="5dp"
-                android:transitionName="favourite"
-                app:mfb_animate_favorite="false"
-                app:mfb_animate_unfavorite="false"
-                app:mfb_bounce_duration="300"
-                app:mfb_color="black"
-                app:mfb_favorite_image="@drawable/favourite_selected"
-                app:mfb_not_favorite_image="@drawable/favourite_grey"
-                app:mfb_rotation_angle="360"
-                app:mfb_size="50"
-                app:mfb_type="heart" />
-
-            <TextView
-                android:id="@+id/name"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="130dp"
-                android:layout_marginTop="10dp"
-                android:fontFamily="@font/lato"
-                android:maxLines="1"
-                android:text="@string/default_property_name"
-                android:textAppearance="?attr/textAppearanceHeadline6"
-                android:textColor="@color/colorBlack"
-                android:transitionName="propertyName" />
-
-            <TextView
-                android:id="@+id/address"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_marginStart="130dp"
-                android:layout_marginTop="40dp"
-                android:fontFamily="@font/lato"
-                android:maxLines="1"
-                android:text="@string/default_property_address"
-                android:textAppearance="?attr/textAppearanceBody2"
-                android:textSize="14sp"
-                android:transitionName="propertyAddress" />
-
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_alignParentStart="true"
-                android:layout_marginStart="120dp"
-                android:layout_marginTop="55dp"
-                android:orientation="horizontal"
-                android:padding="10dp">
+                android:layout_height="wrap_content">
 
                 <ImageView
-                    android:id="@+id/availableSumImage"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:src="@drawable/keys_available"
-                    android:transitionName="propertyKeyAvailableSumImage" />
+                    android:id="@+id/propertyImage"
+                    android:layout_width="100dp"
+                    android:layout_height="110dp"
+                    android:layout_margin="10dp"
+                    android:scaleType="centerInside"
+                    app:srcCompat="@drawable/background" />
 
                 <TextView
-                    android:id="@+id/availableSum"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_marginStart="5dp"
-                    android:fontFamily="@font/lato"
-                    android:text="0"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="22sp" />
+                    android:id="@+id/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="130dp"
+                    android:layout_marginTop="10dp"
+
+                    android:maxLines="1"
+                    android:text="@string/default_property_name"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+
+                    android:transitionName="propertyName" />
 
                 <ImageView
-                    android:id="@+id/busySumImage"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:src="@drawable/keys_busy"
-                    android:transitionName="propertyKeyBusySumImage" />
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="130dp"
+                    android:layout_marginTop="45dp"
+                    android:src="@drawable/place" />
 
                 <TextView
-                    android:id="@+id/busySum"
-                    android:layout_width="25dp"
-                    android:layout_height="25dp"
-                    android:layout_marginStart="5dp"
-                    android:fontFamily="@font/lato"
-                    android:text="0"
-                    android:textColor="@color/colorBlack"
-                    android:textSize="22sp" />
+                    android:id="@+id/address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="160dp"
+                    android:layout_marginTop="45dp"
+                    android:maxLines="1"
+                    android:text="@string/default_property_address"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textSize="14sp"
+                    android:transitionName="propertyAddress" />
 
-            </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginStart="120dp"
+                    android:layout_marginTop="65dp"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
 
-        </RelativeLayout>
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center">
 
-    </com.google.android.material.card.MaterialCardView>
+                        <ImageView
+                            android:id="@+id/availableSumImage"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:src="@drawable/keys_available"
+                            android:transitionName="propertyKeyAvailableSumImage" />
 
-</RelativeLayout>
+                        <TextView
+                            android:id="@+id/availableSum"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_toEndOf="@id/availableSumImage"
+                            android:text="0"
+                            android:textSize="22sp" />
+
+                        <ImageView
+                            android:id="@+id/busySumImage"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:layout_toEndOf="@id/availableSum"
+                            android:src="@drawable/keys_busy"
+                            android:transitionName="propertyKeyBusySumImage" />
+
+                        <TextView
+                            android:id="@+id/busySum"
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:layout_marginStart="5dp"
+                            android:layout_toEndOf="@id/busySumImage"
+                            android:text="0"
+                            android:textSize="22sp" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center">
+
+                        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                            android:id="@+id/setFavourite"
+                            style="@style/FloatingActionBar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/favourite_selected"
+                            android:transitionName="favourite"
+                            app:fabSize="mini"
+                            app:layout_anchorGravity="bottom|right|end" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+    </RelativeLayout>
+
+</FrameLayout>

@@ -44,8 +44,8 @@ public class StorageUtils {
         });
     }
 
-    public static void downloadAndSaveImage(Context context, String id, String name, ImageView[] imageViews) {
-        downloadImage(context, id, name, image -> ImageUtils.loadImages(context, image, imageViews));
+    public static void downloadAndSaveImage(Context context, String id, String name, ImageView imageView) {
+        downloadImage(context, id, name, image -> ImageUtils.loadImage(context, image, imageView));
     }
 
     public static void downloadImage(Context context, String id, String name, Consumer<File> loader) {

@@ -66,8 +66,8 @@ public class ResetPassword extends AppCompatActivity {
 
             Consumer<Task<AuthResult>> onResetFailed = (Task<AuthResult> task) -> {
                 // If sign in fails, display a message to the user.
-                Log.i(TAG, "Password reset for " + phoneNumber + " is failed.", task.getException());
-                Snackbar.make(binding.main, "Password reset for " + phoneNumber + " is failed.", Snackbar.LENGTH_SHORT).show();
+                Log.i(TAG, "Password reset for " + phoneNumber + " failed.", task.getException());
+                Snackbar.make(binding.main, "Password reset for " + phoneNumber + " failed.", Snackbar.LENGTH_SHORT).show();
                 binding.progressBar.setVisibility(View.GONE);
                 binding.submit.setEnabled(true);
             };

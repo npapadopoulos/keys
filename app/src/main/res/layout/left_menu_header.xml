@@ -13,7 +13,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="100dp"
         android:layout_marginBottom="60dp"
-        android:fontFamily="@font/lato"
+
         android:text="@string/last_name"
         android:textSize="18sp" />
 
@@ -24,9 +24,9 @@
         android:layout_alignParentBottom="true"
         android:layout_marginStart="100dp"
         android:layout_marginBottom="80dp"
-        android:fontFamily="@font/lato"
+
         android:text="@string/first_name"
-        android:textColor="@color/colorBlack"
+
         android:textSize="22sp" />
 
     <com.mikhaellopez.circularimageview.CircularImageView
@@ -40,9 +40,9 @@
         android:src="@drawable/default_avatar"
         app:civ_border_color="#fff"
         app:civ_border_width="1dp"
-        app:civ_circle_color="@color/colorGrey"
+
         app:civ_shadow="true"
-        app:civ_shadow_color="@color/colorBlack"
+
         app:civ_shadow_radius="1dp" />
 
     <ImageView

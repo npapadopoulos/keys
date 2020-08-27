@@ -29,7 +29,6 @@
             android:layout_marginLeft="10dp"
             android:layout_marginTop="20dp"
             android:layout_marginRight="10dp"
-            android:layout_marginBottom="20dp"
             android:background="@drawable/form_background"
             android:orientation="vertical"
             android:padding="20dp">
@@ -40,9 +39,8 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
-                android:fontFamily="@font/lato"
+
                 android:text="@string/verify_phone_number"
-                android:textColor="@color/colorPrimaryDark"
                 android:textSize="11pt" />
 
             <com.chaos.view.PinView
@@ -54,14 +52,11 @@
                 android:layout_marginBottom="30dp"
                 android:cursorVisible="true"
                 android:inputType="number"
-                android:itemBackground="@color/colorWhite"
-                app:cursorColor="@color/colorPrimary"
                 app:hideLineWhenFilled="true"
                 app:itemCount="6"
                 app:itemHeight="60dp"
                 app:itemRadius="8dp"
                 app:itemWidth="45dp"
-                app:lineColor="@color/colorBlack"
                 app:lineWidth="1dp"
                 app:viewType="rectangle" />
 
@@ -71,21 +66,38 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                android:fontFamily="@font/lato"
+
                 android:text="@string/submit"
                 android:textAllCaps="false"
-                android:textColor="@color/colorWhite"
                 app:cornerRadius="5dp"
                 app:icon="@drawable/right_arrow"
-                app:iconGravity="end"
-                app:iconPadding="-20dp" />
+                app:iconGravity="end" />
         </LinearLayout>
 
         <ProgressBar
             android:id="@+id/progressBar"
+            style="@style/ProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center" />
+
+        <RelativeLayout
+            android:id="@+id/footer"
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_marginBottom="20dp"
+            android:gravity="bottom">
+
+            <Button
+                android:id="@+id/resend"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:text="@string/haven_t_received_the_code_click_here_to_resend"
+                android:textAllCaps="false"
+                android:textColor="@color/white_50" />
+        </RelativeLayout>
     </LinearLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

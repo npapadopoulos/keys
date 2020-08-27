@@ -1,27 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorBlack</item>
-        <item name="colorAccent">@color/colorGrey</item>
-        <item name="fontFamily">@font/lato</item>
-        <item name="colorControlNormal">@color/colorWhite</item>
-        <item name="colorOnSecondary">@color/colorWhite</item>
-        <item name="android:windowContentTransitions">true</item>
-        <item name="android:windowDrawsSystemBarBackgrounds">false</item>
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:statusBarColor">@color/colorTransparent</item>
+    <!--Navigation Drawer-->
+    <style name="Widget.MyTheme.NavigationView" parent="Widget.MaterialComponents.NavigationView">
+        <item name="itemTextAppearance">?attr/textAppearanceBody2</item>
     </style>
 
-    <style name="AppLeftMenuTheme" parent="AppTheme">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorBlack</item>
-        <item name="colorControlHighlight">@color/colorPrimary</item>
+    <style name="FloatingActionBar" parent="@style/Widget.MaterialComponents.FloatingActionButton">
+        <item name="backgroundTint">@color/primaryColor</item>
     </style>
 
-    <style name="ActionBarTheme" parent="@style/Widget.MaterialComponents.Toolbar.Surface">
+    <style name="MaterialCardView" parent="@style/Widget.MaterialComponents.CardView">
+        <item name="cardForegroundColor">@color/colorTransparent</item>
+        <item name="cardBackgroundColor">@color/white_50</item>
+    </style>
+
+    <style name="Toolbar" parent="@style/Widget.MaterialComponents.Toolbar.Surface">
         <!-- THIS is where you can color the arrow! -->
         <item name="colorPrimary">@color/colorGrey</item>
         <item name="colorPrimaryDark">@color/colorGrey</item>
@@ -36,11 +29,9 @@
         <item name="android:orientation">vertical</item>
     </style>
 
-    <style name="Switch" parent="@style/AppTheme">
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimary</item>
-        <item name="colorAccent">@color/colorPrimary</item>
-        <item name="colorControlNormal">@color/colorPrimary</item>
-        <item name="colorOnSecondary">@color/colorPrimary</item>
+    <style name="ProgressBar" parent="Widget.AppCompat.ProgressBar">
+        <item name="colorFillColor">@color/primaryColor</item>
+        <item name="backgroundColor">@color/primaryColor</item>
+        <item name="colorAccent">@color/primaryColor</item>
     </style>
 </resources>

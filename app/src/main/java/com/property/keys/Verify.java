@@ -18,6 +18,7 @@ import com.google.firebase.auth.PhoneAuthProvider;
 import com.property.keys.databinding.ActivityVerifyBinding;
 import com.property.keys.utils.Utils;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
@@ -53,7 +54,7 @@ public class Verify extends AppCompatActivity {
 
         @Override
         public void onVerificationFailed(@NonNull FirebaseException e) {
-            Snackbar.make(binding.main, e.getMessage(), Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(binding.main, Objects.requireNonNull(e.getMessage()), Snackbar.LENGTH_SHORT).show();
             binding.progressBar.setVisibility(View.GONE);
             binding.submit.setEnabled(true);
         }
@@ -78,7 +79,7 @@ public class Verify extends AppCompatActivity {
 
         binding.otp.setAnimationEnable(true);
 
-        phoneNumber = Utils.addCountryCodeIfMissing(getIntent().getStringExtra("phoneNumber"));
+        phoneNumber = Utils.addCountryCodeIfMissing(Objects.requireNonNull(getIntent().getStringExtra("phoneNumber")));
         sendVerificationCodeToUser();
 
         binding.submit.setOnClickListener(v -> {
@@ -93,6 +94,13 @@ public class Verify extends AppCompatActivity {
                 return;
             }
             verifyCode(code);
+        });
+
+        binding.resend.setOnClickListener(view -> {
+            binding.progressBar.setVisibility(View.VISIBLE);
+            sendVerificationCodeToUser();
+            binding.progressBar.setVisibility(View.GONE);
+            Snackbar.make(binding.main, "New verification code has been sent.", Snackbar.LENGTH_SHORT).show();
         });
     }
 

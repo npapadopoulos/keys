@@ -54,8 +54,8 @@ public class NavigationUtils {
 
     @Deprecated
     public static void onMenuClick(DrawerLayout drawerLayout, ImageView headerMenuIcon) {
-        headerMenuIcon.setOnClickListener(view1 -> {
-            if (drawerLayout.isDrawerVisible(GravityCompat.START)) {
+        headerMenuIcon.setOnClickListener(view -> {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START) || drawerLayout.isDrawerVisible(GravityCompat.START)) {
                 drawerLayout.closeDrawer(GravityCompat.START);
             } else {
                 drawerLayout.openDrawer(GravityCompat.START);

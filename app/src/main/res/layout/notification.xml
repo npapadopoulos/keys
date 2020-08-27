@@ -1,54 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/notificationContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:paddingBottom="10dp">
+    android:layout_marginTop="10dp">
 
-    <com.mikhaellopez.circularimageview.CircularImageView
-        android:id="@+id/userImage"
-        android:layout_width="wrap_content"
-        android:layout_height="70dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="5dp"
-        android:clickable="false"
-        android:scaleType="centerInside"
-        android:src="@drawable/default_avatar"
-        app:civ_border_color="#fff"
-        app:civ_border_width="1dp"
-        app:civ_circle_color="@color/colorGrey"
-        app:civ_shadow="true"
-        app:civ_shadow_color="@color/colorBlack"
-        android:layout_marginBottom="5dp"
-        app:civ_shadow_radius="1dp" />
+    <RelativeLayout
+        android:id="@+id/notificationBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/red_card_background"
+        android:padding="5dp">
 
-    <TextView
-        android:id="@+id/description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="85dp"
-        android:layout_marginTop="38dp"
-        android:layout_marginBottom="5dp"
-        android:fontFamily="@font/lato"
-        android:maxLines="2"
-        android:scrollHorizontally="false"
-        android:textColor="@color/colorBlack"
-        android:textSize="16sp"
-        android:textStyle="bold" />
+        <ImageView
+            android:id="@+id/deleteIcon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/delete" />
 
-    <TextView
-        android:id="@+id/date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginStart="85dp"
-        android:layout_marginTop="18dp"
-        android:layout_marginBottom="5dp"
-        android:fontFamily="@font/lato"
-        android:textSize="14sp" />
-</RelativeLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@id/deleteIcon"
+            android:textColor="@color/white_50"
+            android:textSize="13dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/notificationForeground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/white_card_background"
+        android:padding="5dp">
+
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card"
+            style="@style/MaterialCardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.mikhaellopez.circularimageview.CircularImageView
+                android:id="@+id/userImage"
+                android:layout_width="wrap_content"
+                android:layout_height="70dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="5dp"
+                android:clickable="false"
+                android:scaleType="centerInside"
+                android:src="@drawable/default_avatar"
+                app:civ_border_color="#fff"
+                app:civ_border_width="1dp"
+                app:civ_shadow="true"
+                app:civ_shadow_radius="1dp" />
+
+            <TextView
+                android:id="@+id/description"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="85dp"
+                android:layout_marginTop="38dp"
+                android:layout_marginBottom="5dp"
+                android:maxLines="2"
+                android:scrollHorizontally="false"
+                android:text="asdsadasdasdasad"
+                android:textSize="16sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="85dp"
+                android:layout_marginTop="18dp"
+                android:layout_marginBottom="5dp"
+                android:text="2020 12/02/02"
+                android:textSize="14sp" />
+        </com.google.android.material.card.MaterialCardView>
+    </RelativeLayout>
+</FrameLayout>

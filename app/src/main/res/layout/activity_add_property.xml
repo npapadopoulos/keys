@@ -6,10 +6,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorGrey"
-    android:paddingStart="20dp"
-    android:paddingTop="20dp"
-    android:paddingEnd="20dp"
-    tools:context=".SignUp">
+    android:fitsSystemWindows="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    tools:context=".PropertyDetails">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -18,15 +18,14 @@
 
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/addPropertyToolbar"
-            style="@style/ActionBarTheme"
+            style="@style/Toolbar"
             android:layout_width="match_parent"
-            android:layout_marginTop="20dp"
             android:layout_height="?attr/actionBarSize"
-            android:colorControlNormal="@color/colorBlack"
-            app:colorControlNormal="@color/colorBlack"
+            android:background="@color/colorGrey"
+            android:transitionName="toolbar"
             app:layout_collapseMode="pin"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:titleTextColor="@color/colorBlack" />
+            app:layout_scrollFlags="scroll|enterAlways|snap"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -34,52 +33,126 @@
             android:orientation="vertical"
             android:padding="20dp">
 
-
             <com.google.android.material.textview.MaterialTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
-                android:fontFamily="@font/lato"
                 android:text="@string/add_new_property"
-                android:textColor="@color/colorBlack"
-                android:textStyle="bold"
-                android:textSize="11pt" />
+                android:textSize="11pt"
+                android:textStyle="bold" />
 
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@id/name"
-                android:layout_width="match_parent"
+            <RelativeLayout
+                android:layout_width="130dp"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:hint="@string/name">
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp">
 
-                <com.google.android.material.textfield.TextInputEditText
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/colorGrey"
-                    android:drawablePadding="10dp"
-                    android:text=" " />
+                <ImageView
+                    android:id="@+id/propertyImage"
+                    android:layout_width="100dp"
+                    android:layout_height="110dp"
+                    android:layout_margin="10dp"
+                    android:scaleType="centerInside"
+                    app:srcCompat="@drawable/background" />
 
+                <com.mikhaellopez.circularimageview.CircularImageView
+                    android:id="@+id/addImage"
+                    android:layout_width="45dp"
+                    android:layout_height="45dp"
+                    android:layout_alignBottom="@id/propertyImage"
+                    android:layout_alignParentEnd="true"
+                    android:src="@drawable/camera"
+                    app:civ_border_color="@color/primaryColor"
+                    app:civ_border_width="1dp"
+                    app:civ_circle_color="@color/colorGrey"
+                    app:civ_shadow="true"
+                    app:civ_shadow_color="@color/black_900"
+                    app:civ_shadow_radius="2dp" />
+            </RelativeLayout>
 
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@id/address"
+            <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:hint="@string/address">
+                android:layout_height="wrap_content">
 
-                <com.google.android.material.textfield.TextInputEditText
+                <LinearLayout
+                    style="@style/Widget.CardContent"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:background="@color/colorGrey"
-                    android:drawablePadding="10dp"
-                    android:text=" " />
+                    android:layout_height="wrap_content">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@id/name"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:hint="@string/name">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="65dp"
+                            android:maxLines="2"
+                            android:textAppearance="?attr/textAppearanceBody2"
+                            android:transitionName="propertyName" />
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@id/address"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:hint="@string/address">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="match_parent"
+                            android:layout_height="65dp"
+                            android:maxLines="2"
+                            android:textAppearance="?attr/textAppearanceBody2"
+
+                            android:transitionName="propertyAddress" />
 
 
-            </com.google.android.material.textfield.TextInputLayout>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                </LinearLayout>
+
+            </com.google.android.material.card.MaterialCardView>
+
+            <!--            <com.google.android.material.textfield.TextInputLayout-->
+            <!--                android:id="@id/name"-->
+            <!--                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginBottom="10dp"-->
+            <!--                android:hint="@string/name">-->
+
+            <!--                <com.google.android.material.textfield.TextInputEditText-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:drawablePadding="10dp"-->
+            <!--                    android:text=" " />-->
+
+
+            <!--            </com.google.android.material.textfield.TextInputLayout>-->
+
+            <!--            <com.google.android.material.textfield.TextInputLayout-->
+            <!--                android:id="@id/address"-->
+            <!--                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_marginBottom="10dp"-->
+            <!--                android:hint="@string/address">-->
+
+            <!--                <com.google.android.material.textfield.TextInputEditText-->
+            <!--                    android:layout_width="match_parent"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:drawablePadding="10dp"-->
+            <!--                    android:text=" " />-->
+
+
+            <!--            </com.google.android.material.textfield.TextInputLayout>-->
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/submit"
@@ -89,21 +162,20 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
-                android:fontFamily="@font/lato"
+
                 android:text="@string/submit"
                 android:textAllCaps="false"
-                android:textColor="@color/colorWhite"
                 app:cornerRadius="5dp"
                 app:icon="@drawable/right_arrow"
                 app:iconGravity="end"
                 app:iconPadding="-20dp" />
-        </LinearLayout>
 
-        <ProgressBar
-            android:id="@+id/progressBar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="-40dp" />
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="@style/ProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center" />
+        </LinearLayout>
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

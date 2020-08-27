@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
 
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
@@ -188,9 +187,9 @@ public class ImagePicker extends AppCompatActivity {
 
         UCrop.Options options = new UCrop.Options();
         options.setCompressionQuality(IMAGE_COMPRESSION);
-        options.setToolbarColor(ContextCompat.getColor(this, R.color.colorGrey));
-        options.setStatusBarColor(ContextCompat.getColor(this, R.color.colorBlack));
-        options.setActiveControlsWidgetColor(ContextCompat.getColor(this, R.color.colorPrimary));
+//        options.setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary));
+//        options.setStatusBarColor(ContextCompat.getColor(this, R.color.colorBlack));
+//        options.setActiveControlsWidgetColor(ContextCompat.getColor(this, R.color.colorSecondary));
 
         if (lockAspectRatio)
             options.withAspectRatio(ASPECT_RATIO_X, ASPECT_RATIO_Y);

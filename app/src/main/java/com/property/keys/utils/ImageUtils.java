@@ -15,7 +15,6 @@ import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
@@ -30,7 +29,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Instant;
-import java.util.Arrays;
 import java.util.List;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
@@ -72,35 +70,23 @@ public class ImageUtils {
         return null;
     }
 
-    public static void loadImages(Context context, String name, ImageView... imageViews) {
-        Arrays.stream(imageViews).forEach(imageView -> {
-            loadImage(context, name, imageView);
-        });
-    }
-
-    public static void loadImages(Context context, File image, ImageView... imageViews) {
-        Arrays.stream(imageViews).forEach(imageView -> {
-            loadImage(context, image, imageView);
-        });
-    }
-
-    public static void loadImage(Context context, String name, ImageView imageView) {
+    public static File loadImage(Context context, String name, ImageView imageView) {
         File image = getImage(context, name);
         if (image == null) {
             Log.i(TAG, "No Image found for: " + name);
-            return;
+            return image;
         }
 
-        loadImage(context, image, imageView);
+        return loadImage(context, image, imageView);
     }
 
-    public static void loadImage(Context context, File image, ImageView imageView) {
+    public static File loadImage(Context context, File image, ImageView imageView) {
         Glide.with(context)
                 .load(image)
                 .dontTransform()
                 .into(imageView);
-        imageView.setColorFilter(ContextCompat.getColor(context, android.R.color.transparent));
         Log.i(TAG, "Image " + image.getPath() + " has been loaded");
+        return image;
     }
 
     public static void clearCache(Context context) {
@@ -124,12 +110,12 @@ public class ImageUtils {
         }
     }
 
-    public static void syncAndloadImages(Context context, @NonNull String name, ImageView... imageViews) {
+    public static void syncAndloadImages(Context context, @NonNull String name, ImageView imageView) {
         File image = getImage(context, name);
         if (image != null) {
-            loadImages(context, image, imageViews);
+            loadImage(context, image, imageView);
         } else {
-            StorageUtils.downloadAndSaveImage(context, name, "profile", imageViews);
+            StorageUtils.downloadAndSaveImage(context, name, "profile", imageView);
         }
     }
 

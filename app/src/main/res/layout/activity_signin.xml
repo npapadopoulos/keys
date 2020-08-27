@@ -41,9 +41,8 @@
                 android:layout_gravity="center"
                 android:layout_marginTop="20dp"
                 android:layout_marginBottom="20dp"
-                android:fontFamily="@font/lato"
+
                 android:text="@string/signIn"
-                android:textColor="@color/colorPrimaryDark"
                 android:textSize="11pt" />
 
             <com.google.android.material.textfield.TextInputLayout
@@ -56,7 +55,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/lato"
+
                     android:inputType="textEmailAddress"
                     android:textSize="5pt" />
 
@@ -73,7 +72,7 @@
                 <com.google.android.material.textfield.TextInputEditText
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/lato"
+
                     android:inputType="textPassword"
                     android:textSize="5pt" />
 
@@ -86,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
                 android:layout_margin="5dp"
-                android:fontFamily="@font/lato"
+
                 android:text="@string/forgot_password"
                 android:textAllCaps="false"
                 android:textColor="#4458DB"
@@ -99,10 +98,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="20dp"
-                android:fontFamily="@font/lato"
+
                 android:text="@string/submit"
                 android:textAllCaps="false"
-                android:textColor="@color/colorWhite"
                 app:cornerRadius="5dp"
                 app:icon="@drawable/right_arrow"
                 app:iconGravity="end"
@@ -112,7 +110,9 @@
 
         <ProgressBar
             android:id="@+id/progressBar"
+            style="@style/ProgressBar"
             android:layout_width="wrap_content"
+            android:progressBackgroundTint="@color/white_50"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="20dp" />
@@ -130,10 +130,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:fontFamily="@font/lato"
                 android:text="@string/new_account_sign_up"
                 android:textAllCaps="false"
-                android:textColor="@color/colorWhite" />
+                android:textColor="@color/white_50" />
         </RelativeLayout>
     </LinearLayout>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

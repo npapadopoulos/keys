@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#4458DB</color>
-    <color name="colorPrimaryLight">#7f85ff</color>
-    <color name="colorPrimaryDark">#002fa8</color>
-    <color name="colorBlack">#000</color>
-    <color name="colorWhite">#fff</color>
-    <color name="colorGrey">#F6F6F6</color>
-    <color name="colorAccent">@color/colorGrey</color>
+    <color name="secondaryColor">@color/colorGrey</color> <!--Color secondary variant-->
+    <color name="primaryColor">#4458DB</color>
+    <color name="primaryDarkColor">#4458DB</color>
+
+    <color name="accentColor">#FF4081</color>
+    <color name="primaryTextColor">#212121</color>
     <color name="colorTransparent">#00000000</color>
-    <color name="colorPurple">#B444DB</color>
-    <color name="colorPink">#FE4365</color>
+    <color name="navigationBarColor">@color/colorGrey</color>
+    <color name="colorGrey">#F6F6F6</color>
+
+    <color name="red_600">#b00020</color> <!--Color error (light)-->
+
+    <color name="white_50">#ffffff</color>
+
+    <color name="black_900">#000000</color>
+
 </resources>

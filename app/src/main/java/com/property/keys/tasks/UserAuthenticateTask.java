@@ -21,6 +21,7 @@ import com.property.keys.Container;
 import com.property.keys.entities.User;
 import com.property.keys.utils.UserUtils;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 import lombok.AllArgsConstructor;
@@ -55,7 +56,7 @@ public class UserAuthenticateTask extends AbstractAsyncTask {
                                 if (user.exists()) {
                                     try {
                                         Intent nextIntent = new Intent(context, Container.class);
-                                        UserUtils.saveUser(user.getValue(User.class), context);
+                                        UserUtils.saveUser(Objects.requireNonNull(user.getValue(User.class)), context);
                                         nextIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                         startDashboardActivity.accept(nextIntent);
                                     } catch (Exception e) {

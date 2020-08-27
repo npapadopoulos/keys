@@ -2,17 +2,22 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorGrey"
     android:fitsSystemWindows="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context=".PropertyDetails">
 
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/propertyDetailsToolbarLayout"
         android:layout_width="match_parent"
         android:layout_height="256dp"
+        android:background="@color/colorGrey"
         android:fitsSystemWindows="true"
-        android:theme="@style/ThemeOverlay.AppCompat.Dark">
+        app:liftOnScroll="true">
 
         <com.google.android.material.appbar.CollapsingToolbarLayout
             android:layout_width="match_parent"
@@ -29,16 +34,17 @@
                 android:layout_height="match_parent"
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/default_property_image"
+                android:src="@drawable/background"
                 android:transitionName="propertyKeyAvailableSumImage"
                 app:layout_collapseMode="parallax" />
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/propertyDetailsToolbar"
-                style="@style/ActionBarTheme"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
+                android:layout_marginTop="20dp"
                 app:layout_collapseMode="pin"
+                app:layout_scrollFlags="scroll|enterAlways|snap"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -48,7 +54,6 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/colorGrey"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -60,16 +65,19 @@
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                app:cardBackgroundColor="@color/colorWhite">
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginEnd="16dp">
 
                 <LinearLayout
                     style="@style/Widget.CardContent"
                     android:layout_width="match_parent"
+                    android:background="@color/white_50"
                     android:layout_height="wrap_content">
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@id/name"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="10dp"
@@ -78,18 +86,15 @@
                         <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="65dp"
-                            android:background="@color/colorWhite"
                             android:maxLines="2"
                             android:text="@string/default_property_name"
                             android:textAppearance="?attr/textAppearanceBody2"
-                            android:textColor="@color/colorBlack"
                             android:transitionName="propertyName" />
-
-
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@id/address"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="10dp"
@@ -98,12 +103,10 @@
                         <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"
                             android:layout_height="65dp"
-                            android:background="@color/colorWhite"
-                            android:fontFamily="@font/lato"
                             android:maxLines="2"
                             android:text="@string/default_property_address"
                             android:textAppearance="?attr/textAppearanceBody2"
-                            android:textColor="@color/colorBlack"
+
                             android:transitionName="propertyAddress" />
 
 
@@ -114,6 +117,15 @@
             </com.google.android.material.card.MaterialCardView>
 
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/keyList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="16dp"
+                android:clipToPadding="false"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                tools:listitem="@layout/key" />
+
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/update"
                 style="@style/Widget.MaterialComponents.Button.Icon"
@@ -121,14 +133,22 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginBottom="20dp"
-                android:fontFamily="@font/lato"
+
                 android:text="@string/update"
                 android:textAllCaps="false"
-                android:textColor="@color/colorWhite"
+
+
                 app:cornerRadius="5dp"
                 app:icon="@drawable/right_arrow"
                 app:iconGravity="end"
                 app:iconPadding="-20dp" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="@style/ProgressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center" />
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
@@ -140,13 +160,13 @@
         android:layout_margin="16dp"
         android:src="@drawable/favourite_selected"
         android:transitionName="favourite"
-        app:backgroundTint="@color/colorPrimary"
         app:fabSize="normal"
         app:layout_anchor="@id/propertyDetailsToolbarLayout"
         app:layout_anchorGravity="bottom|right|end" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addNewKey"
+        style="@style/FloatingActionBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
@@ -154,8 +174,6 @@
         android:layout_marginBottom="50dp"
         android:contentDescription="@string/add_new_property"
         android:src="@drawable/plus"
-        android:tint="@color/colorWhite"
-        android:transitionName="addNew"
-        app:backgroundTint="@color/colorPrimary" />
+        android:transitionName="addNew" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

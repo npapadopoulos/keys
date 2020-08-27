@@ -1,5 +1,6 @@
 package com.property.keys.fragments;
 
+import android.app.AlertDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -12,8 +13,8 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,12 +23,14 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.property.keys.Container;
-import com.property.keys.R;
+import com.property.keys.adapters.NotificationAdapter;
 import com.property.keys.adapters.NotificationHolder;
 import com.property.keys.databinding.FragmentNotificationsBinding;
 import com.property.keys.entities.Notification;
 import com.property.keys.entities.UnreadNotification;
+import com.property.keys.helpers.RecyclerItemTouchHelper;
 import com.property.keys.utils.UserUtils;
+import com.property.keys.utils.Utils;
 
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -35,7 +38,7 @@ import java.util.stream.Collectors;
 import static java.lang.Boolean.FALSE;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
-public class Notifications extends Fragment implements FirebaseAuth.AuthStateListener {
+public class Notifications extends Fragment implements FirebaseAuth.AuthStateListener, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
     private static final String TAG = Notifications.class.getSimpleName();
 
@@ -45,7 +48,8 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
     private final DatabaseReference unreadNotifications = FirebaseDatabase.getInstance().getReference("unread_notifications");
 
     private FragmentNotificationsBinding binding;
-    private Container containerActivity;
+    private NotificationAdapter adapter;
+    private Container container;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,8 +57,8 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
         binding = FragmentNotificationsBinding.inflate(getLayoutInflater(), container, false);
         binding.notificationsList.setHasFixedSize(true);
 
-        containerActivity = (Container) getActivity();
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(containerActivity);
+        this.container = (Container) getActivity();
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this.container);
         linearLayoutManager.setStackFromEnd(true);
         linearLayoutManager.setReverseLayout(true);
         binding.notificationsList.setLayoutManager(linearLayoutManager);
@@ -79,7 +83,26 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
             }
         });
 
+        Utils.initSwipeProperty(binding.notificationsList, this);
+
         return binding.getRoot();
+    }
+
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+        if (viewHolder instanceof NotificationHolder) {
+            new AlertDialog.Builder(viewHolder.itemView.getContext())
+                    .setMessage("Are you sure?")
+                    .setPositiveButton("Yes", (dialogInterface, i) -> {
+                        // remove the item from recycler view
+                        adapter.removeItem(viewHolder.getAdapterPosition());
+                        Notification notification = adapter.getItem(viewHolder.getAdapterPosition());
+
+                        // showing snack bar with Undo option
+                        Snackbar.make(container.getContentLayout(), "Notification removed!", Snackbar.LENGTH_LONG).show();
+                    })
+                    .setNegativeButton("No", (dialogInterface, i) -> adapter.notifyItemChanged(viewHolder.getAdapterPosition())).create().show();
+        }
     }
 
     @Override
@@ -103,7 +126,13 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
     }
 
     private void attachRecyclerViewAdapter() {
-        final RecyclerView.Adapter adapter = newAdapter();
+        FirebaseRecyclerOptions<Notification> options =
+                new FirebaseRecyclerOptions.Builder<Notification>()
+                        .setQuery(notificationsQuery, Notification.class)
+                        .setLifecycleOwner(this)
+                        .build();
+
+        adapter = new NotificationAdapter(options, this.getActivity());
 
         // Scroll to bottom on new messages
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
@@ -114,32 +143,5 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
         });
 
         binding.notificationsList.setAdapter(adapter);
-    }
-
-    @NonNull
-    protected RecyclerView.Adapter newAdapter() {
-        FirebaseRecyclerOptions<Notification> options =
-                new FirebaseRecyclerOptions.Builder<Notification>()
-                        .setQuery(notificationsQuery, Notification.class)
-                        .setLifecycleOwner(this)
-                        .build();
-
-        return new FirebaseRecyclerAdapter<Notification, NotificationHolder>(options) {
-            @Override
-            public NotificationHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-                return new NotificationHolder(LayoutInflater.from(parent.getContext())
-                        .inflate(R.layout.notification, parent, false), getActivity());
-            }
-
-            @Override
-            protected void onBindViewHolder(@NonNull NotificationHolder holder, int position, @NonNull Notification model) {
-                holder.bind(getActivity(), model);
-            }
-
-            @Override
-            public void onDataChanged() {
-                // If there are no more notifications do nothing.
-            }
-        };
     }
 }

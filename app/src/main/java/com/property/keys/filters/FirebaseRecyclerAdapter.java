@@ -23,8 +23,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import lombok.Getter;
 import lombok.Setter;
 
+import static com.google.android.gms.common.util.CollectionUtils.isEmpty;
 import static java.util.stream.Collectors.toList;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
@@ -34,9 +36,9 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
 
     private FirebaseRecyclerOptions<T> mOptions;
     private ObservableSnapshotArray<T> mSnapshots;
+    @Getter
     private List<T> properties;
     private Filter filter;
-    private boolean showOnlyFavourites;
 
     /**
      * Initialize a {@link RecyclerView.Adapter} that listens to a Firebase query. See
@@ -46,7 +48,7 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
         mOptions = options;
         mSnapshots = options.getSnapshots();
 
-        properties = new ArrayList<>(options.getSnapshots());
+        properties = isEmpty(options.getSnapshots()) ? new ArrayList<>() : new ArrayList<>(options.getSnapshots());
 
         if (mOptions.getOwner() != null) {
             mOptions.getOwner().getLifecycle().addObserver(this);
@@ -78,15 +80,15 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
                                @NonNull DataSnapshot snapshot,
                                int newIndex,
                                int oldIndex) {
-        T model = mSnapshots.get(newIndex);
+
         switch (type) {
             case ADDED:
-                properties.add(newIndex, model);
+                properties.add(newIndex, mSnapshots.get(newIndex));
                 notifyItemInserted(newIndex);
                 break;
             case CHANGED:
                 properties.remove(newIndex);
-                properties.add(newIndex, model);
+                properties.add(newIndex, mSnapshots.get(newIndex));
                 notifyItemChanged(newIndex);
                 break;
             case REMOVED:
@@ -95,7 +97,7 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
                 break;
             case MOVED:
                 properties.remove(oldIndex);
-                properties.add(newIndex, model);
+                properties.add(newIndex, mSnapshots.get(newIndex));
                 notifyItemMoved(oldIndex, newIndex);
                 break;
             default:
@@ -133,30 +135,6 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
     @Override
     public int getItemCount() {
         return mSnapshots.isListening(this) ? properties.size() : 0;
-    }
-
-    /**
-     * Re-initialize the Adapter with a new set of options. Can be used to change the query
-     * without re-constructing the entire adapter.
-     */
-    public void updateOptions(@NonNull FirebaseRecyclerOptions<T> options) {
-        // Tear down old options
-        boolean wasListening = mSnapshots.isListening(this);
-        if (mOptions.getOwner() != null) {
-            mOptions.getOwner().getLifecycle().removeObserver(this);
-        }
-        mSnapshots.clear();
-        stopListening();
-
-        // Set up new options
-        mOptions = options;
-        mSnapshots = options.getSnapshots();
-        if (options.getOwner() != null) {
-            options.getOwner().getLifecycle().addObserver(this);
-        }
-        if (wasListening) {
-            startListening();
-        }
     }
 
     @Override
@@ -197,6 +175,10 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
         return filter;
     }
 
+    public void removeItem(int position) {
+        getRef(position).removeValue();
+    }
+
     /**
      * Simple search on arrived data from firebase.
      * Note that the search query doesn't apply on firebase directly.
@@ -208,16 +190,15 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
 
         @Override
         protected FilterResults performFiltering(CharSequence charSequence) {
+            properties.clear();
+            properties.addAll(getSnapshots());
 
-            String query = charSequence.toString();
             List<T> filtered = new ArrayList<>();
-            if (query.isEmpty()) {
-                properties.clear();
-                properties.addAll(getSnapshots());
+            if (charSequence == null || charSequence.toString().isEmpty()) {
                 filtered.addAll(properties);
             } else {
                 filtered.addAll(properties.stream()
-                        .filter(model -> filterCondition(model, query))
+                        .filter(model -> filterCondition(model, charSequence.toString()))
                         .collect(toList()));
             }
 

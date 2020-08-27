@@ -5,7 +5,6 @@
     android:id="@+id/scanner"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorGrey"
     android:padding="20dp"
     tools:context=".fragments.Scanner">
 
@@ -14,6 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
+        android:layout_marginBottom="40dp"
         app:autoFocusButtonColor="@android:color/white"
         app:autoFocusButtonVisible="true"
         app:flashButtonColor="@android:color/white"
@@ -24,6 +24,5 @@
         app:frameCornersRadius="0dp"
         app:frameCornersSize="50dp"
         app:frameSize="0.75"
-        app:frameThickness="2dp"
-        app:maskColor="@color/colorBlack" />
+        app:frameThickness="2dp" />
 </RelativeLayout>

@@ -10,8 +10,10 @@ import androidx.annotation.RequiresApi;
 import com.google.android.gms.tasks.Task;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 import com.property.keys.R;
+import com.property.keys.entities.Key;
 import com.property.keys.entities.Property;
 import com.property.keys.tasks.KeyGenerateTask;
+import com.property.keys.tasks.KeyUpdateTask;
 import com.property.keys.tasks.NotificationCreateTask;
 import com.property.keys.tasks.PropertyCreateTask;
 import com.property.keys.tasks.PropertyUpdateTask;
@@ -36,6 +38,10 @@ public class PropertyUtils {
 
     public static void update(Activity activity, Property property, boolean favorite) {
         new TaskExecutor().executeAsync(new PropertyUpdateTask(activity, property, favorite));
+    }
+
+    public static void update(Activity activity, Key key, boolean favorite) {
+        new TaskExecutor().executeAsync(new KeyUpdateTask(activity, key, favorite));
     }
 
     public static void notify(Activity activity, String description, Property property, String action) {

@@ -6,25 +6,25 @@
         android:id="@+id/bottom_navigation_dashboard"
         android:icon="@drawable/dashboard"
         android:title="@string/dashboard"
-        app:cnb_backgroundColor="@color/colorPrimary" />
+        app:cnb_iconColor="@color/primaryColor" />
     <item
         android:id="@+id/bottom_navigation_properties"
         android:icon="@drawable/home_icon"
         android:title="@string/properties"
-        app:cnb_backgroundColor="@color/colorPrimary" />
+        app:cnb_iconColor="@color/primaryColor" />
     <item
         android:id="@+id/bottom_navigation_scanner"
         android:icon="@drawable/ic_code_scanner_auto_focus_off"
         android:title="@string/scan"
-        app:cnb_backgroundColor="@color/colorPrimary" />
+        app:cnb_iconColor="@color/primaryColor" />
     <item
         android:id="@+id/bottom_navigation_notification"
         android:icon="@drawable/notification"
         android:title="@string/notifications"
-        app:cnb_backgroundColor="@color/colorPrimary" />
+        app:cnb_iconColor="@color/primaryColor" />
     <item
         android:id="@+id/bottom_navigation_profile"
         android:icon="@drawable/profile"
         android:title="@string/profile"
-        app:cnb_backgroundColor="@color/colorPrimary" />
+        app:cnb_iconColor="@color/primaryColor" />
 </menu>

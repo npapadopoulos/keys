@@ -5,6 +5,7 @@
     android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorGrey"
     android:fitsSystemWindows="true"
     tools:context=".Container"
     tools:openDrawer="start">
@@ -14,14 +15,13 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="@color/colorGrey"
-        android:theme="@style/AppLeftMenuTheme"
         app:headerLayout="@layout/left_menu_header"
         app:menu="@menu/left_navigation_menu" />
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
         android:focusable="true"
         android:focusableInTouchMode="true">
 
@@ -29,7 +29,8 @@
         <RelativeLayout
             android:id="@+id/content"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true" />
 
         <RelativeLayout
             android:id="@+id/menus"
@@ -50,16 +51,15 @@
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:elevation="0dp">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/toolbar"
-                style="@style/ActionBarTheme"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@color/colorGrey"
                 app:headerLayout="@layout/left_menu_header"
-                app:menu="@menu/left_navigation_menu"
                 app:navigationIcon="@drawable/ic_menu_24dp" />
         </com.google.android.material.appbar.AppBarLayout>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

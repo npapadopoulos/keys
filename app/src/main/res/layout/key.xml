@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/keyContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp">
+
+    <RelativeLayout
+        android:id="@+id/propertyBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/red_card_background">
+
+        <ImageView
+            android:id="@+id/deleteIcon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/delete" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="10dp"
+            android:layout_toLeftOf="@id/deleteIcon"
+            android:textColor="@color/white_50"
+            android:textSize="13dp" />
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/propertyForeground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/white_card_background">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card"
+            style="@style/MaterialCardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorGrey">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/qrCodeImage"
+                    android:layout_width="100dp"
+                    android:layout_height="110dp"
+                    android:layout_margin="10dp"
+                    android:scaleType="fitCenter"
+                    app:srcCompat="@drawable/ic_code_scanner_auto_focus_on" />
+
+                <!--                <ImageView-->
+                <!--                    android:layout_width="35dp"-->
+                <!--                    android:layout_height="35dp"-->
+                <!--                    android:layout_alignParentStart="true"-->
+                <!--                    android:layout_alignParentTop="true"-->
+                <!--                    android:layout_marginStart="130dp"-->
+                <!--                    android:layout_marginTop="30dp"-->
+                <!--                    android:src="@drawable/keys" />-->
+
+                <TextView
+                    android:id="@+id/keyId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginStart="127dp"
+                    android:layout_marginTop="15dp"
+                    android:maxLines="1"
+                    android:text="Key #1 "
+                    android:textAppearance="?attr/textAppearanceHeadline4" />
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginStart="120dp"
+                    android:layout_marginTop="50dp"
+                    android:orientation="horizontal"
+                    android:padding="10dp">
+
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center">
+
+                        <TextView
+                            android:id="@+id/keyDescription"
+                            android:layout_width="200dp"
+                            android:layout_height="wrap_content"
+                            android:maxLines="2"
+                            android:text="Tap on QR code to scan the key in order to check in/out."
+                            android:textAppearance="?attr/textAppearanceHeadline6"
+                            android:textSize="14sp" />
+
+                        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                            android:id="@+id/setFavourite"
+                            style="@style/FloatingActionBar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/favourite_selected"
+                            android:transitionName="favourite"
+                            app:fabSize="mini" />
+                    </RelativeLayout>
+                </LinearLayout>
+
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+    </RelativeLayout>
+
+</FrameLayout>

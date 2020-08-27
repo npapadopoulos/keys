@@ -18,7 +18,6 @@ import androidx.fragment.app.Fragment;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
-import com.property.keys.LoadingDialog;
 import com.property.keys.databinding.FragmentProfileBinding;
 import com.property.keys.entities.User;
 import com.property.keys.utils.ImageUtils;
@@ -72,13 +71,12 @@ public class Profile extends Fragment {
 
 
         binding.update.setOnClickListener(view -> {
-            LoadingDialog loadingDialog = new LoadingDialog(this);
-            loadingDialog.show();
+//            Utils.showProgressBar(getActivity());
 
             binding.update.setEnabled(false);
             if (!Utils.validateText(binding.firstName) | !Utils.validateText(binding.lastName) | !Utils.validateEmail(binding.email) | !Utils.validatePhoneNumber(binding.phoneNumber)) {
                 binding.update.setEnabled(true);
-                loadingDialog.hide();
+//                Utils.hideProgressBar(getActivity());
                 return;
             }
 
@@ -87,7 +85,8 @@ public class Profile extends Fragment {
                     && user.getPhoneNumber().equals(phoneNumberEditText.getText().toString())
                     && user.getEmail().equalsIgnoreCase(emailEditText.getText().toString())) {
                 binding.update.setEnabled(true);
-                loadingDialog.hide();
+//                Utils.hideProgressBar(getActivity());
+                Snackbar.make(binding.main, "Nothing to update.", Snackbar.LENGTH_SHORT).show();
                 return;
             }
 
@@ -103,13 +102,13 @@ public class Profile extends Fragment {
                 Log.i(TAG, "Account update for " + user.getId() + " failed.", task.getException());
                 Snackbar.make(binding.main, "Account update for " + user.getId() + " failed. Try again later.", Snackbar.LENGTH_SHORT).show();
                 binding.update.setEnabled(true);
-                loadingDialog.hide();
+//                Utils.hideProgressBar(getActivity());
             };
 
             Consumer<Task<Void>> onUpdateSucceeded = (Task<Void> task) -> {
                 Log.i(TAG, "Account update for " + user.getId() + " succeeded.");
                 binding.update.setEnabled(true);
-                loadingDialog.hide();
+//                Utils.hideProgressBar(getActivity());
                 UserUtils.saveUser(newUser, getActivity().getApplicationContext());
             };
             UserUtils.update(this, user, newUser, onUpdateFailed, onUpdateSucceeded);
@@ -131,7 +130,7 @@ public class Profile extends Fragment {
                     ImageUtils.clearCache(getContext());
                     ImageUtils.saveImage(getContext(), image, user.getId());
                     StorageUtils.uploadImage(user.getId(), "profile", image);
-                    ImageUtils.loadImages(getActivity(), user.getId(), binding.profileImage);
+                    ImageUtils.loadImage(getActivity(), user.getId(), binding.profileImage);
 
                     Intent intent = new Intent();
                     intent.setAction("com.property.keys.PROFILE_IMAGE_UPDATED");

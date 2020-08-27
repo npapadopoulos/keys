@@ -8,12 +8,12 @@ import android.os.Handler;
 import android.util.Pair;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
-import android.widget.ImageView;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.property.keys.databinding.ActivityMainBinding;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class MainActivity extends AppCompatActivity {
@@ -21,24 +21,20 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int SPLASH_SCREEN = 2000;
 
-    private Animation top;
-
-    private ImageView logo;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        ActivityMainBinding binding = ActivityMainBinding.inflate(getLayoutInflater());
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        setContentView(R.layout.activity_main);
+        setContentView(binding.getRoot());
 
-        logo = findViewById(R.id.logo);
-        logo.setAnimation(AnimationUtils.loadAnimation(this, R.anim.simple));
+        binding.logo.setAnimation(AnimationUtils.loadAnimation(this, R.anim.simple));
 
         new Handler().postDelayed(() -> {
             Intent signIn = new Intent(MainActivity.this, SignIn.class);
 
             Pair[] pairs = new Pair[1];
-            pairs[0] = new Pair<View, String>(logo, "logo");
+            pairs[0] = new Pair<View, String>(binding.logo, "logo");
 
             Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, pairs).toBundle();
             startActivity(signIn, bundle);

@@ -61,31 +61,33 @@ public class NotificationCreateTask extends AbstractAsyncTask {
                 });
 
         DatabaseReference unreadNotifications = firebaseDatabase.getReference("unread_notifications");
-        if (Action.ADDED_PROPERTY.name().equals(action)) {
+        if (Action.ADDED_PROPERTY.name().equals(action) || Action.DELETED_PROPERTY.name().equals(action)) {
             firebaseDatabase.getReference("users").addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    User user = snapshot.getValue(User.class);
-                    unreadNotifications.child(user.getId()).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            UnreadNotification unreadNotification = snapshot.getValue(UnreadNotification.class);
-                            if (unreadNotification == null) {
-                                unreadNotification = UnreadNotification.builder()
-                                        .userId(user.getId())
-                                        .notificationIds(new HashMap<>())
-                                        .build();
+                    for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                        User user = userSnapshot.getValue(User.class);
+                        unreadNotifications.child(user.getId()).getRef().addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                UnreadNotification unreadNotification = snapshot.getValue(UnreadNotification.class);
+                                if (unreadNotification == null) {
+                                    unreadNotification = UnreadNotification.builder()
+                                            .userId(user.getId())
+                                            .notificationIds(new HashMap<>())
+                                            .build();
+                                }
+
+                                unreadNotification.getNotificationIds().put(notification.getId(), Boolean.TRUE);
+                                unreadNotifications.child(user.getId()).setValue(unreadNotification);
                             }
 
-                            unreadNotification.getNotificationIds().put(notification.getId(), Boolean.TRUE);
-                            unreadNotifications.child(user.getId()).setValue(unreadNotification);
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            //do nothing for the moment
-                        }
-                    });
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                //do nothing for the moment
+                            }
+                        });
+                    }
                 }
 
                 @Override
