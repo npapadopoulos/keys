@@ -52,7 +52,10 @@
     <string name="add_key">Add Key</string>
     <string name="searchHint">Name or Address</string>
     <string name="search">Search…</string>
-    <string name="filter_favourites">Filter Favourites</string>
+    <string name="filter">Filter</string>
     <string name="haven_t_received_the_code_click_here_to_resend">Haven’t received the code? Click here to resend</string>
     <string name="delete">Delete</string>
+    <string name="favourite">Favourite</string>
+    <string name="all">All</string>
+    <string name="favourites">Favourites</string>
 </resources>

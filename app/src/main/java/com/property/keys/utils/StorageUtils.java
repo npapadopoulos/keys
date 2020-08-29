@@ -52,7 +52,7 @@ public class StorageUtils {
         reference.child(id + "/images/" + name + ".jpg").getBytes(Long.MAX_VALUE).addOnSuccessListener(data -> {
             // Use the bytes to display the image
             File image = ImageUtils.saveImage(context, BitmapFactory.decodeByteArray(data, 0, data.length), id);
-            if (loader != null) {
+            if (loader != null && image != null) {
                 loader.accept(image);
             }
         }).addOnFailureListener(exception -> {

@@ -36,12 +36,12 @@ public class PropertyUtils {
         new TaskExecutor().executeAsync(new PropertyCreateTask(activity, context, property, startActivity, onCreationFailed));
     }
 
-    public static void update(Activity activity, Property property, boolean favorite) {
-        new TaskExecutor().executeAsync(new PropertyUpdateTask(activity, property, favorite));
+    public static void update(Activity activity, Property property, boolean favourite) {
+        new TaskExecutor().executeAsync(new PropertyUpdateTask(activity, property, favourite));
     }
 
-    public static void update(Activity activity, Key key, boolean favorite) {
-        new TaskExecutor().executeAsync(new KeyUpdateTask(activity, key, favorite));
+    public static void update(Activity activity, Key key, boolean favourite) {
+        new TaskExecutor().executeAsync(new KeyUpdateTask(activity, key, favourite));
     }
 
     public static void notify(Activity activity, String description, Property property, String action) {

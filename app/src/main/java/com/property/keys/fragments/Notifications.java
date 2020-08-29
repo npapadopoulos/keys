@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -22,13 +24,16 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 import com.property.keys.Container;
+import com.property.keys.R;
 import com.property.keys.adapters.NotificationAdapter;
 import com.property.keys.adapters.NotificationHolder;
 import com.property.keys.databinding.FragmentNotificationsBinding;
 import com.property.keys.entities.Notification;
 import com.property.keys.entities.UnreadNotification;
 import com.property.keys.helpers.RecyclerItemTouchHelper;
+import com.property.keys.utils.PropertyUtils;
 import com.property.keys.utils.UserUtils;
 import com.property.keys.utils.Utils;
 
@@ -51,6 +56,20 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
     private NotificationAdapter adapter;
     private Container container;
 
+    private ChipNavigationBar bottomNavigationMenu;
+    private NavigationView navigation;
+    private MaterialToolbar toolbar;
+
+    public Notifications(NavigationView navigation, MaterialToolbar toolbar) {
+        this(null, navigation, toolbar);
+    }
+
+    public Notifications(ChipNavigationBar bottomNavigationMenu, NavigationView navigation, MaterialToolbar toolbar) {
+        this.bottomNavigationMenu = bottomNavigationMenu;
+        this.navigation = navigation;
+        this.toolbar = toolbar;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -62,6 +81,10 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
         linearLayoutManager.setStackFromEnd(true);
         linearLayoutManager.setReverseLayout(true);
         binding.notificationsList.setLayoutManager(linearLayoutManager);
+
+        bottomNavigationMenu.setItemSelected(R.id.bottom_navigation_notification, true);
+        resetBadge();
+        toolbar.setTitle("Notifications");
 
         final String userId = UserUtils.getLocalUser(getContext()).getId();
         unreadNotifications.child(userId).addValueEventListener(new ValueEventListener() {
@@ -87,6 +110,11 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
 
         return binding.getRoot();
     }
+
+    private void resetBadge() {
+        PropertyUtils.dismissBadge(getActivity());
+    }
+
 
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {

@@ -23,7 +23,7 @@ public class KeyUpdateTask extends AbstractAsyncTask {
 
     private final Activity activity;
     private final Key key;
-    private final boolean favorite;
+    private final boolean favourite;
 
     @Override
     public void runInBackground() {
@@ -31,7 +31,7 @@ public class KeyUpdateTask extends AbstractAsyncTask {
         User user = UserUtils.getLocalUser(activity.getApplicationContext());
 
         Intent intent = new Intent();
-        if (favorite) {
+        if (favourite) {
             intent.putExtra("action", Action.ADDED_FAVOURED.name());
             key.getFavouredBy().put(user.getId(), Boolean.TRUE);
             intent.putExtra("description", user.getFirstName() + " is now following '" + key.getId() + "'.");

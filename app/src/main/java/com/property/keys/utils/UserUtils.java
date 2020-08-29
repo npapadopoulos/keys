@@ -11,18 +11,27 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
+import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.property.keys.entities.User;
+import com.property.keys.helpers.PropertySuggestion;
 import com.property.keys.tasks.ResetPasswordTask;
 import com.property.keys.tasks.TaskExecutor;
 import com.property.keys.tasks.UserAuthenticateTask;
 import com.property.keys.tasks.UserCreateTask;
 import com.property.keys.tasks.UserUpdateTask;
 
+import java.util.Deque;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toSet;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class UserUtils {
@@ -58,8 +67,26 @@ public class UserUtils {
         new TaskExecutor().executeAsync(new ResetPasswordTask(context, phoneNumber, password, credentialByPhone, startActivity, onResetFailed));
     }
 
-    public static void signOut(Context context) {
+    public static void signOut(Activity activity) {
+        Intent broadcastIntent = new Intent();
+        broadcastIntent.setAction(activity.getPackageName() + ".USER_LOGGED_OUT");
+        activity.sendBroadcast(broadcastIntent);
         firebaseAuth.signOut();
+    }
+
+    public static Deque<SearchSuggestion> getPropertySearchSuggestions(Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
+
+        return Objects.requireNonNull(sharedPreferences.getStringSet("suggestions", new HashSet<>())).stream()
+                .map(name -> new PropertySuggestion(name, true))
+                .collect(Collectors.toCollection(LinkedList::new));
+    }
+
+    public static void setPropertySearchSuggestions(Deque<SearchSuggestion> suggestions, Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putStringSet("suggestions", suggestions.stream().map(SearchSuggestion::getBody).collect(toSet()));
+        editor.apply();
     }
 
     public static User getLocalUser(Context context) {
@@ -68,7 +95,7 @@ public class UserUtils {
                 .id(sharedPreferences.getString("id", firebaseAuth.getCurrentUser() == null ? "" : firebaseAuth.getCurrentUser().getUid()))
                 .firstName(sharedPreferences.getString("firstName", ""))
                 .lastName(sharedPreferences.getString("lastName", ""))
-                .email(sharedPreferences.getString("email", "").toLowerCase().trim())
+                .email(Objects.requireNonNull(sharedPreferences.getString("email", "")).toLowerCase().trim())
                 .phoneNumber(sharedPreferences.getString("phoneNumber", ""))
                 .build();
     }

@@ -1,8 +1,10 @@
 package com.property.keys;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
@@ -24,6 +26,7 @@ import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
@@ -70,13 +73,25 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
     private IntentFilter actionFilter;
     private IntentFilter imageChangedFilter;
 
+    private static void onClick(DialogInterface dialogInterface, int i) {
+    }
+
     @Override
     public void onBackPressed() {
         if (binding.drawerLayout.isDrawerOpen(GravityCompat.START) || binding.drawerLayout.isDrawerVisible(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START);
         } else {
-            UserUtils.signOut(getApplicationContext());
-            super.onBackPressed();
+            FragmentManager fragmentManager = this.getSupportFragmentManager();
+            if (fragmentManager.getBackStackEntryCount() > 0) {
+                super.onBackPressed();
+            } else {
+                new AlertDialog.Builder(this)
+                        .setMessage("Are you sure you want to log out?")
+                        .setPositiveButton("Yes", (dialogInterface, i) -> {
+                            UserUtils.signOut(this);
+                        })
+                        .setNegativeButton("No", Container::onClick).create().show();
+            }
         }
     }
 
@@ -187,42 +202,35 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
         binding.bottomNavigationMenu.setOnItemSelectedListener(i -> {
             binding.toolbar.setEnabled(true);
             binding.toolbar.setVisibility(View.VISIBLE);
+            String tag = "";
             switch (i) {
                 case R.id.bottom_navigation_dashboard:
-                    binding.navigation.setCheckedItem(R.id.navigationDashboard);
-                    binding.navigation.getCheckedItem().setChecked(true);
-                    binding.toolbar.setTitle("Dashboard");
-                    fragment = new Dashboard();
+                    tag = "dashboard";
+                    fragment = new Dashboard(binding.bottomNavigationMenu, binding.navigation, binding.toolbar);
                     break;
                 case R.id.bottom_navigation_properties:
-                    binding.navigation.getCheckedItem().setChecked(false);
-                    binding.toolbar.setEnabled(false);
-                    binding.toolbar.setVisibility(View.GONE);
-                    fragment = new Properties();
+                    tag = "properties";
+                    fragment = new Properties(binding.bottomNavigationMenu, binding.navigation, binding.toolbar);
                     break;
                 case R.id.bottom_navigation_scanner:
-                    binding.navigation.getCheckedItem().setChecked(false);
-                    binding.toolbar.setTitle("Scanner");
-                    fragment = new Scanner();
+                    tag = "scanner";
+                    fragment = new Scanner(binding.bottomNavigationMenu, binding.navigation, binding.toolbar);
                     break;
                 case R.id.bottom_navigation_notification:
-                    binding.navigation.getCheckedItem().setChecked(false);
-                    resetBadge();
-                    binding.toolbar.setTitle("Notifications");
-                    fragment = new Notifications();
+                    tag = "notifications";
+                    fragment = new Notifications(binding.bottomNavigationMenu, binding.navigation, binding.toolbar);
                     break;
                 case R.id.bottom_navigation_profile:
-                    binding.navigation.getCheckedItem().setChecked(false);
-                    binding.toolbar.setTitle("Profile");
-                    fragment = new Profile();
+                    tag = "profile";
+                    fragment = new Profile(binding.bottomNavigationMenu, binding.navigation, binding.toolbar);
                     break;
             }
-            getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.content, fragment, getPackageName() + "." + tag)
+                    .addToBackStack(fragment.getTag())
+                    .commit();
         });
-    }
-
-    private void resetBadge() {
-        PropertyUtils.dismissBadge(this);
     }
 
     private void setOnUnreadNotificationListener() {
@@ -259,25 +267,23 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        String tag = "";
         switch (item.getItemId()) {
             case R.id.navigationDashboard:
-                binding.bottomNavigationMenu.setItemSelected(R.id.bottom_navigation_dashboard, true);
-                binding.toolbar.setTitle("Dashboard");
+                tag = "dashboard";
+                fragment = new Dashboard(binding.bottomNavigationMenu, binding.navigation, binding.toolbar);
                 break;
             case R.id.navigationHistory:
-                binding.bottomNavigationMenu.setItemSelected(binding.bottomNavigationMenu.getSelectedItemId(), false);
-                binding.toolbar.setTitle("History");
-                fragment = new History();
+                tag = "history";
+                fragment = new History(binding.bottomNavigationMenu, binding.navigation, binding.toolbar);
                 break;
             case R.id.navigationNotifications:
-                binding.bottomNavigationMenu.setItemSelected(R.id.bottom_navigation_notification, true);
-                resetBadge();
-                binding.toolbar.setTitle("Notifications");
-                fragment = new Notifications();
+                tag = "notifications";
+                fragment = new Notifications(binding.bottomNavigationMenu, binding.navigation, binding.toolbar);
                 break;
             case R.id.navigationLogout:
                 fragment = null;
-                UserUtils.signOut(getApplicationContext());
+                UserUtils.signOut(this);
                 finish();
                 break;
 
@@ -287,7 +293,11 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
             item.setChecked(true);
             binding.drawerLayout.closeDrawers();
 
-            getSupportFragmentManager().beginTransaction().replace(R.id.content, fragment).commit();
+            getSupportFragmentManager()
+                    .beginTransaction()
+                    .replace(R.id.content, fragment, getPackageName() + "." + tag)
+                    .addToBackStack(fragment.getTag())
+                    .commit();
             return true;
         }
 

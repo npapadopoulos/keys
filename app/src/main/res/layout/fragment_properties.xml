@@ -13,7 +13,6 @@
     android:padding="20dp"
     tools:context=".fragments.Properties">
 
-
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/searchBar"
         android:layout_width="match_parent"
@@ -42,10 +41,38 @@
             android:textSize="18sp" />
     </androidx.core.widget.NestedScrollView>
 
+    <com.google.android.material.chip.ChipGroup
+        android:id="@+id/filters"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="60dp"
+        app:singleSelection="true">
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/allFilter"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/all"
+            android:textAlignment="center" />
+
+        <com.google.android.material.chip.Chip
+            android:id="@+id/favouriteFilter"
+            style="@style/Widget.MaterialComponents.Chip.Choice"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:text="@string/favourites"
+            android:textAlignment="center" />
+
+    </com.google.android.material.chip.ChipGroup>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/propertyList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="45dp"
         android:layout_marginBottom="?attr/actionBarSize"
         android:clipToPadding="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -71,7 +98,6 @@
         app:floatingSearch_dimBackground="false"
         app:floatingSearch_dismissOnOutsideTouch="true"
         app:floatingSearch_leftActionMode="showHamburger"
-        app:floatingSearch_menu="@menu/top_bar_menu"
         app:floatingSearch_searchHint="Search..."
         app:floatingSearch_showSearchKey="true"
         app:floatingSearch_suggestionsListAnimDuration="250" />

@@ -16,8 +16,12 @@ import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
+import com.ismaeldivita.chipnavigation.ChipNavigationBar;
+import com.property.keys.R;
 import com.property.keys.databinding.FragmentProfileBinding;
 import com.property.keys.entities.User;
 import com.property.keys.utils.ImageUtils;
@@ -36,6 +40,20 @@ public class Profile extends Fragment {
     private User user;
 
     private FragmentProfileBinding binding;
+
+    private ChipNavigationBar bottomNavigationMenu;
+    private NavigationView navigation;
+    private MaterialToolbar toolbar;
+
+    public Profile(NavigationView navigation, MaterialToolbar toolbar) {
+        this(null, navigation, toolbar);
+    }
+
+    public Profile(ChipNavigationBar bottomNavigationMenu, NavigationView navigation, MaterialToolbar toolbar) {
+        this.bottomNavigationMenu = bottomNavigationMenu;
+        this.navigation = navigation;
+        this.toolbar = toolbar;
+    }
 
     @Override
     public void onDestroy() {
@@ -56,6 +74,10 @@ public class Profile extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentProfileBinding.inflate(inflater, container, false);
+
+        bottomNavigationMenu.setItemSelected(R.id.bottom_navigation_profile, true);
+        navigation.getCheckedItem().setChecked(false);
+        toolbar.setTitle("Profile");
 
         user = UserUtils.getLocalUser(getActivity().getApplicationContext());
 

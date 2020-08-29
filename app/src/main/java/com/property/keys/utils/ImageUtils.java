@@ -7,6 +7,7 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
@@ -14,10 +15,14 @@ import android.util.Log;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.request.target.CustomViewTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -73,7 +78,7 @@ public class ImageUtils {
     public static File loadImage(Context context, String name, ImageView imageView) {
         File image = getImage(context, name);
         if (image == null) {
-            Log.i(TAG, "No Image found for: " + name);
+            Log.e(TAG, "No Image found for: " + name);
             return image;
         }
 
@@ -81,10 +86,33 @@ public class ImageUtils {
     }
 
     public static File loadImage(Context context, File image, ImageView imageView) {
-        Glide.with(context)
+        return loadImage(context, image, imageView, false);
+    }
+
+    public static File loadImage(Context context, File image, ImageView imageView, boolean useBackround) {
+        RequestBuilder<Drawable> glideBuilder = Glide.with(context)
                 .load(image)
-                .dontTransform()
-                .into(imageView);
+                .dontTransform();
+        if (useBackround) {
+            glideBuilder.into(new CustomViewTarget<ImageView, Drawable>(imageView) {
+                @Override
+                public void onLoadFailed(@Nullable Drawable errorDrawable) {
+
+                }
+
+                @Override
+                public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                    imageView.setBackground(resource);
+                }
+
+                @Override
+                protected void onResourceCleared(@Nullable Drawable placeholder) {
+
+                }
+            });
+        } else {
+            glideBuilder.into(imageView);
+        }
         Log.i(TAG, "Image " + image.getPath() + " has been loaded");
         return image;
     }
@@ -111,9 +139,13 @@ public class ImageUtils {
     }
 
     public static void syncAndloadImages(Context context, @NonNull String name, ImageView imageView) {
+        syncAndloadImages(context, name, imageView, false);
+    }
+
+    public static void syncAndloadImages(Context context, @NonNull String name, ImageView imageView, boolean useBackround) {
         File image = getImage(context, name);
         if (image != null) {
-            loadImage(context, image, imageView);
+            loadImage(context, image, imageView, useBackround);
         } else {
             StorageUtils.downloadAndSaveImage(context, name, "profile", imageView);
         }

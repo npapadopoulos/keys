@@ -95,22 +95,12 @@
 
                         <TextView
                             android:id="@+id/keyDescription"
-                            android:layout_width="200dp"
-                            android:layout_height="wrap_content"
-                            android:maxLines="2"
-                            android:text="Tap on QR code to scan the key in order to check in/out."
-                            android:textAppearance="?attr/textAppearanceHeadline6"
-                            android:textSize="14sp" />
-
-                        <com.google.android.material.floatingactionbutton.FloatingActionButton
-                            android:id="@+id/setFavourite"
-                            style="@style/FloatingActionBar"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:src="@drawable/favourite_selected"
-                            android:transitionName="favourite"
-                            app:fabSize="mini" />
+                            android:maxLines="2"
+                            android:text="Tap on QR code to scan the key code to check in or out."
+                            android:textAppearance="?attr/textAppearanceHeadline6"
+                            android:textSize="14sp" />
                     </RelativeLayout>
                 </LinearLayout>
 

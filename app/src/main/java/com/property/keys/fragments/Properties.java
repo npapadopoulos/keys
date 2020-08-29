@@ -25,10 +25,13 @@ import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 import com.arlib.floatingsearchview.util.Util;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.appbar.AppBarLayout;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 import com.property.keys.AddProperty;
 import com.property.keys.Container;
 import com.property.keys.R;
@@ -39,6 +42,7 @@ import com.property.keys.entities.Property;
 import com.property.keys.filters.FirebaseRecyclerAdapter;
 import com.property.keys.helpers.PropertySuggestion;
 import com.property.keys.helpers.RecyclerItemTouchHelper;
+import com.property.keys.utils.UserUtils;
 import com.property.keys.utils.Utils;
 
 import java.util.ArrayList;
@@ -62,6 +66,20 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
     private String lastQuery;
     private Deque<SearchSuggestion> suggestions = new LinkedList<>();
 
+    private ChipNavigationBar bottomNavigationMenu;
+    private NavigationView navigation;
+    private MaterialToolbar toolbar;
+
+    public Properties(NavigationView navigation, MaterialToolbar toolbar) {
+        this(null, navigation, toolbar);
+    }
+
+    public Properties(ChipNavigationBar bottomNavigationMenu, NavigationView navigation, MaterialToolbar toolbar) {
+        this.bottomNavigationMenu = bottomNavigationMenu;
+        this.navigation = navigation;
+        this.toolbar = toolbar;
+    }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -71,6 +89,13 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setStackFromEnd(true);
         linearLayoutManager.setReverseLayout(true);
+
+        bottomNavigationMenu.setItemSelected(R.id.bottom_navigation_properties, true);
+        navigation.getCheckedItem().setChecked(false);
+        toolbar.setEnabled(false);
+        toolbar.setVisibility(View.GONE);
+
+        suggestions = UserUtils.getPropertySearchSuggestions(getContext());
 
         binding.propertyList.setLayoutManager(linearLayoutManager);
         binding.propertyList.setItemAnimator(new DefaultItemAnimator());
@@ -101,6 +126,22 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
         Utils.initSwipeProperty(binding.propertyList, this);
         setupSearchBar();
 
+        binding.filters.setOnCheckedChangeListener((group, checkedId) -> {
+            FirebaseRecyclerAdapter.SearchFilter searchFilter = (FirebaseRecyclerAdapter.SearchFilter) adapter.getFilter();
+            switch (checkedId) {
+                case R.id.favouriteFilter: {
+                    searchFilter.setShowOnlyFavourites(true);
+                    break;
+                }
+                case R.id.allFilter:
+                default: {
+                    searchFilter.setShowOnlyFavourites(false);
+                    break;
+                }
+            }
+            searchFilter.filter(lastQuery);
+        });
+
         //TODO
         // Enabling Offline Capabilities on Android
         /**
@@ -119,7 +160,6 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
     }
 
     private void setupSearchBar() {
-
         binding.floatingSearchView.setShowMoveUpSuggestion(true);
 
         binding.floatingSearchView.setOnQueryChangeListener((oldQuery, newQuery) -> {
@@ -129,7 +169,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
             } else {
                 lastQuery = newQuery;
                 FirebaseRecyclerAdapter.SearchFilter searchFilter = (FirebaseRecyclerAdapter.SearchFilter) adapter.getFilter();
-//                    searchFilter.setShowOnlyFavourites(filterView.isChecked()); TODO fix filter favourites switch
+                searchFilter.setShowOnlyFavourites(binding.favouriteFilter.isChecked());
                 searchFilter.filter(newQuery);
             }
             binding.floatingSearchView.hideProgress();
@@ -141,7 +181,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
                 binding.floatingSearchView.showProgress();
                 lastQuery = searchSuggestion.getBody();
                 FirebaseRecyclerAdapter.SearchFilter searchFilter = (FirebaseRecyclerAdapter.SearchFilter) adapter.getFilter();
-//                    searchFilter.setShowOnlyFavourites(filterView.isChecked()); TODO fix filter favourites switch
+                searchFilter.setShowOnlyFavourites(binding.favouriteFilter.isChecked());
                 searchFilter.filter(searchSuggestion.getBody());
                 binding.floatingSearchView.setSearchFocused(false);
                 binding.floatingSearchView.hideProgress();
@@ -153,7 +193,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
                 lastQuery = query;
                 updateSuggestions();
                 FirebaseRecyclerAdapter.SearchFilter searchFilter = (FirebaseRecyclerAdapter.SearchFilter) adapter.getFilter();
-//                    searchFilter.setShowOnlyFavourites(filterView.isChecked()); TODO fix filter favourites switch
+                searchFilter.setShowOnlyFavourites(binding.favouriteFilter.isChecked());
                 searchFilter.filter(query);
                 binding.floatingSearchView.hideProgress();
             }
@@ -170,9 +210,9 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
             public void onFocusCleared() {
                 updateSuggestions();
 
-                String title = lastQuery;
-                if (title == null | title.isEmpty()) {
-                    title = "";
+                String title = "";
+                if (lastQuery != null && !lastQuery.isEmpty()) {
+                    title = lastQuery;
                 }
 
                 //set the title of the bar so that when focus is returned a new query begins
@@ -188,7 +228,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
          * Here you have access to the left icon and the text of a given suggestion
          * item after as it is bound to the suggestion list. You can utilize this
          * callback to change some properties of the left icon and the text. For example, you
-         * can load the left icon images using your favorite image loading library, or change text color.
+         * can load the left icon images using your favourite image loading library, or change text color.
          *
          *
          * Important:
@@ -202,8 +242,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
             String textLight = "#787878";
 
             if (propertySuggestion.isHistory()) {
-                leftIcon.setImageDrawable(ResourcesCompat.getDrawable(Properties.this.getResources(),
-                        R.drawable.ic_history_black_24dp, null));
+                leftIcon.setImageDrawable(ResourcesCompat.getDrawable(Properties.this.getResources(), R.drawable.ic_history_black_24dp, null));
 
                 Util.setIconColor(leftIcon, Color.parseColor(textColor));
                 leftIcon.setAlpha(.36f);
@@ -214,19 +253,26 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
 
             textView.setTextColor(Color.parseColor(textColor));
             String text = propertySuggestion.getBody()
-                    .replaceFirst(binding.floatingSearchView.getQuery(),
-                            "<font color=\"" + textLight + "\">" + binding.floatingSearchView.getQuery() + "</font>");
+                    .replaceFirst(binding.floatingSearchView.getQuery(), "<font color=\"" + textLight + "\">" + binding.floatingSearchView.getQuery() + "</font>");
             textView.setText(Html.fromHtml(text));
         });
     }
 
     private void updateSuggestions() {
+        boolean updated = false;
         if (lastQuery != null && !lastQuery.isEmpty()) {
             if (suggestions.size() > 3) {
+                updated = true;
                 suggestions.removeLast();
             }
             PropertySuggestion newSuggestion = new PropertySuggestion(lastQuery, true);
-            if (!suggestions.contains(newSuggestion)) suggestions.addFirst(newSuggestion);
+            if (!suggestions.contains(newSuggestion)) {
+                updated = true;
+                suggestions.addFirst(newSuggestion);
+            }
+        }
+        if (updated) {
+            UserUtils.setPropertySearchSuggestions(suggestions, requireContext());
         }
     }
 

@@ -32,20 +32,12 @@
                 android:id="@+id/propertyImage"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@drawable/background"
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/background"
+                android:src="@drawable/gradient"
                 android:transitionName="propertyKeyAvailableSumImage"
                 app:layout_collapseMode="parallax" />
-
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/propertyDetailsToolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:layout_marginTop="20dp"
-                app:layout_collapseMode="pin"
-                app:layout_scrollFlags="scroll|enterAlways|snap"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
@@ -54,115 +46,107 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/white_50"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:paddingTop="24dp">
+            android:background="@color/white_50"
+            android:orientation="vertical">
 
-            <com.google.android.material.card.MaterialCardView
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/propertyDetailsToolbar"
+                android:layout_height="?attr/actionBarSize"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="16dp"
-                android:layout_marginEnd="16dp">
+                android:layout_marginTop="?attr/actionBarSize"
+                android:layout_marginEnd="10dp"
+                app:layout_collapseMode="pin"
+                app:layout_scrollFlags="scroll|enterAlways|snap"
+                app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
                 <LinearLayout
-                    style="@style/Widget.CardContent"
                     android:layout_width="match_parent"
-                    android:background="@color/white_50"
-                    android:layout_height="wrap_content">
+                    android:layout_height="match_parent"
+                    android:gravity="start"
+                    android:orientation="horizontal">
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@id/name"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
-                        android:hint="@string/name">
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:gravity="start"
+                        android:orientation="vertical">
 
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:layout_width="match_parent"
-                            android:layout_height="65dp"
-                            android:maxLines="2"
+                        <TextView
+                            android:id="@id/name"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:text="@string/default_property_name"
-                            android:textAppearance="?attr/textAppearanceBody2"
+                            android:textAppearance="?attr/textAppearanceHeadline6"
                             android:transitionName="propertyName" />
-                    </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.google.android.material.textfield.TextInputLayout
-                        android:id="@id/address"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginBottom="10dp"
-                        android:hint="@string/address">
-
-                        <com.google.android.material.textfield.TextInputEditText
-                            android:layout_width="match_parent"
-                            android:layout_height="65dp"
-                            android:maxLines="2"
+                        <TextView
+                            android:id="@id/address"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
                             android:text="@string/default_property_address"
                             android:textAppearance="?attr/textAppearanceBody2"
+                            android:transitionName="propertyName" />
 
-                            android:transitionName="propertyAddress" />
+                    </LinearLayout>
 
+                    <RelativeLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content">
 
-                    </com.google.android.material.textfield.TextInputLayout>
-
+                        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                            android:id="@+id/setFavourite"
+                            style="@style/FloatingActionBar"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_alignParentEnd="true"
+                            android:src="@drawable/favourite_selected"
+                            android:transitionName="favourite"
+                            app:fabSize="mini"
+                            app:layout_anchorGravity="end" />
+                    </RelativeLayout>
                 </LinearLayout>
 
-            </com.google.android.material.card.MaterialCardView>
+            </com.google.android.material.appbar.MaterialToolbar>
 
+            <!--            <androidx.recyclerview.widget.RecyclerView-->
+            <!--                android:id="@+id/keyList"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="match_parent"-->
+            <!--                android:layout_margin="16dp"-->
+            <!--                android:clipToPadding="false"-->
+            <!--                app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
+            <!--                tools:listitem="@layout/key" />-->
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/keyList"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_margin="16dp"
-                android:clipToPadding="false"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                tools:listitem="@layout/key" />
+            <!--            <com.google.android.material.button.MaterialButton-->
+            <!--                android:id="@+id/update"-->
+            <!--                style="@style/Widget.MaterialComponents.Button.Icon"-->
+            <!--                android:layout_width="250dp"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_gravity="center"-->
+            <!--                android:layout_marginBottom="20dp"-->
+            <!--                android:text="@string/update"-->
+            <!--                android:textAllCaps="false"-->
+            <!--                app:cornerRadius="5dp"-->
+            <!--                app:icon="@drawable/right_arrow"-->
+            <!--                app:iconGravity="end"-->
+            <!--                app:iconPadding="-20dp" />-->
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/update"
-                style="@style/Widget.MaterialComponents.Button.Icon"
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="20dp"
-
-                android:text="@string/update"
-                android:textAllCaps="false"
-
-
-                app:cornerRadius="5dp"
-                app:icon="@drawable/right_arrow"
-                app:iconGravity="end"
-                app:iconPadding="-20dp" />
-
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="@style/ProgressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center" />
+            <!--            <ProgressBar-->
+            <!--                android:id="@+id/progressBar"-->
+            <!--                style="@style/ProgressBar"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_gravity="bottom|center" />-->
         </LinearLayout>
 
     </androidx.core.widget.NestedScrollView>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/setFavourite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:src="@drawable/favourite_selected"
-        android:transitionName="favourite"
-        app:fabSize="normal"
-        app:layout_anchor="@id/propertyDetailsToolbarLayout"
-        app:layout_anchorGravity="bottom|right|end" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/addNewKey"
