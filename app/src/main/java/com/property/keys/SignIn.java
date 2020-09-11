@@ -3,6 +3,7 @@ package com.property.keys;
 import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +14,8 @@ import android.view.inputmethod.InputMethodManager;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
@@ -26,6 +29,13 @@ import com.property.keys.utils.Utils;
 
 import java.util.Objects;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
+
+import static android.Manifest.permission.ACCESS_NETWORK_STATE;
+import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.INTERNET;
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 
 @RequiresApi(api = Build.VERSION_CODES.R)
@@ -55,9 +65,21 @@ public class SignIn extends AppCompatActivity {
         binding = ActivitySigninBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        checkForPermissions(CAMERA, INTERNET, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, ACCESS_NETWORK_STATE);
+
         addOnSubmitClickListener();
         addOnSignUpClickListener();
         addOnForgotPasswordClickListener();
+    }
+
+    private void checkForPermissions(String... permissions) {
+        Stream.of(permissions).forEach(permission -> {
+            if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                if (!ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
+                    requestPermissions(new String[]{permission}, PackageManager.PERMISSION_GRANTED);
+                }
+            }
+        });
     }
 
     private void addOnForgotPasswordClickListener() {

@@ -37,10 +37,6 @@ public class Scanner extends Fragment {
     private NavigationView navigation;
     private MaterialToolbar toolbar;
 
-    public Scanner(NavigationView navigation, MaterialToolbar toolbar) {
-        this(null, navigation, toolbar);
-    }
-
     public Scanner(ChipNavigationBar bottomNavigationMenu, NavigationView navigation, MaterialToolbar toolbar) {
         this.bottomNavigationMenu = bottomNavigationMenu;
         this.navigation = navigation;
