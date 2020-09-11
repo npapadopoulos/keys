@@ -39,17 +39,24 @@ import com.property.keys.adapters.PropertyAdapter;
 import com.property.keys.adapters.PropertyHolder;
 import com.property.keys.databinding.FragmentPropertiesBinding;
 import com.property.keys.entities.Property;
+import com.property.keys.entities.User;
 import com.property.keys.filters.FirebaseRecyclerAdapter;
 import com.property.keys.helpers.PropertySuggestion;
 import com.property.keys.helpers.RecyclerItemTouchHelper;
+import com.property.keys.utils.PropertyUtils;
 import com.property.keys.utils.UserUtils;
 import com.property.keys.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import lombok.Getter;
+
+import static java.util.stream.Collectors.toList;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class Properties extends Fragment implements FirebaseAuth.AuthStateListener, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener, AppBarLayout.OnOffsetChangedListener {
@@ -69,6 +76,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
     private ChipNavigationBar bottomNavigationMenu;
     private NavigationView navigation;
     private MaterialToolbar toolbar;
+    private User user;
 
     public Properties(NavigationView navigation, MaterialToolbar toolbar) {
         this(null, navigation, toolbar);
@@ -95,7 +103,11 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
         toolbar.setEnabled(false);
         toolbar.setVisibility(View.GONE);
 
-        suggestions = UserUtils.getPropertySearchSuggestions(getContext());
+        user = UserUtils.getLocalUser(requireContext());
+        suggestions = user.getPropertySearchSuggestions().stream()
+                .map(suggestion -> new PropertySuggestion(suggestion, true))
+                .distinct()
+                .collect(Collectors.toCollection(LinkedList::new));
 
         binding.propertyList.setLayoutManager(linearLayoutManager);
         binding.propertyList.setItemAnimator(new DefaultItemAnimator());
@@ -112,10 +124,10 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
             @Override
             public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
                 super.onScrolled(recyclerView, dx, dy);
-                if (dy < 0) {
-                    binding.addNewProperty.show();
-                } else if (dy > 0) {
+                if (dy > 0) {
                     binding.addNewProperty.hide();
+                } else {
+                    binding.addNewProperty.show();
                 }
             }
         });
@@ -272,7 +284,12 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
             }
         }
         if (updated) {
-            UserUtils.setPropertySearchSuggestions(suggestions, requireContext());
+            User user = UserUtils.getLocalUser(requireContext());
+            user.setPropertySearchSuggestions(Stream.of(user.getPropertySearchSuggestions(), suggestions.stream().map(SearchSuggestion::getBody).collect(toList()))
+                    .flatMap(List::stream)
+                    .distinct()
+                    .collect(toList()));
+            UserUtils.updateSearchSuggestions(requireContext(), user);
         }
     }
 
@@ -306,7 +323,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
                         .build();
 
 
-        adapter = new PropertyAdapter(options, this.getActivity());
+        adapter = new PropertyAdapter(options, this.getActivity(), user);
         // Scroll to bottom on new properties
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
             @Override
@@ -323,12 +340,12 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
             new AlertDialog.Builder(viewHolder.itemView.getContext())
                     .setMessage("Are you sure?")
                     .setPositiveButton("Yes", (dialogInterface, i) -> {
-                        // remove the item from recycler view
-                        adapter.removeItem(viewHolder.getAdapterPosition());
-                        // showing snack bar with Undo option
-                        Snackbar.make(container.getContentLayout(), "Notification removed from list!", Snackbar.LENGTH_LONG).show();
+                        PropertyUtils.delete(this.getActivity(), adapter.getItem(viewHolder.getAdapterPosition()));
+                        Snackbar.make(container.getPlaceSnackBar(), "Property removed.", Snackbar.LENGTH_LONG).show();
                     })
-                    .setNegativeButton("No", (dialogInterface, i) -> adapter.notifyItemChanged(viewHolder.getAdapterPosition())).create().show();
+                    .setNegativeButton("No", (dialogInterface, i) -> adapter.notifyItemChanged(viewHolder.getAdapterPosition()))
+                    .setCancelable(false)
+                    .create().show();
         }
     }
 

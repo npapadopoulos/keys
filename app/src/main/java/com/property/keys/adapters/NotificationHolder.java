@@ -1,6 +1,5 @@
 package com.property.keys.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.os.Build;
 import android.view.View;
@@ -24,9 +23,7 @@ public class NotificationHolder extends RecyclerView.ViewHolder implements Holde
     private CircularImageView userImage;
     private RelativeLayout notificationBackground, notificationForeground;
 
-    private Activity activity;
-
-    public NotificationHolder(@NonNull Activity activity, @NonNull View itemView) {
+    public NotificationHolder(@NonNull View itemView) {
         super(itemView);
 
         description = itemView.findViewById(R.id.description);
@@ -34,8 +31,6 @@ public class NotificationHolder extends RecyclerView.ViewHolder implements Holde
         userImage = itemView.findViewById(R.id.userImage);
         notificationBackground = itemView.findViewById(R.id.notificationBackground);
         notificationForeground = itemView.findViewById(R.id.notificationForeground);
-
-        this.activity = activity;
     }
 
     public void bind(@NonNull Context context, @NonNull Notification notification) {

@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import lombok.Getter;
 import lombok.Setter;
 
 import static com.google.android.gms.common.util.CollectionUtils.isEmpty;
@@ -34,10 +33,8 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
         extends RecyclerView.Adapter<VH> implements FirebaseAdapter<T>, Filterable {
     private static final String TAG = "FirebaseRecyclerAdapter";
 
-    private FirebaseRecyclerOptions<T> mOptions;
     private ObservableSnapshotArray<T> mSnapshots;
-    @Getter
-    private List<T> properties;
+    protected List<T> filteredSnapshots;
     private Filter filter;
 
     /**
@@ -45,13 +42,12 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
      * {@link FirebaseRecyclerOptions} for configuration options.
      */
     public FirebaseRecyclerAdapter(@NonNull FirebaseRecyclerOptions<T> options) {
-        mOptions = options;
         mSnapshots = options.getSnapshots();
 
-        properties = isEmpty(options.getSnapshots()) ? new ArrayList<>() : new ArrayList<>(options.getSnapshots());
+        filteredSnapshots = isEmpty(options.getSnapshots()) ? new ArrayList<>() : new ArrayList<>(options.getSnapshots());
 
-        if (mOptions.getOwner() != null) {
-            mOptions.getOwner().getLifecycle().addObserver(this);
+        if (options.getOwner() != null) {
+            options.getOwner().getLifecycle().addObserver(this);
         }
     }
 
@@ -83,21 +79,21 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
 
         switch (type) {
             case ADDED:
-                properties.add(newIndex, mSnapshots.get(newIndex));
+                filteredSnapshots.add(newIndex, mSnapshots.get(newIndex));
                 notifyItemInserted(newIndex);
                 break;
             case CHANGED:
-                properties.remove(newIndex);
-                properties.add(newIndex, mSnapshots.get(newIndex));
+                filteredSnapshots.remove(newIndex);
+                filteredSnapshots.add(newIndex, mSnapshots.get(newIndex));
                 notifyItemChanged(newIndex);
                 break;
             case REMOVED:
-                properties.remove(newIndex);
+                filteredSnapshots.remove(newIndex);
                 notifyItemRemoved(newIndex);
                 break;
             case MOVED:
-                properties.remove(oldIndex);
-                properties.add(newIndex, mSnapshots.get(newIndex));
+                filteredSnapshots.remove(oldIndex);
+                filteredSnapshots.add(newIndex, mSnapshots.get(newIndex));
                 notifyItemMoved(oldIndex, newIndex);
                 break;
             default:
@@ -123,7 +119,7 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
     @NonNull
     @Override
     public T getItem(int position) {
-        return properties.get(position);
+        return filteredSnapshots.get(position);
     }
 
     @NonNull
@@ -134,7 +130,7 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-        return mSnapshots.isListening(this) ? properties.size() : 0;
+        return mSnapshots.isListening(this) ? filteredSnapshots.size() : 0;
     }
 
     @Override
@@ -190,14 +186,14 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
 
         @Override
         protected FilterResults performFiltering(CharSequence charSequence) {
-            properties.clear();
-            properties.addAll(getSnapshots());
+            filteredSnapshots.clear();
+            filteredSnapshots.addAll(getSnapshots());
 
             List<T> filtered = new ArrayList<>();
             if (charSequence == null || charSequence.toString().isEmpty()) {
-                filtered.addAll(properties);
+                filtered.addAll(filteredSnapshots);
             } else {
-                filtered.addAll(properties.stream()
+                filtered.addAll(filteredSnapshots.stream()
                         .filter(model -> filterCondition(model, charSequence.toString()))
                         .collect(toList()));
             }
@@ -214,8 +210,8 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
 
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            properties.clear();
-            properties.addAll((Collection<? extends T>) filterResults.values);
+            filteredSnapshots.clear();
+            filteredSnapshots.addAll((Collection<? extends T>) filterResults.values);
             notifyDataSetChanged();
         }
     }

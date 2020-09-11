@@ -1,30 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
         android:id="@+id/bottom_navigation_dashboard"
+        android:enabled="true"
         android:icon="@drawable/dashboard"
-        android:title="@string/dashboard"
-        app:cnb_iconColor="@color/primaryColor" />
+        android:title="@string/dashboard" />
     <item
         android:id="@+id/bottom_navigation_properties"
+        android:enabled="true"
         android:icon="@drawable/home_icon"
-        android:title="@string/properties"
-        app:cnb_iconColor="@color/primaryColor" />
+        android:title="@string/properties" />
     <item
         android:id="@+id/bottom_navigation_scanner"
+        android:enabled="true"
         android:icon="@drawable/ic_code_scanner_auto_focus_off"
-        android:title="@string/scan"
-        app:cnb_iconColor="@color/primaryColor" />
+        android:title="@string/scan" />
     <item
         android:id="@+id/bottom_navigation_notification"
+        android:enabled="true"
         android:icon="@drawable/notification"
-        android:title="@string/notifications"
-        app:cnb_iconColor="@color/primaryColor" />
+        android:title="@string/notifications" />
     <item
         android:id="@+id/bottom_navigation_profile"
+        android:enabled="true"
         android:icon="@drawable/profile"
-        android:title="@string/profile"
-        app:cnb_iconColor="@color/primaryColor" />
+        android:title="@string/profile" />
 </menu>

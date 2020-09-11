@@ -20,9 +20,11 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.property.keys.databinding.ActivitySigninBinding;
+import com.property.keys.entities.User;
 import com.property.keys.utils.UserUtils;
 import com.property.keys.utils.Utils;
 
+import java.util.Objects;
 import java.util.function.Consumer;
 
 
@@ -43,6 +45,7 @@ public class SignIn extends AppCompatActivity {
         Utils.reset(true, binding.email, binding.password);
         binding.progressBar.setVisibility(View.GONE);
         binding.submit.setEnabled(true);
+        initRememberCredentials();
     }
 
     @Override
@@ -52,16 +55,19 @@ public class SignIn extends AppCompatActivity {
         binding = ActivitySigninBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.submit.setOnClickListener(v -> {
-            InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            in.hideSoftInputFromWindow(v.getWindowToken(), 0);
+        addOnSubmitClickListener();
+        addOnSignUpClickListener();
+        addOnForgotPasswordClickListener();
+    }
 
-            binding.progressBar.setVisibility(View.VISIBLE);
-            binding.submit.setEnabled(false);
-
-            loginUser(v);
+    private void addOnForgotPasswordClickListener() {
+        binding.forgotPassword.setOnClickListener(v -> {
+            startActivity(new Intent(SignIn.this, ForgotPassword.class));
+            finish();
         });
+    }
 
+    private void addOnSignUpClickListener() {
         binding.signUp.setOnClickListener(view -> {
             Utils.reset(true, binding.email, binding.password);
 
@@ -75,11 +81,31 @@ public class SignIn extends AppCompatActivity {
             startActivity(new Intent(SignIn.this, SignUp.class), options.toBundle());
             finish();
         });
+    }
 
-        binding.forgotPassword.setOnClickListener(v -> {
-            startActivity(new Intent(SignIn.this, ForgotPassword.class));
-            finish();
+    private void addOnSubmitClickListener() {
+        binding.submit.setOnClickListener(v -> {
+            InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            in.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
+            binding.progressBar.setVisibility(View.VISIBLE);
+            binding.submit.setEnabled(false);
+
+            loginUser(v);
         });
+    }
+
+    private void initRememberCredentials() {
+        if (UserUtils.rememberCredentials(this)) {
+            User localUser = UserUtils.getLocalUser(this);
+            if (localUser != null) {
+                String email = localUser.getEmail();
+                String password = localUser.getPassword();
+                Objects.requireNonNull(binding.email.getEditText()).setText(email);
+                Objects.requireNonNull(binding.password.getEditText()).setText(password);
+                binding.remember.setChecked(true);
+            }
+        }
     }
 
 
@@ -93,8 +119,8 @@ public class SignIn extends AppCompatActivity {
     }
 
     private void isUser() {
+        String password = binding.password.getEditText().getText().toString();
         String email = binding.email.getEditText().getText().toString().trim();
-        String password = Utils.hash(binding.password.getEditText().getText().toString());
 
         Consumer<Intent> startDashboardActivity = intent -> {
             startActivity(intent);
@@ -126,6 +152,7 @@ public class SignIn extends AppCompatActivity {
             binding.progressBar.setVisibility(View.GONE);
             binding.submit.setEnabled(true);
         };
-        UserUtils.authenticate(this, getApplicationContext(), email, password, startDashboardActivity, onAuthenticationFailed, onFailed);
+        UserUtils.authenticate(this, getApplicationContext(), email, password, binding.remember.isChecked(),
+                startDashboardActivity, onAuthenticationFailed, onFailed);
     }
 }

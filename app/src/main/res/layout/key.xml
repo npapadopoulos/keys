@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/keyContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="10dp">
+    android:layout_margin="5dp">
 
     <RelativeLayout
         android:id="@+id/propertyBackground"
@@ -16,19 +15,10 @@
             android:id="@+id/deleteIcon"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
+            android:layout_marginEnd="10dp"
             android:src="@drawable/delete" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@id/deleteIcon"
-            android:textColor="@color/white_50"
-            android:textSize="13dp" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -51,19 +41,8 @@
                 <ImageView
                     android:id="@+id/qrCodeImage"
                     android:layout_width="100dp"
-                    android:layout_height="110dp"
-                    android:layout_margin="10dp"
-                    android:scaleType="fitCenter"
-                    app:srcCompat="@drawable/ic_code_scanner_auto_focus_on" />
-
-                <!--                <ImageView-->
-                <!--                    android:layout_width="35dp"-->
-                <!--                    android:layout_height="35dp"-->
-                <!--                    android:layout_alignParentStart="true"-->
-                <!--                    android:layout_alignParentTop="true"-->
-                <!--                    android:layout_marginStart="130dp"-->
-                <!--                    android:layout_marginTop="30dp"-->
-                <!--                    android:src="@drawable/keys" />-->
+                    android:layout_height="100dp"
+                    android:scaleType="fitCenter" />
 
                 <TextView
                     android:id="@+id/keyId"
@@ -72,11 +51,9 @@
                     android:layout_alignParentStart="true"
                     android:layout_alignParentTop="true"
                     android:layout_marginStart="127dp"
-                    android:layout_marginTop="15dp"
                     android:maxLines="1"
                     android:text="Key #1 "
                     android:textAppearance="?attr/textAppearanceHeadline4" />
-
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -98,7 +75,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:maxLines="2"
-                            android:text="Tap on QR code to scan the key code to check in or out."
+                            android:text="Tap on QR code to scan the key."
                             android:textAppearance="?attr/textAppearanceHeadline6"
                             android:textSize="14sp" />
                     </RelativeLayout>

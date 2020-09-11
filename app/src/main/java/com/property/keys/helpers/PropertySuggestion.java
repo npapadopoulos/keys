@@ -23,7 +23,7 @@ public class PropertySuggestion implements SearchSuggestion {
         }
     };
     private String propertyName;
-    private boolean isHistory = false;
+    private boolean isHistory;
 
     public PropertySuggestion(String suggestion, boolean isHistory) {
         this.propertyName = suggestion.toLowerCase();

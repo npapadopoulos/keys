@@ -62,15 +62,13 @@ public class AddProperty extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
         binding = ActivityAddPropertyBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
         updateStatusBarOptions();
+        initToolbar();
+        addOnButtonsClickListeners();
+    }
 
-        MaterialToolbar propertyToolbar = binding.addPropertyToolbar;
-        setSupportActionBar(propertyToolbar);
-        getSupportActionBar().setTitle("Back");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        propertyToolbar.setNavigationOnClickListener(view -> finish());
-
+    private void addOnButtonsClickListeners() {
         binding.submit.setOnClickListener(view -> {
             InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             in.hideSoftInputFromWindow(view.getWindowToken(), 0);
@@ -83,6 +81,15 @@ public class AddProperty extends AppCompatActivity {
 
         binding.addImage.setOnClickListener(this::updateImage);
         binding.propertyImage.setOnClickListener(this::updateImage);
+    }
+
+    private void initToolbar() {
+        MaterialToolbar propertyToolbar = binding.addPropertyToolbar;
+        propertyToolbar.setNavigationOnClickListener(view -> finish());
+
+        setSupportActionBar(propertyToolbar);
+        getSupportActionBar().setTitle("Back");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     private void updateStatusBarOptions() {
@@ -143,7 +150,7 @@ public class AddProperty extends AppCompatActivity {
             binding.submit.setEnabled(true);
         };
 
-        PropertyUtils.create(this, getApplicationContext(), property, startActivity, onCreationFailed);
+        PropertyUtils.create(this, property, startActivity, onCreationFailed);
     }
 
     @Override

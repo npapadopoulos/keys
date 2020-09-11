@@ -1,37 +1,30 @@
 package com.property.keys.utils;
 
-import android.content.Context;
+import android.app.Activity;
+import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.os.Build;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
-import android.widget.ProgressBar;
 
 import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.property.keys.R;
+import com.property.keys.entities.Property;
+import com.property.keys.entities.User;
 import com.property.keys.helpers.RecyclerItemTouchHelper;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.atomic.AtomicInteger;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
-
-    private final static AtomicInteger CHANGE_COUNTER = new AtomicInteger(0);
-    private final static Map<String, ProgressBar> PROGRESS_BARS = new HashMap<>();
 
     private final static String EMAIL_PATTERN = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     private final static String PASSWORD_PATTERN = "^" +
@@ -165,35 +158,17 @@ public class Utils {
         return result.toString();
     }
 
-    public static void addOnTextChangeListener(MaterialButton button, TextInputEditText textInputEditText, String original) {
-        textInputEditText.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if (charSequence.toString().equals(original) && !original.equals("")) {
-                    button.setEnabled(false);
-                    CHANGE_COUNTER.decrementAndGet();
-                } else {
-                    button.setEnabled(true);
-                    CHANGE_COUNTER.incrementAndGet();
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-            }
-        });
+    public static void updateFavourite(Activity activity, FloatingActionButton view, Property property, User user) {
+        boolean alreadyLiked = property.getFavouredBy().get(user.getId()) != null;
+        PropertyUtils.like(activity, property, !alreadyLiked);
+        updateFavourite(activity, view, !alreadyLiked);
     }
 
-    public static void updateFavourite(Context context, FloatingActionButton view, boolean isFavourite) {
-        if (isFavourite) {
-            view.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.accentColor)));
+    public static void updateFavourite(Activity activity, FloatingActionButton view, boolean liked) {
+        if (liked) {
+            view.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(activity, R.color.accentColor)));
         } else {
-            view.setBackgroundTintList(ColorStateList.valueOf(context.getResources().getColor(R.color.primaryColor)));
+            view.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(activity, R.color.primaryColor)));
         }
     }
 
@@ -205,4 +180,9 @@ public class Utils {
         ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, listener);
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(view);
     }
+
+    public static void onClick(DialogInterface dialogInterface, int i) {
+        //does nothing, used in some alert dialogs when user presses "No"
+    }
+
 }

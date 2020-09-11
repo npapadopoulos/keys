@@ -2,7 +2,6 @@ package com.property.keys.adapters;
 
 import android.app.Activity;
 import android.app.ActivityOptions;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -20,9 +19,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.property.keys.PropertyDetails;
 import com.property.keys.R;
 import com.property.keys.entities.Property;
+import com.property.keys.entities.User;
 import com.property.keys.utils.ImageUtils;
-import com.property.keys.utils.PropertyUtils;
-import com.property.keys.utils.UserUtils;
 
 import static com.property.keys.utils.Utils.updateFavourite;
 
@@ -36,10 +34,12 @@ public class PropertyHolder extends RecyclerView.ViewHolder implements Holder {
     private FloatingActionButton setFavourite;
     private RelativeLayout propertyBackground, propertyForeground;
     private Property property;
+    private User user;
 
-    public PropertyHolder(@NonNull Activity activity, @NonNull View itemView) {
+    public PropertyHolder(@NonNull Activity activity, User user, @NonNull View itemView) {
         super(itemView);
 
+        this.user = user;
         name = itemView.findViewById(R.id.name);
         address = itemView.findViewById(R.id.address);
         propertyImage = itemView.findViewById(R.id.propertyImage);
@@ -48,13 +48,11 @@ public class PropertyHolder extends RecyclerView.ViewHolder implements Holder {
         propertyBackground = itemView.findViewById(R.id.propertyBackground);
         propertyForeground = itemView.findViewById(R.id.propertyForeground);
 
-        setFavourite = itemView.findViewById(R.id.setFavourite);
-        setFavourite.setOnClickListener(view -> {
-            boolean isFavourite = property.getFavouredBy().containsKey(UserUtils.getLocalUser(view.getContext()).getId());
-            PropertyUtils.update(activity, property, !isFavourite);
-            updateFavourite(view.getContext(), setFavourite, !isFavourite);
-        });
+        addOnSetFavouriteClickListener(activity, itemView);
+        addOnPropertyClickListener(activity, itemView);
+    }
 
+    private void addOnPropertyClickListener(@NonNull Activity activity, @NonNull View itemView) {
         itemView.setOnClickListener(view -> {
             Pair[] pairs = new Pair[6];
             pairs[0] = new Pair<View, String>(propertyImage, "propertyImage");
@@ -69,17 +67,20 @@ public class PropertyHolder extends RecyclerView.ViewHolder implements Holder {
             propertyDetails.putExtra("property", property);
 
             view.getContext().startActivity(propertyDetails, bundle);
-            //FIXME probably back button on details has to do with the above. ACTIVITY STARTS FROM PROPERTY_HOLDER INSTEAD OF THE CONTAINER
         });
-
     }
 
-    public void bind(@NonNull Context context, @NonNull Property property) {
+    private void addOnSetFavouriteClickListener(@NonNull Activity activity, @NonNull View itemView) {
+        setFavourite = itemView.findViewById(R.id.setFavourite);
+        setFavourite.setOnClickListener(view -> updateFavourite(activity, setFavourite, property, user));
+    }
+
+    public void bind(@NonNull Activity activity, @NonNull Property property) {
         name.setText(property.getName());
         address.setText(property.getAddress());
         this.property = property;
-        ImageUtils.syncAndloadImages(context, property.getId(), propertyImage);
-        updateFavourite(context, setFavourite, property.getFavouredBy().containsKey(UserUtils.getLocalUser(context).getId()));
+        ImageUtils.syncAndloadImages(activity, property.getId(), propertyImage);
+        updateFavourite(activity, setFavourite, property.getFavouredBy().containsKey(user.getId()));
     }
 
     @Override

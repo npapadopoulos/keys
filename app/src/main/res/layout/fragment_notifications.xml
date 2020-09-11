@@ -13,7 +13,6 @@
     android:padding="20dp"
     tools:context=".fragments.Notifications">
 
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notificationsList"
         android:layout_marginTop="20dp"
@@ -23,4 +22,15 @@
         android:clipToPadding="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
         tools:listitem="@layout/notification" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/deleteNotifications"
+        style="@style/FloatingActionBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|center"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="50dp"
+        android:contentDescription="@string/add_new_key"
+        android:src="@drawable/clear" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

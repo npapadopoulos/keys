@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
@@ -14,7 +13,6 @@ import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,12 +20,14 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+import com.arlib.floatingsearchview.FloatingSearchView;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -36,8 +36,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.property.keys.databinding.ActivityContainerBinding;
-import com.property.keys.entities.Property;
-import com.property.keys.entities.UnreadNotification;
 import com.property.keys.entities.User;
 import com.property.keys.fragments.Dashboard;
 import com.property.keys.fragments.History;
@@ -49,6 +47,7 @@ import com.property.keys.utils.ImageUtils;
 import com.property.keys.utils.NavigationUtils;
 import com.property.keys.utils.PropertyUtils;
 import com.property.keys.utils.UserUtils;
+import com.property.keys.utils.Utils;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -61,37 +60,32 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
 
     private final int REQUEST_CODE_SIGN_IN = 100;
 
-    private final static DatabaseReference unreadNotificationsQuery = FirebaseDatabase.getInstance()
-            .getReference();
+    private final DatabaseReference usersDatabaseReference = FirebaseDatabase.getInstance().getReference().child("users");
 
     private ActivityContainerBinding binding;
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
     private Fragment fragment;
 
     private OnImageChangedBroadcastReceiver onImageChangedBroadcastReceiver;
-    private OnActionBroadcastReceiver onActionBroadcastReceiver;
-    private IntentFilter actionFilter;
     private IntentFilter imageChangedFilter;
-
-    private static void onClick(DialogInterface dialogInterface, int i) {
-    }
 
     @Override
     public void onBackPressed() {
-        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START) || binding.drawerLayout.isDrawerVisible(GravityCompat.START)) {
+        if (binding.drawerLayout.isDrawerOpen(GravityCompat.START)
+                || binding.drawerLayout.isDrawerVisible(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START);
+        } else if (fragment.getTag() == null || fragment.getTag().equalsIgnoreCase(getPackageName() + "." + "dashboard")) {
+            new AlertDialog.Builder(this)
+                    .setMessage("Are you sure you want to log out?")
+                    .setPositiveButton("Yes", (dialogInterface, i) -> UserUtils.signOut())
+                    .setNegativeButton("No", Utils::onClick).create().show();
+        } else if (fragment.getTag() != null && fragment.getTag().equalsIgnoreCase(getPackageName() + "." + "properties")
+                && ((Properties) fragment).getView().findViewById(R.id.floatingSearchView).isFocused()) {
+            FloatingSearchView propertiesView = ((Properties) fragment).getView().findViewById(R.id.floatingSearchView);
+            propertiesView.clearSearchFocus();
         } else {
             FragmentManager fragmentManager = this.getSupportFragmentManager();
-            if (fragmentManager.getBackStackEntryCount() > 0) {
-                super.onBackPressed();
-            } else {
-                new AlertDialog.Builder(this)
-                        .setMessage("Are you sure you want to log out?")
-                        .setPositiveButton("Yes", (dialogInterface, i) -> {
-                            UserUtils.signOut(this);
-                        })
-                        .setNegativeButton("No", Container::onClick).create().show();
-            }
+            fragmentManager.popBackStack();
         }
     }
 
@@ -105,14 +99,12 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
     protected void onResume() {
         super.onResume();
         registerReceiver(onImageChangedBroadcastReceiver, imageChangedFilter);
-        registerReceiver(onActionBroadcastReceiver, actionFilter);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
         unregisterReceiver(onImageChangedBroadcastReceiver);
-        unregisterReceiver(onActionBroadcastReceiver);
         firebaseAuth.removeAuthStateListener(getAuthStateListener());
     }
 
@@ -167,16 +159,8 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
         onImageChangedBroadcastReceiver.setUserId(user.getId());
         onImageChangedBroadcastReceiver.setImageView(navigationProfileImage);
 
-        onActionBroadcastReceiver = new OnActionBroadcastReceiver();
-        onActionBroadcastReceiver.setActivity(this);
-
         imageChangedFilter = new IntentFilter();
         imageChangedFilter.addAction(getPackageName() + ".PROFILE_IMAGE_UPDATED");
-
-        actionFilter = new IntentFilter();
-        actionFilter.addAction(getPackageName() + ".ACTION_PERFORMED");
-
-        //TODO when back is pressed. eg. from Properties Details
 
         updateStatusBarOptions();
         bottomMenu();
@@ -237,18 +221,12 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
         Activity activity = this;
 
         User user = UserUtils.getLocalUser(getApplicationContext());
-        unreadNotificationsQuery.child("unread_notifications")
-                .orderByChild("userId")
-                .equalTo(user.getId())
+        usersDatabaseReference.child(user.getId()).child("notifications").orderByChild("unread").equalTo(true)
                 .addValueEventListener(new ValueEventListener() {
 
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        snapshot.getChildren().forEach(s -> {
-                            UnreadNotification unreadNotification = s.getValue(UnreadNotification.class);
-                            long count = unreadNotification.getNotificationIds().values().stream().filter(Boolean::booleanValue).count();
-                            updateBadge(activity, count);
-                        });
+                        PropertyUtils.updateBadge(activity, snapshot.getChildrenCount());
                     }
 
                     @Override
@@ -256,13 +234,6 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
 
                     }
                 });
-    }
-
-    private void updateBadge(Activity activity, long count) {
-        if (count > 0)
-            PropertyUtils.showBadge(activity, count);
-        else
-            PropertyUtils.dismissBadge(activity);
     }
 
     @Override
@@ -283,7 +254,7 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
                 break;
             case R.id.navigationLogout:
                 fragment = null;
-                UserUtils.signOut(this);
+                UserUtils.signOut();
                 finish();
                 break;
 
@@ -304,8 +275,8 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
         return false;
     }
 
-    public RelativeLayout getContentLayout() {
-        return binding.content;
+    public CoordinatorLayout getPlaceSnackBar() {
+        return binding.placeSnackBar;
     }
 
     public DrawerLayout getDrawerLayout() {
@@ -322,21 +293,6 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
         @Override
         public void onReceive(Context context, Intent intent) {
             ImageUtils.syncAndloadImages(context, userId, imageView);
-        }
-    }
-
-    @NoArgsConstructor
-    @Setter
-    public final static class OnActionBroadcastReceiver extends BroadcastReceiver {
-
-        private Activity activity;
-
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            String description = intent.getStringExtra("description");
-            Property property = intent.getParcelableExtra("property");
-            String action = intent.getStringExtra("action");
-            PropertyUtils.notify(activity, description, property, action);
         }
     }
 }

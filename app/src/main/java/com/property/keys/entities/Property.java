@@ -36,6 +36,7 @@ public class Property implements Parcelable {
     private String id;
     private String name;
     private String address;
+    private Map<String, Key> keys;
     private Map<String, Object> favouredBy = new HashMap<>();
 
     protected Property(Parcel in) {
@@ -43,6 +44,7 @@ public class Property implements Parcelable {
         name = in.readString();
         address = in.readString();
         favouredBy = in.readHashMap(String.class.getClassLoader());
+        keys = in.readHashMap(String.class.getClassLoader());
     }
 
     @Override
@@ -56,5 +58,6 @@ public class Property implements Parcelable {
         parcel.writeString(name);
         parcel.writeString(address);
         parcel.writeMap(favouredBy == null ? new HashMap<>() : favouredBy);
+        parcel.writeMap(keys == null ? new HashMap<>() : keys);
     }
 }

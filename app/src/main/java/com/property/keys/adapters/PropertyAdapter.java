@@ -11,6 +11,7 @@ import androidx.annotation.RequiresApi;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.property.keys.R;
 import com.property.keys.entities.Property;
+import com.property.keys.entities.User;
 import com.property.keys.filters.FirebaseRecyclerAdapter;
 import com.property.keys.utils.UserUtils;
 
@@ -19,9 +20,13 @@ public class PropertyAdapter extends FirebaseRecyclerAdapter<Property, PropertyH
     @NonNull
     private Activity activity;
 
-    public PropertyAdapter(@NonNull FirebaseRecyclerOptions<Property> options, Activity activity) {
+    @NonNull
+    private User user;
+
+    public PropertyAdapter(@NonNull FirebaseRecyclerOptions<Property> options, Activity activity, User user) {
         super(options);
         this.activity = activity;
+        this.user = user;
     }
 
     @Override
@@ -43,7 +48,7 @@ public class PropertyAdapter extends FirebaseRecyclerAdapter<Property, PropertyH
     @NonNull
     @Override
     public PropertyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new PropertyHolder(activity, LayoutInflater.from(parent.getContext())
+        return new PropertyHolder(activity, user, LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.property, parent, false));
     }
 }

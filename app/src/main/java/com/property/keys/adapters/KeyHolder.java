@@ -20,10 +20,6 @@ import com.property.keys.PropertyDetails;
 import com.property.keys.R;
 import com.property.keys.entities.Key;
 import com.property.keys.utils.ImageUtils;
-import com.property.keys.utils.PropertyUtils;
-import com.property.keys.utils.UserUtils;
-
-import static com.property.keys.utils.Utils.updateFavourite;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class KeyHolder extends RecyclerView.ViewHolder {
@@ -38,13 +34,6 @@ public class KeyHolder extends RecyclerView.ViewHolder {
 
         keyId = itemView.findViewById(R.id.keyId);
         qrCodeImage = itemView.findViewById(R.id.qrCodeImage);
-
-        setFavourite = itemView.findViewById(R.id.setFavourite);
-        setFavourite.setOnClickListener(view -> {
-            boolean isFavourite = key.getFavouredBy().containsKey(UserUtils.getLocalUser(view.getContext()).getId());
-            PropertyUtils.update(activity, key, !isFavourite);
-            updateFavourite(view.getContext(), setFavourite, !isFavourite);
-        });
 
         itemView.setOnClickListener(view -> {
             Pair[] pairs = new Pair[6];
@@ -66,6 +55,5 @@ public class KeyHolder extends RecyclerView.ViewHolder {
         keyId.setText(key.getId());
         this.key = key;
         ImageUtils.syncAndloadImages(context, key.getId(), qrCodeImage);
-        updateFavourite(context, setFavourite, key.getFavouredBy().containsKey(UserUtils.getLocalUser(context).getId()));
     }
 }

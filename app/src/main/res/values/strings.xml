@@ -46,7 +46,6 @@
     <string name="update">Update</string>
     <string name="loading">Loading…</string>
     <string name="add_new_property">Add new property</string>
-    <string name="add_new_key">Add new key</string>
     <string name="name">Name</string>
     <string name="address" translatable="true">Address</string>
     <string name="add_key">Add Key</string>
@@ -58,4 +57,7 @@
     <string name="favourite">Favourite</string>
     <string name="all">All</string>
     <string name="favourites">Favourites</string>
+    <string name="available">Available</string>
+    <string name="add_new_key">ADD NEW KEY</string>
+    <string name="remember">Remember</string>
 </resources>

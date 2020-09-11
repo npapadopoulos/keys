@@ -24,7 +24,6 @@ import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 import com.property.keys.R;
 import com.property.keys.databinding.FragmentScannerBinding;
 import com.property.keys.entities.Key;
-import com.property.keys.entities.Property;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class Scanner extends Fragment {
@@ -61,16 +60,12 @@ public class Scanner extends Fragment {
         CodeScannerView scannerView = binding.scannerView;
         mCodeScanner = new CodeScanner(activity, scannerView);
         mCodeScanner.setDecodeCallback(result -> {
-            firebaseDatabase.getReference("keys").child(result.getText()).addListenerForSingleValueEvent(new ValueEventListener() {
-                @Override
-                public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    Key key = snapshot.getValue(Key.class);
-
-                    firebaseDatabase.getReference("properties").child(key.getPropertyId()).addListenerForSingleValueEvent(new ValueEventListener() {
+            firebaseDatabase.getReference("properties/keys/").child(result.getText())
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            Property property = snapshot.getValue(Property.class);
-                            activity.runOnUiThread(() -> Snackbar.make(binding.scannerView, "Found key for property '" + property.getName() + "'.", Snackbar.LENGTH_LONG).show());
+                            Key key = snapshot.getValue(Key.class);
+                            activity.runOnUiThread(() -> Snackbar.make(binding.scannerView, "Found key for with id '" + key.getId() + "'.", Snackbar.LENGTH_LONG).show());
                         }
 
                         @Override
@@ -78,13 +73,6 @@ public class Scanner extends Fragment {
 
                         }
                     });
-                }
-
-                @Override
-                public void onCancelled(@NonNull DatabaseError error) {
-
-                }
-            });
         });
         scannerView.setOnClickListener(view -> mCodeScanner.startPreview());
 

@@ -20,15 +20,6 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="10dp"
             android:src="@drawable/delete" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:layout_toLeftOf="@id/deleteIcon"
-            android:textColor="@color/white_50"
-            android:textSize="13dp" />
     </RelativeLayout>
 
     <RelativeLayout
@@ -53,6 +44,7 @@
                     android:layout_height="110dp"
                     android:layout_margin="10dp"
                     android:scaleType="centerInside"
+                    android:transitionName="propertyImage"
                     app:srcCompat="@drawable/background" />
 
                 <TextView
@@ -63,11 +55,9 @@
                     android:layout_alignParentTop="true"
                     android:layout_marginStart="130dp"
                     android:layout_marginTop="10dp"
-
                     android:maxLines="1"
                     android:text="@string/default_property_name"
                     android:textAppearance="?attr/textAppearanceHeadline6"
-
                     android:transitionName="propertyName" />
 
                 <ImageView
@@ -77,7 +67,8 @@
                     android:layout_alignParentTop="true"
                     android:layout_marginStart="130dp"
                     android:layout_marginTop="45dp"
-                    android:src="@drawable/place" />
+                    android:src="@drawable/place"
+                    android:transitionName="propertyPlace" />
 
                 <TextView
                     android:id="@+id/address"
@@ -121,6 +112,7 @@
                             android:layout_height="25dp"
                             android:layout_marginStart="5dp"
                             android:layout_toEndOf="@id/availableSumImage"
+                            android:transitionName="propertyKeyAvailableSum"
                             android:text="0"
                             android:textSize="22sp" />
 
@@ -135,6 +127,7 @@
                         <TextView
                             android:id="@+id/busySum"
                             android:layout_width="25dp"
+                            android:transitionName="propertyKeyBusySum"
                             android:layout_height="25dp"
                             android:layout_marginStart="5dp"
                             android:layout_toEndOf="@id/busySumImage"

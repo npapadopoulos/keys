@@ -15,6 +15,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
+        app:itemIconTint="@drawable/drawer_menu_item_style"
+        app:itemTextColor="@drawable/drawer_menu_item_style"
         app:headerLayout="@layout/left_menu_header"
         app:menu="@menu/left_navigation_menu" />
 
@@ -32,22 +34,29 @@
             android:layout_height="wrap_content"
             android:fitsSystemWindows="true" />
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/menus"
+            android:orientation="vertical"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
+
+            <androidx.coordinatorlayout.widget.CoordinatorLayout
+                android:id="@+id/placeSnackBar"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_gravity="bottom"
+                android:layout_weight="1" />
 
             <com.ismaeldivita.chipnavigation.ChipNavigationBar
                 android:id="@+id/bottom_navigation_menu"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
                 android:background="@color/colorGrey"
                 android:elevation="8dp"
                 app:cnb_menuResource="@menu/bottom_navigation_menu"
                 app:cnb_orientationMode="horizontal"
                 app:cnb_radius="5dp" />
-        </RelativeLayout>
+        </LinearLayout>
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"

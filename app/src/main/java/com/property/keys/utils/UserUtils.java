@@ -4,34 +4,30 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
-import androidx.fragment.app.Fragment;
 
-import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.property.keys.entities.User;
-import com.property.keys.helpers.PropertySuggestion;
-import com.property.keys.tasks.ResetPasswordTask;
 import com.property.keys.tasks.TaskExecutor;
-import com.property.keys.tasks.UserAuthenticateTask;
-import com.property.keys.tasks.UserCreateTask;
-import com.property.keys.tasks.UserUpdateTask;
+import com.property.keys.tasks.users.UserAuthenticateTask;
+import com.property.keys.tasks.users.UserCreateTask;
+import com.property.keys.tasks.users.UserDeleteNotificationsTask;
+import com.property.keys.tasks.users.UserPropertySearchSuggestionsUpdateTask;
+import com.property.keys.tasks.users.UserReadNotificationsTask;
+import com.property.keys.tasks.users.UserResetPasswordTask;
+import com.property.keys.tasks.users.UserUpdateTask;
 
-import java.util.Deque;
+import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Objects;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toSet;
+import static java.util.Collections.emptySet;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class UserUtils {
@@ -44,49 +40,99 @@ public class UserUtils {
         throw new AssertionError("No instance for you!");
     }
 
-    public static void authenticate(Activity activity, Context context, String email, String password,
+    public static void authenticate(Activity activity, Context context, String email, String password, boolean remember,
                                     Consumer<Intent> startActivity,
                                     Consumer<Task<AuthResult>> onAuthenticationFailed,
                                     Consumer<Exception> onFailed) {
-        new TaskExecutor().executeAsync(new UserAuthenticateTask(activity, context, email, password, startActivity, onAuthenticationFailed, onFailed));
+        new TaskExecutor().executeAsync(UserAuthenticateTask.builder()
+                .activity(activity)
+                .context(context)
+                .email(email)
+                .password(password)
+                .remember(remember)
+                .startActivity(startActivity)
+                .onAuthenticationFailed(onAuthenticationFailed)
+                .onFailed(onFailed)
+                .build()
+        );
     }
 
     public static void create(Activity activity, Context context, User user,
                               Consumer<Intent> startActivity,
                               Consumer<Task<AuthResult>> onCreationFailed) {
-        new TaskExecutor().executeAsync(new UserCreateTask(activity, context, user, startActivity, onCreationFailed));
+        new TaskExecutor().executeAsync(
+                UserCreateTask.builder()
+                        .activity(activity)
+                        .context(context)
+                        .user(user)
+                        .startActivity(startActivity)
+                        .onCreationFailed(onCreationFailed)
+                        .build()
+        );
     }
 
-    public static void update(Fragment fragment, User currentUser, User newUser, Consumer<Task<Void>> onUpdateFailed, Consumer<Task<Void>> onUpdateSucceeded) {
-        new TaskExecutor().executeAsync(new UserUpdateTask(fragment, currentUser, newUser, onUpdateFailed, onUpdateSucceeded));
+    public static void update(User user, Consumer<Task<Void>> onUpdateFailed, Consumer<Task<Void>> onUpdateSucceeded) {
+        new TaskExecutor().executeAsync(
+                UserUpdateTask.builder()
+                        .user(user)
+                        .onUpdateFailed(onUpdateFailed)
+                        .onUpdateSucceeded(onUpdateSucceeded)
+                        .build()
+        );
+    }
+
+    public static void setReadNotifications(String userId) {
+        new TaskExecutor().executeAsync(
+                UserReadNotificationsTask.builder()
+                        .userId(userId)
+                        .build()
+        );
+    }
+
+    public static void deleteNotifications(String userId) {
+        deleteNotification(userId, null, true);
+    }
+
+    public static void deleteNotification(String userId, String notificationId) {
+        deleteNotification(userId, notificationId, false);
+    }
+
+    public static void deleteNotification(String userId, String notificationId, boolean all) {
+        new TaskExecutor().executeAsync(
+                UserDeleteNotificationsTask.builder()
+                        .userId(userId)
+                        .notificationId(notificationId)
+                        .all(all)
+                        .build()
+        );
+    }
+
+    public static void updateSearchSuggestions(Context context, User user) {
+        new TaskExecutor().executeAsync(
+                UserPropertySearchSuggestionsUpdateTask.builder()
+                        .context(context)
+                        .user(user)
+                        .build()
+        );
     }
 
     public static void resetPassword(Context context, String phoneNumber, String password, PhoneAuthCredential credentialByPhone,
                                      Consumer<Intent> startActivity,
                                      Consumer<Task<AuthResult>> onResetFailed) {
-        new TaskExecutor().executeAsync(new ResetPasswordTask(context, phoneNumber, password, credentialByPhone, startActivity, onResetFailed));
+        new TaskExecutor().executeAsync(
+                UserResetPasswordTask.builder()
+                        .context(context)
+                        .phoneNumber(phoneNumber)
+                        .password(password)
+                        .credentialByPhone(credentialByPhone)
+                        .startActivity(startActivity)
+                        .onResetFailed(onResetFailed)
+                        .build()
+        );
     }
 
-    public static void signOut(Activity activity) {
-        Intent broadcastIntent = new Intent();
-        broadcastIntent.setAction(activity.getPackageName() + ".USER_LOGGED_OUT");
-        activity.sendBroadcast(broadcastIntent);
+    public static void signOut() {
         firebaseAuth.signOut();
-    }
-
-    public static Deque<SearchSuggestion> getPropertySearchSuggestions(Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
-
-        return Objects.requireNonNull(sharedPreferences.getStringSet("suggestions", new HashSet<>())).stream()
-                .map(name -> new PropertySuggestion(name, true))
-                .collect(Collectors.toCollection(LinkedList::new));
-    }
-
-    public static void setPropertySearchSuggestions(Deque<SearchSuggestion> suggestions, Context context) {
-        SharedPreferences sharedPreferences = context.getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putStringSet("suggestions", suggestions.stream().map(SearchSuggestion::getBody).collect(toSet()));
-        editor.apply();
     }
 
     public static User getLocalUser(Context context) {
@@ -97,26 +143,35 @@ public class UserUtils {
                 .lastName(sharedPreferences.getString("lastName", ""))
                 .email(Objects.requireNonNull(sharedPreferences.getString("email", "")).toLowerCase().trim())
                 .phoneNumber(sharedPreferences.getString("phoneNumber", ""))
+                .password(sharedPreferences.getString("password", ""))
+                .remember(sharedPreferences.getBoolean("remember", false))
+                .propertySearchSuggestions(new ArrayList<>(sharedPreferences.getStringSet("propertySearchSuggestions", emptySet())))
                 .build();
     }
 
+    public static boolean rememberCredentials(Context context) {
+        return context.getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE).getBoolean("remember", false);
+    }
+
+    //used by Profile Fragment, do not update remember credentials
     public static void saveUser(User user, Context context) {
+        saveUser(user, null, context);
+    }
+
+    //used by Sign In Fragment, update remember credentials
+    public static void saveUser(User user, String password, Context context) {
         SharedPreferences sharedPreferences = context.getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putBoolean("remember", user.isRemember());
         editor.putString("id", user.getId());
         editor.putString("firstName", user.getFirstName());
         editor.putString("lastName", user.getLastName());
         editor.putString("email", user.getEmail());
         editor.putString("phoneNumber", user.getPhoneNumber());
+        editor.putStringSet("propertySearchSuggestions", new HashSet<>(user.getPropertySearchSuggestions()));
+        if (user.isRemember() && password != null) {
+            editor.putString("password", password);
+        }
         editor.apply();
-    }
-
-    public boolean icConnectedToInternet(Context context) {
-        /**
-         * TODO Need to add listener once connectivity is lost popup a dialog with that info and add a constrait to every ACTION which requires connection to Internet
-         */
-        ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

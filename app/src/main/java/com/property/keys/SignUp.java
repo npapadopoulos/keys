@@ -83,7 +83,8 @@ public class SignUp extends AppCompatActivity {
                 .lastName(lastNameValue)
                 .email(emailValue.toLowerCase().trim())
                 .phoneNumber(Utils.addCountryCodeIfMissing(phoneNumberValue))
-                .password(Utils.hash(passwordValue))
+                .password(passwordValue)
+                .remember(false)
                 .build();
 
         Consumer<Intent> startActivity = intent -> {

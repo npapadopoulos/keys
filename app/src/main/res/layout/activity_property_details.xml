@@ -36,7 +36,7 @@
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
                 android:src="@drawable/gradient"
-                android:transitionName="propertyKeyAvailableSumImage"
+                android:transitionName="propertyImage"
                 app:layout_collapseMode="parallax" />
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -44,23 +44,24 @@
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.core.widget.NestedScrollView
+        android:id="@+id/content"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/white_50"
+        android:background="@color/colorGrey"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white_50"
+            android:layout_margin="5dp"
+            android:background="@color/colorGrey"
             android:orientation="vertical">
 
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/propertyDetailsToolbar"
-                android:layout_height="?attr/actionBarSize"
                 android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
                 android:layout_marginTop="?attr/actionBarSize"
-                android:layout_marginEnd="10dp"
                 app:layout_collapseMode="pin"
                 app:layout_scrollFlags="scroll|enterAlways|snap"
                 app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
@@ -86,13 +87,27 @@
                             android:textAppearance="?attr/textAppearanceHeadline6"
                             android:transitionName="propertyName" />
 
-                        <TextView
-                            android:id="@id/address"
+
+                        <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/default_property_address"
-                            android:textAppearance="?attr/textAppearanceBody2"
-                            android:transitionName="propertyName" />
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:layout_width="20dp"
+                                android:layout_height="20dp"
+                                android:src="@drawable/place"
+                                android:transitionName="propertyPlace" />
+
+                            <TextView
+                                android:id="@id/address"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="5dp"
+                                android:text="@string/default_property_address"
+                                android:textAppearance="?attr/textAppearanceBody2"
+                                android:transitionName="propertyAddress" />
+                        </LinearLayout>
 
                     </LinearLayout>
 
@@ -115,19 +130,125 @@
 
             </com.google.android.material.appbar.MaterialToolbar>
 
-            <!--            <androidx.recyclerview.widget.RecyclerView-->
-            <!--                android:id="@+id/keyList"-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="match_parent"-->
-            <!--                android:layout_margin="16dp"-->
-            <!--                android:clipToPadding="false"-->
-            <!--                app:layout_behavior="@string/appbar_scrolling_view_behavior"-->
-            <!--                tools:listitem="@layout/key" />-->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/MaterialCardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="125dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_weight="1">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:padding="5dp">
+
+                        <ImageView
+                            android:id="@+id/availableSumImage"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:layout_centerHorizontal="true"
+                            android:src="@drawable/keys_available"
+                            android:transitionName="propertyKeyAvailableSumImage" />
+
+                        <TextView
+                            android:id="@+id/availableSum"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="0"
+                            android:textSize="30sp"
+                            android:textStyle="bold"
+                            android:transitionName="propertyKeyAvailableSum" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/availableSum"
+                            android:layout_centerHorizontal="true"
+                            android:text="@string/available"
+                            android:textSize="20sp" />
+                    </RelativeLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    style="@style/MaterialCardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="125dp"
+                    android:layout_marginStart="10dp"
+                    android:layout_weight="1"
+                    android:padding="5dp">
+
+                    <RelativeLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:padding="5dp">
+
+                        <ImageView
+                            android:id="@+id/busySumImage"
+                            android:layout_width="35dp"
+                            android:layout_height="35dp"
+                            android:layout_centerHorizontal="true"
+                            android:src="@drawable/keys_busy"
+                            android:transitionName="propertyKeyBusySumImage" />
+
+                        <TextView
+                            android:id="@+id/busySum"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:text="0"
+                            android:textSize="30sp"
+                            android:textStyle="bold"
+                            android:transitionName="propertyKeyBusySum" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_below="@id/busySum"
+                            android:layout_centerHorizontal="true"
+                            android:text="@string/busy"
+                            android:textSize="20sp" />
+                    </RelativeLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/keyList"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                tools:listitem="@layout/key" />
+
+            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+                android:id="@+id/addNewKey"
+                style="@style/FloatingActionBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="35dp"
+                android:contentDescription="@string/add_new_key"
+                android:src="@drawable/plus"
+                android:text="@string/add_new_key"
+                android:textSize="14sp"
+                android:transitionName="addNew"
+                app:icon="@drawable/plus" />
+
 
             <!--            <com.google.android.material.button.MaterialButton-->
             <!--                android:id="@+id/update"-->
             <!--                style="@style/Widget.MaterialComponents.Button.Icon"-->
-            <!--                android:layout_width="250dp"-->
+            <!--                android:layout_width="235dp"-->
             <!--                android:layout_height="wrap_content"-->
             <!--                android:layout_gravity="center"-->
             <!--                android:layout_marginBottom="20dp"-->
@@ -145,19 +266,5 @@
             <!--                android:layout_height="wrap_content"-->
             <!--                android:layout_gravity="bottom|center" />-->
         </LinearLayout>
-
     </androidx.core.widget.NestedScrollView>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/addNewKey"
-        style="@style/FloatingActionBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_marginEnd="20dp"
-        android:layout_marginBottom="50dp"
-        android:contentDescription="@string/add_new_property"
-        android:src="@drawable/plus"
-        android:transitionName="addNew" />
-
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

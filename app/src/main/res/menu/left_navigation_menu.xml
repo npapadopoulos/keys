@@ -4,22 +4,18 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/navigationDashboard"
-
             android:icon="@drawable/dashboard"
             android:title="@string/dashboard" />
         <item
             android:id="@+id/navigationHistory"
-
             android:icon="@drawable/history"
             android:title="@string/history" />
         <item
             android:id="@+id/navigationNotifications"
             android:icon="@drawable/notification"
-
             android:title="@string/notifications" />
         <item
             android:id="@+id/navigationLogout"
-
             android:icon="@drawable/logout"
             android:title="@string/logout" />
     </group>

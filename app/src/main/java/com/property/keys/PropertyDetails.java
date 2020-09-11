@@ -1,7 +1,6 @@
 package com.property.keys;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -18,12 +17,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.property.keys.databinding.ActivityPropertyDetailsBinding;
 import com.property.keys.entities.Property;
+import com.property.keys.entities.User;
 import com.property.keys.utils.ImageUtils;
 import com.property.keys.utils.PropertyUtils;
 import com.property.keys.utils.StorageUtils;
 import com.property.keys.utils.UserUtils;
 
 import java.io.IOException;
+
+import lombok.SneakyThrows;
 
 import static com.property.keys.utils.ImageUtils.REQUEST_IMAGE;
 import static com.property.keys.utils.Utils.updateFavourite;
@@ -34,6 +36,7 @@ public class PropertyDetails extends AppCompatActivity {
 
     private ActivityPropertyDetailsBinding binding;
     private Property property;
+    private User user;
 
     @Override
     public void onBackPressed() {
@@ -41,6 +44,7 @@ public class PropertyDetails extends AppCompatActivity {
         super.onBackPressed();
     }
 
+    @SneakyThrows
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,30 +53,19 @@ public class PropertyDetails extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         property = getIntent().getParcelableExtra("property");
-
-        MaterialToolbar propertyDetailsToolbar = binding.propertyDetailsToolbar;
-        setSupportActionBar(propertyDetailsToolbar);
-        getSupportActionBar().setTitle("");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        propertyDetailsToolbar.setNavigationOnClickListener(view -> finish());
         binding.name.setText(property.getName());
         binding.address.setText(property.getAddress());
+        binding.propertyImage.setOnClickListener(this::updateImage);
+
+        user = UserUtils.getLocalUser(this);
+
+        initToolbar();
+        ImageUtils.syncAndloadImages(this, property.getId(), binding.propertyImage, true);
+        updateFavourite(this, binding.setFavourite, property.getFavouredBy().get(user.getId()) != null);
+        addOnSetFavouriteClickListener();
 
 //        binding.progressBar.setVisibility(View.GONE);
-
-        ImageUtils.syncAndloadImages(this, property.getId(), binding.propertyImage, true);
-        binding.propertyImage.setOnClickListener(this::updateImage);
 //        binding.addKey.setOnClickListener(this::addKey);
-
-        Context context = this;
-
-        updateFavourite(this, binding.setFavourite, property.getFavouredBy().containsKey(UserUtils.getLocalUser(getApplicationContext()).getId()));
-        binding.setFavourite.setOnClickListener(view -> {
-            boolean isFavourite = property.getFavouredBy().containsKey(UserUtils.getLocalUser(view.getContext()).getId());
-            PropertyUtils.update(this, property, !isFavourite);
-            updateFavourite(view.getContext(), binding.setFavourite, !isFavourite);
-        });
 
 //        binding.update.setOnClickListener(view -> {
 //            InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -84,6 +77,19 @@ public class PropertyDetails extends AppCompatActivity {
 //            updateProperty();
 //        });
 
+    }
+
+    private void addOnSetFavouriteClickListener() {
+        binding.setFavourite.setOnClickListener(view -> updateFavourite(this, binding.setFavourite, property, user));
+    }
+
+    private void initToolbar() {
+        MaterialToolbar propertyDetailsToolbar = binding.propertyDetailsToolbar;
+        propertyDetailsToolbar.setNavigationOnClickListener(view -> finish());
+
+        setSupportActionBar(propertyDetailsToolbar);
+        getSupportActionBar().setTitle("");
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
 //    private void updateProperty() {

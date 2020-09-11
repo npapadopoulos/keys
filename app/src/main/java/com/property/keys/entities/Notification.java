@@ -18,4 +18,5 @@ public class Notification {
     private String userId;
     private String description;
     private String date;
+    private Boolean unread = Boolean.TRUE;
 }

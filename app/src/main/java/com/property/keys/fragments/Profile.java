@@ -133,7 +133,8 @@ public class Profile extends Fragment {
 //                Utils.hideProgressBar(getActivity());
                 UserUtils.saveUser(newUser, getActivity().getApplicationContext());
             };
-            UserUtils.update(this, user, newUser, onUpdateFailed, onUpdateSucceeded);
+            //FIXME notifications and properties are not included in local user
+            UserUtils.update(user, onUpdateFailed, onUpdateSucceeded);
         });
 
         ImageUtils.syncAndloadImages(getActivity(), user.getId(), binding.profileImage);

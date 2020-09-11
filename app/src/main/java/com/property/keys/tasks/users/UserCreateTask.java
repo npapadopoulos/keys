@@ -1,4 +1,4 @@
-package com.property.keys.tasks;
+package com.property.keys.tasks.users;
 
 import android.app.Activity;
 import android.content.Context;
@@ -15,13 +15,15 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.property.keys.SignIn;
 import com.property.keys.entities.User;
+import com.property.keys.tasks.AbstractAsyncTask;
+import com.property.keys.utils.Utils;
 
 import java.util.function.Consumer;
 
-import lombok.AllArgsConstructor;
+import lombok.Builder;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
-@AllArgsConstructor
+@Builder
 public class UserCreateTask extends AbstractAsyncTask {
     private static final String TAG = UserCreateTask.class.getSimpleName();
 
@@ -41,8 +43,9 @@ public class UserCreateTask extends AbstractAsyncTask {
                     if (task.isSuccessful()) {
                         try {
                             DatabaseReference users = firebaseDatabase.getReference("users");
-
                             user.setId(firebaseAuth.getCurrentUser().getUid());
+                            String hashedPassword = Utils.hash(user.getPassword());
+                            user.setPassword(hashedPassword);
                             users.child(user.getId()).setValue(user);
 
                             Intent next = new Intent(context, SignIn.class);

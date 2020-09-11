@@ -1,7 +1,15 @@
 package com.property.keys.entities;
 
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import androidx.annotation.RequiresApi;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +20,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@RequiresApi(api = Build.VERSION_CODES.R)
 public class User implements Parcelable {
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -31,6 +40,10 @@ public class User implements Parcelable {
     private String email;
     private String phoneNumber;
     private String password;
+    private boolean remember;
+    private Map<String, Notification> notifications = new HashMap<>();
+    private Map<String, Property> properties = new HashMap<>();
+    private List<String> propertySearchSuggestions = new ArrayList<>();
 
     protected User(Parcel in) {
         id = in.readString();
@@ -39,6 +52,10 @@ public class User implements Parcelable {
         email = in.readString();
         phoneNumber = in.readString();
         password = in.readString();
+        remember = in.readBoolean();
+        notifications = in.readHashMap(String.class.getClassLoader());
+        properties = in.readHashMap(String.class.getClassLoader());
+        propertySearchSuggestions = in.readArrayList(String.class.getClassLoader());
     }
 
     @Override
@@ -54,5 +71,9 @@ public class User implements Parcelable {
         parcel.writeString(email);
         parcel.writeString(phoneNumber);
         parcel.writeString(password);
+        parcel.writeBoolean(remember);
+        parcel.writeMap(notifications == null ? new HashMap<>() : notifications);
+        parcel.writeMap(properties == null ? new HashMap<>() : properties);
+        parcel.writeList(propertySearchSuggestions == null ? new ArrayList<>() : propertySearchSuggestions);
     }
 }

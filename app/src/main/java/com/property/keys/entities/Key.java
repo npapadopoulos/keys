@@ -5,7 +5,6 @@ import android.os.Parcelable;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import lombok.AllArgsConstructor;
@@ -20,7 +19,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Key implements Parcelable {
     private String id;
-    private String propertyId;
+    private String checkedInDate;
+    private String checkedOutDate;
+    private String lastCheckOutDate;
+
     public static final Parcelable.Creator<Key> CREATOR = new Parcelable.Creator<Key>() {
         @Override
         public Key createFromParcel(Parcel in) {
@@ -32,12 +34,13 @@ public class Key implements Parcelable {
             return new Key[size];
         }
     };
-    private Map<String, Object> favouredBy = new HashMap<>();
+    private Map<String, Object> favouredBy;
 
     protected Key(Parcel in) {
         id = in.readString();
-        propertyId = in.readString();
-        favouredBy = in.readHashMap(String.class.getClassLoader());
+        checkedInDate = in.readString();
+        checkedOutDate = in.readString();
+        lastCheckOutDate = in.readString();
     }
 
     @Override
@@ -48,7 +51,8 @@ public class Key implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(id);
-        parcel.writeString(propertyId);
-        parcel.writeMap(favouredBy == null ? new HashMap<>() : favouredBy);
+        parcel.writeString(checkedInDate);
+        parcel.writeString(checkedOutDate);
+        parcel.writeString(lastCheckOutDate);
     }
 }
