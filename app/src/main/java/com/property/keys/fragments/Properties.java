@@ -1,6 +1,5 @@
 package com.property.keys.fragments;
 
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
@@ -26,6 +25,7 @@ import com.arlib.floatingsearchview.util.Util;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -78,10 +78,6 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
     private MaterialToolbar toolbar;
     private User user;
 
-    public Properties(NavigationView navigation, MaterialToolbar toolbar) {
-        this(null, navigation, toolbar);
-    }
-
     public Properties(ChipNavigationBar bottomNavigationMenu, NavigationView navigation, MaterialToolbar toolbar) {
         this.bottomNavigationMenu = bottomNavigationMenu;
         this.navigation = navigation;
@@ -113,7 +109,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
         binding.propertyList.setItemAnimator(new DefaultItemAnimator());
         binding.propertyList.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
-        binding.addNewProperty.setOnClickListener(view -> startActivity(new Intent(getContext(), AddProperty.class)));
+        binding.addNewProperty.setOnClickListener(view -> view.getContext().startActivity(new Intent(getContext(), AddProperty.class)));
 
         binding.propertyList.addOnScrollListener(new OnScrollListener() {
             @Override
@@ -337,7 +333,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
         if (viewHolder instanceof PropertyHolder) {
-            new AlertDialog.Builder(viewHolder.itemView.getContext())
+            new MaterialAlertDialogBuilder(viewHolder.itemView.getContext())
                     .setMessage("Are you sure?")
                     .setPositiveButton("Yes", (dialogInterface, i) -> {
                         PropertyUtils.delete(this.getActivity(), adapter.getItem(viewHolder.getAdapterPosition()));

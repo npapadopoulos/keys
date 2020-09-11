@@ -23,8 +23,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/colorGrey"
             android:transitionName="toolbar"
-            app:layout_collapseMode="pin"
-            app:layout_scrollFlags="scroll|enterAlways|snap"
+            app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
         <LinearLayout

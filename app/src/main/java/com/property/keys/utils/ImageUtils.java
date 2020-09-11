@@ -3,7 +3,6 @@ package com.property.keys.utils;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -21,8 +20,10 @@ import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestBuilder;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.target.CustomViewTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -89,11 +90,13 @@ public class ImageUtils {
         return loadImage(context, image, imageView, false);
     }
 
-    public static File loadImage(Context context, File image, ImageView imageView, boolean useBackround) {
+    public static File loadImage(Context context, File image, ImageView imageView, boolean useBackground) {
         RequestBuilder<Drawable> glideBuilder = Glide.with(context)
                 .load(image)
+                .skipMemoryCache(true)
+                .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .dontTransform();
-        if (useBackround) {
+        if (useBackground) {
             glideBuilder.into(new CustomViewTarget<ImageView, Drawable>(imageView) {
                 @Override
                 public void onLoadFailed(@Nullable Drawable errorDrawable) {
@@ -138,16 +141,20 @@ public class ImageUtils {
         }
     }
 
-    public static void syncAndloadImages(Context context, @NonNull String name, ImageView imageView) {
-        syncAndloadImages(context, name, imageView, false);
+    public static void syncAndloadImagesProfile(Context context, @NonNull String name, ImageView imageView) {
+        syncAndloadImages(context, "profile", name, imageView, false);
     }
 
-    public static void syncAndloadImages(Context context, @NonNull String name, ImageView imageView, boolean useBackround) {
+    public static void syncAndloadImagesProperty(Context context, @NonNull String name, ImageView imageView, boolean useBackround) {
+        syncAndloadImages(context, "property", name, imageView, useBackround);
+    }
+
+    private static void syncAndloadImages(Context context, String directory, @NonNull String name, ImageView imageView, boolean useBackround) {
         File image = getImage(context, name);
         if (image != null) {
             loadImage(context, image, imageView, useBackround);
         } else {
-            StorageUtils.downloadAndSaveImage(context, name, "profile", imageView);
+            StorageUtils.downloadAndSaveImage(context, name, directory, imageView);
         }
     }
 
@@ -258,7 +265,7 @@ public class ImageUtils {
      * @param activity
      */
     private static void showSettingsDialog(Activity activity) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity);
         builder.setTitle("Grant Permissions");
         builder.setMessage("This app needs permission to use this feature. You can grant them in app settings.");
         builder.setPositiveButton("GOTO SETTINGS", (dialog, which) -> {

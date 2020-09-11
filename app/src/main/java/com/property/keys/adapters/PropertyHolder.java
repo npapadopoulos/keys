@@ -65,7 +65,6 @@ public class PropertyHolder extends RecyclerView.ViewHolder implements Holder {
             Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(activity, pairs).toBundle();
             Intent propertyDetails = new Intent(itemView.getContext(), PropertyDetails.class);
             propertyDetails.putExtra("property", property);
-
             view.getContext().startActivity(propertyDetails, bundle);
         });
     }
@@ -79,7 +78,7 @@ public class PropertyHolder extends RecyclerView.ViewHolder implements Holder {
         name.setText(property.getName());
         address.setText(property.getAddress());
         this.property = property;
-        ImageUtils.syncAndloadImages(activity, property.getId(), propertyImage);
+        ImageUtils.syncAndloadImagesProperty(activity, property.getId(), propertyImage, false);
         updateFavourite(activity, setFavourite, property.getFavouredBy().containsKey(user.getId()));
     }
 

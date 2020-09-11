@@ -1,6 +1,5 @@
 package com.property.keys.fragments;
 
-import android.app.AlertDialog;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -15,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
@@ -104,7 +104,7 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
 
     private void addOnClearListener() {
         binding.deleteNotifications.setOnClickListener(view -> {
-            new AlertDialog.Builder(getActivity())
+            new MaterialAlertDialogBuilder(requireActivity())
                     .setMessage("Are you sure you want to remove all notifications?")
                     .setPositiveButton("Yes", (dialogInterface, i) -> {
                         UserUtils.deleteNotifications(userId);
@@ -123,7 +123,7 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
     @Override
     public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
         if (viewHolder instanceof NotificationHolder) {
-            new AlertDialog.Builder(viewHolder.itemView.getContext())
+            new MaterialAlertDialogBuilder(viewHolder.itemView.getContext())
                     .setMessage("Are you sure?")
                     .setPositiveButton("Yes", (dialogInterface, i) -> {
                         UserUtils.deleteNotification(userId, adapter.getItem(viewHolder.getAdapterPosition()).getId());

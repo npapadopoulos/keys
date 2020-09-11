@@ -19,7 +19,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.property.keys.PropertyDetails;
 import com.property.keys.R;
 import com.property.keys.entities.Key;
-import com.property.keys.utils.ImageUtils;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class KeyHolder extends RecyclerView.ViewHolder {
@@ -54,6 +53,6 @@ public class KeyHolder extends RecyclerView.ViewHolder {
     public void bind(@NonNull Context context, @NonNull Key key) {
         keyId.setText(key.getId());
         this.key = key;
-        ImageUtils.syncAndloadImages(context, key.getId(), qrCodeImage);
+//        ImageUtils.syncAndloadImagesKey(context, key.getId(), qrCodeImage);
     }
 }

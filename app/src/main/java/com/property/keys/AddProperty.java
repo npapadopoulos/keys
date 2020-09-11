@@ -64,8 +64,8 @@ public class AddProperty extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         updateStatusBarOptions();
-        initToolbar();
         addOnButtonsClickListeners();
+        initToolbar();
     }
 
     private void addOnButtonsClickListeners() {
@@ -88,8 +88,9 @@ public class AddProperty extends AppCompatActivity {
         propertyToolbar.setNavigationOnClickListener(view -> finish());
 
         setSupportActionBar(propertyToolbar);
-        getSupportActionBar().setTitle("Back");
+        getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
     }
 
     private void updateStatusBarOptions() {

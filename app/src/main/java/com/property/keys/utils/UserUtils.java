@@ -71,7 +71,7 @@ public class UserUtils {
         );
     }
 
-    public static void update(User user, Consumer<Task<Void>> onUpdateFailed, Consumer<Task<Void>> onUpdateSucceeded) {
+    public static void updateBasics(User user, Consumer<Exception> onUpdateFailed, Consumer<Task<Void>> onUpdateSucceeded) {
         new TaskExecutor().executeAsync(
                 UserUpdateTask.builder()
                         .user(user)

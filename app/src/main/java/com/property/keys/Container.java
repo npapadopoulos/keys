@@ -1,7 +1,6 @@
 package com.property.keys;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -28,6 +27,7 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
 import com.arlib.floatingsearchview.FloatingSearchView;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -75,7 +75,7 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
                 || binding.drawerLayout.isDrawerVisible(GravityCompat.START)) {
             binding.drawerLayout.closeDrawer(GravityCompat.START);
         } else if (fragment.getTag() == null || fragment.getTag().equalsIgnoreCase(getPackageName() + "." + "dashboard")) {
-            new AlertDialog.Builder(this)
+            new MaterialAlertDialogBuilder(this)
                     .setMessage("Are you sure you want to log out?")
                     .setPositiveButton("Yes", (dialogInterface, i) -> UserUtils.signOut())
                     .setNegativeButton("No", Utils::onClick).create().show();
@@ -153,7 +153,7 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
         toggle.syncState();
 
         NavigationUtils.initNavigation(binding.navigation, binding.drawerLayout, binding.content);
-        ImageUtils.syncAndloadImages(this, user.getId(), navigationProfileImage);
+        ImageUtils.syncAndloadImagesProfile(this, user.getId(), navigationProfileImage);
 
         onImageChangedBroadcastReceiver = new OnImageChangedBroadcastReceiver();
         onImageChangedBroadcastReceiver.setUserId(user.getId());
@@ -292,7 +292,7 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            ImageUtils.syncAndloadImages(context, userId, imageView);
+            ImageUtils.syncAndloadImagesProfile(context, userId, imageView);
         }
     }
 }

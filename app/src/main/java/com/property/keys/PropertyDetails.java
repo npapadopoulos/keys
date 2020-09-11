@@ -60,7 +60,7 @@ public class PropertyDetails extends AppCompatActivity {
         user = UserUtils.getLocalUser(this);
 
         initToolbar();
-        ImageUtils.syncAndloadImages(this, property.getId(), binding.propertyImage, true);
+        ImageUtils.syncAndloadImagesProperty(this, property.getId(), binding.propertyImage, true);
         updateFavourite(this, binding.setFavourite, property.getFavouredBy().get(user.getId()) != null);
         addOnSetFavouriteClickListener();
 

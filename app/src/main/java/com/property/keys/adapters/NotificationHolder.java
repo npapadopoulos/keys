@@ -36,7 +36,7 @@ public class NotificationHolder extends RecyclerView.ViewHolder implements Holde
     public void bind(@NonNull Context context, @NonNull Notification notification) {
         description.setText(notification.getDescription());
         date.setText(notification.getDate());
-        ImageUtils.syncAndloadImages(context, notification.getUserId(), userImage);
+        ImageUtils.syncAndloadImagesProfile(context, notification.getUserId(), userImage);
     }
 
     @Override

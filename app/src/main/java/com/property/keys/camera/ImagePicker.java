@@ -2,7 +2,6 @@ package com.property.keys.camera;
 
 import android.Manifest;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
@@ -15,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.karumi.dexter.Dexter;
 import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
@@ -53,7 +53,7 @@ public class ImagePicker extends AppCompatActivity {
 
     public static void showImagePickerOptions(Activity activity, PickerOptionListener listener) {
         // setup the alert builder
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity);
         builder.setTitle(activity.getString(R.string.lbl_set_profile_photo));
 
         // add a list
@@ -70,8 +70,7 @@ public class ImagePicker extends AppCompatActivity {
         });
 
         // create and show the alert dialog
-        AlertDialog dialog = builder.create();
-        dialog.show();
+        builder.create().show();
     }
 
     @Override

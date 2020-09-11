@@ -21,6 +21,7 @@ import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.android.material.textfield.TextInputEditText;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
+import com.property.keys.Container;
 import com.property.keys.R;
 import com.property.keys.databinding.FragmentProfileBinding;
 import com.property.keys.entities.User;
@@ -44,10 +45,7 @@ public class Profile extends Fragment {
     private ChipNavigationBar bottomNavigationMenu;
     private NavigationView navigation;
     private MaterialToolbar toolbar;
-
-    public Profile(NavigationView navigation, MaterialToolbar toolbar) {
-        this(null, navigation, toolbar);
-    }
+    private Container container;
 
     public Profile(ChipNavigationBar bottomNavigationMenu, NavigationView navigation, MaterialToolbar toolbar) {
         this.bottomNavigationMenu = bottomNavigationMenu;
@@ -79,6 +77,8 @@ public class Profile extends Fragment {
         navigation.getCheckedItem().setChecked(false);
         toolbar.setTitle("Profile");
 
+        this.container = (Container) getActivity();
+
         user = UserUtils.getLocalUser(getActivity().getApplicationContext());
 
         TextInputEditText firstNameEditText = (TextInputEditText) binding.firstName.getEditText();
@@ -108,36 +108,35 @@ public class Profile extends Fragment {
                     && user.getEmail().equalsIgnoreCase(emailEditText.getText().toString())) {
                 binding.update.setEnabled(true);
 //                Utils.hideProgressBar(getActivity());
-                Snackbar.make(binding.main, "Nothing to update.", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(this.container.getPlaceSnackBar(), "Nothing to update.", Snackbar.LENGTH_SHORT).show();
                 return;
             }
 
-            User newUser = new User();
-            newUser.setId(user.getId());
-            newUser.setFirstName(firstNameEditText.getText().toString());
-            newUser.setLastName(lastNameEditText.getText().toString());
-            newUser.setEmail(emailEditText.getText().toString());
-            newUser.setPhoneNumber(phoneNumberEditText.getText().toString());
+            user.setFirstName(firstNameEditText.getText().toString());
+            user.setLastName(lastNameEditText.getText().toString());
+            user.setEmail(emailEditText.getText().toString());
+            user.setPhoneNumber(phoneNumberEditText.getText().toString());
 
-            Consumer<Task<Void>> onUpdateFailed = (Task<Void> task) -> {
+            Consumer<Exception> onUpdateFailed = (Exception exception) -> {
                 // If sign in fails, display a message to the user.
-                Log.i(TAG, "Account update for " + user.getId() + " failed.", task.getException());
-                Snackbar.make(binding.main, "Account update for " + user.getId() + " failed. Try again later.", Snackbar.LENGTH_SHORT).show();
+                Log.i(TAG, "Account update for " + user.getId() + " failed.", exception);
+                Snackbar.make(this.container.getPlaceSnackBar(), "Account update for " + user.getId() + " failed. Try again later.", Snackbar.LENGTH_SHORT).show();
                 binding.update.setEnabled(true);
 //                Utils.hideProgressBar(getActivity());
             };
 
             Consumer<Task<Void>> onUpdateSucceeded = (Task<Void> task) -> {
                 Log.i(TAG, "Account update for " + user.getId() + " succeeded.");
+                Snackbar.make(this.container.getPlaceSnackBar(), "Account details updated.", Snackbar.LENGTH_SHORT).show();
                 binding.update.setEnabled(true);
 //                Utils.hideProgressBar(getActivity());
-                UserUtils.saveUser(newUser, getActivity().getApplicationContext());
+                UserUtils.saveUser(user, getActivity().getApplicationContext());
             };
-            //FIXME notifications and properties are not included in local user
-            UserUtils.update(user, onUpdateFailed, onUpdateSucceeded);
+            //updates only basic fields, firstName, lastName, email and phoneNumber
+            UserUtils.updateBasics(user, onUpdateFailed, onUpdateSucceeded);
         });
 
-        ImageUtils.syncAndloadImages(getActivity(), user.getId(), binding.profileImage);
+        ImageUtils.syncAndloadImagesProfile(getActivity(), user.getId(), binding.profileImage);
         binding.addImage.setOnClickListener(this::updateImage);
         binding.profileImage.setOnClickListener(this::updateImage);
 
