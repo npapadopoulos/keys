@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 
+import com.google.android.gms.common.util.CollectionUtils;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthResult;
@@ -27,6 +28,8 @@ import com.property.keys.entities.User;
 import com.property.keys.utils.UserUtils;
 import com.property.keys.utils.Utils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
@@ -73,13 +76,18 @@ public class SignIn extends AppCompatActivity {
     }
 
     private void checkForPermissions(String... permissions) {
+        List<String> missingPermissions = new ArrayList<>();
         Stream.of(permissions).forEach(permission -> {
             if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
                 if (!ActivityCompat.shouldShowRequestPermissionRationale(this, permission)) {
-                    requestPermissions(new String[]{permission}, PackageManager.PERMISSION_GRANTED);
+                    missingPermissions.add(permission);
                 }
             }
         });
+        if (!CollectionUtils.isEmpty(missingPermissions)) {
+            requestPermissions(missingPermissions.toArray(new String[0]), PackageManager.PERMISSION_GRANTED);
+        }
+
     }
 
     private void addOnForgotPasswordClickListener() {
