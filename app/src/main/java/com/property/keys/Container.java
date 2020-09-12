@@ -162,6 +162,11 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
         imageChangedFilter = new IntentFilter();
         imageChangedFilter.addAction(getPackageName() + ".PROFILE_IMAGE_UPDATED");
 
+
+        navigationProfileImage.setOnClickListener(v -> openProfileFragment());
+        firstNameLabel.setOnClickListener(v -> openProfileFragment());
+        lastNameLabel.setOnClickListener(v -> openProfileFragment());
+
         updateStatusBarOptions();
         bottomMenu();
         setOnUnreadNotificationListener();
@@ -172,6 +177,16 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
         } else {
             binding.bottomNavigationMenu.setItemSelected(R.id.bottom_navigation_dashboard, true);
         }
+    }
+
+    private void openProfileFragment() {
+        fragment = new Profile(binding.bottomNavigationMenu, binding.navigation, binding.toolbar);
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.content, fragment, getPackageName() + "." + "profile")
+                .addToBackStack(fragment.getTag())
+                .commit();
+        binding.drawerLayout.closeDrawer(GravityCompat.START);
     }
 
     private void updateStatusBarOptions() {

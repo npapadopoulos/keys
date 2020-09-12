@@ -70,6 +70,13 @@ public class SignIn extends AppCompatActivity {
 
         checkForPermissions(CAMERA, INTERNET, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, ACCESS_NETWORK_STATE);
 
+        binding.password.setErrorIconOnClickListener(view -> {
+            if (binding.password.isErrorEnabled()) {
+                binding.password.setErrorEnabled(false);
+                binding.password.requestFocus();
+            }
+        });
+
         addOnSubmitClickListener();
         addOnSignUpClickListener();
         addOnForgotPasswordClickListener();
@@ -169,11 +176,9 @@ public class SignIn extends AppCompatActivity {
                 // If sign in fails, display a message to the user.
                 Log.w(TAG, "No such User exists: ", task.getException());
                 binding.email.setError("No such User exists");
-                binding.email.requestFocus();
             } else if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                 Log.w(TAG, "Wrong Password: ", task.getException());
                 binding.password.setError("Wrong Password");
-                binding.password.requestFocus();
             } else {
                 // If sign in fails, display a message to the user.
                 Log.w(TAG, "Authentication failed: ", task.getException());
