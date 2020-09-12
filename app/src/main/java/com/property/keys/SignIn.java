@@ -182,7 +182,7 @@ public class SignIn extends AppCompatActivity {
                 binding.password.setError("Wrong Password");
             } else if (task.getException() instanceof FirebaseTooManyRequestsException) {
                 Log.w(TAG, "Try again later: ", task.getException());
-                binding.password.setError("Authentication failed. Max retries limit reached. Try again later.");
+                Snackbar.make(binding.main, "Authentication failed. Max retries limit reached. Try again later.", Snackbar.LENGTH_SHORT).show();
             } else {
                 // If sign in fails, display a message to the user.
                 Log.w(TAG, "Authentication failed: ", task.getException());
