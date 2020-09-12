@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat;
 import com.google.android.gms.common.util.CollectionUtils;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.FirebaseTooManyRequestsException;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthInvalidUserException;
@@ -179,6 +180,9 @@ public class SignIn extends AppCompatActivity {
             } else if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
                 Log.w(TAG, "Wrong Password: ", task.getException());
                 binding.password.setError("Wrong Password");
+            } else if (task.getException() instanceof FirebaseTooManyRequestsException) {
+                Log.w(TAG, "Try again later: ", task.getException());
+                binding.password.setError("Authentication failed. Max retries limit reached. Try again later.");
             } else {
                 // If sign in fails, display a message to the user.
                 Log.w(TAG, "Authentication failed: ", task.getException());
