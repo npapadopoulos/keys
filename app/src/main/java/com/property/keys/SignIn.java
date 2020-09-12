@@ -39,6 +39,7 @@ import static android.Manifest.permission.ACCESS_NETWORK_STATE;
 import static android.Manifest.permission.CAMERA;
 import static android.Manifest.permission.INTERNET;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.READ_PHONE_STATE;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 
@@ -69,7 +70,7 @@ public class SignIn extends AppCompatActivity {
         binding = ActivitySigninBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        checkForPermissions(CAMERA, INTERNET, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, ACCESS_NETWORK_STATE);
+        checkForPermissions(CAMERA, INTERNET, READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE, ACCESS_NETWORK_STATE, READ_PHONE_STATE);
 
         binding.password.setErrorIconOnClickListener(view -> {
             if (binding.password.isErrorEnabled()) {

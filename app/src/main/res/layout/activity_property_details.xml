@@ -60,7 +60,7 @@
             <com.google.android.material.appbar.MaterialToolbar
                 android:id="@+id/propertyDetailsToolbar"
                 android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
+                android:layout_height="80dp"
                 android:layout_marginTop="?attr/actionBarSize"
                 app:layout_collapseMode="pin"
                 app:layout_scrollFlags="scroll|enterAlways|snap"
@@ -130,11 +130,23 @@
 
             </com.google.android.material.appbar.MaterialToolbar>
 
+            <com.mapquest.mapping.maps.MapView
+                android:id="@+id/mapquestMapView"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
+                app:mapquest_app_key="@string/maps_key" />
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
                 android:orientation="horizontal">
 
                 <com.google.android.material.card.MaterialCardView

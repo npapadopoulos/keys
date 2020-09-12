@@ -37,7 +37,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="qr_code_scanner">QR Code Scanner</string>
     <string name="busy">Busy</string>
-    <string name="default_property_address">Ypostratigou Tassou Markou Ave 65/1</string>
+    <string name="default_property_address">Parmenionos 3 (Opposite Kings Avenue Mall Philippou Court shop 1–2 Paphos, 8045, Cyprus</string>
     <string name="default_property_name">Jewel Villa at Javania Coral</string>
     <string name="back">Back</string>
     <string name="close">Close</string>
@@ -60,4 +60,5 @@
     <string name="available">Available</string>
     <string name="add_new_key">ADD NEW KEY</string>
     <string name="remember">Remember</string>
+    <string name="maps_key">uznpzwz1exjqRuDIRSGUASUIzFoLAB08</string>
 </resources>

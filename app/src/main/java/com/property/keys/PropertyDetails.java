@@ -64,6 +64,8 @@ public class PropertyDetails extends AppCompatActivity {
         updateFavourite(this, binding.setFavourite, property.getFavouredBy().get(user.getId()) != null);
         addOnSetFavouriteClickListener();
 
+        PropertyUtils.createMap(this, savedInstanceState, binding.mapquestMapView, property);
+
 //        binding.progressBar.setVisibility(View.GONE);
 //        binding.addKey.setOnClickListener(this::addKey);
 
@@ -158,5 +160,30 @@ public class PropertyDetails extends AppCompatActivity {
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
+    }
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        binding.mapquestMapView.onResume();
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        binding.mapquestMapView.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        binding.mapquestMapView.onDestroy();
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        binding.mapquestMapView.onSaveInstanceState(outState);
     }
 }

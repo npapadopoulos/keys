@@ -37,6 +37,8 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 
+import timber.log.Timber;
+
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class ImageUtils {
 
@@ -68,10 +70,10 @@ public class ImageUtils {
             fos.flush();
             fos.close();
 
-            Log.i(TAG, "Saved Image to : " + file.getPath());
+            Timber.tag(TAG).i("Saved Image to : %s", file.getPath());
             return file;
         } catch (IOException e) {
-            Log.e(TAG, "Couldn't save the image to local storage.", e);
+            Timber.tag(TAG).e(e, "Couldn't save the image to local storage.");
         }
         return null;
     }
