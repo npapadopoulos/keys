@@ -83,6 +83,10 @@ public class Utils {
 
 
     public static Boolean validatePassword(TextInputLayout... passwords) {
+        return validatePassword(false, passwords);
+    }
+
+    public static Boolean validatePassword(boolean signin, TextInputLayout... passwords) {
         TextInputLayout password = passwords[0];
         TextInputLayout confirmPassword = null;
         if (passwords.length == 2) {
@@ -92,7 +96,7 @@ public class Utils {
         if (value.isEmpty()) {
             password.setError("cannot be empty");
             return false;
-        } else if (!value.matches(PASSWORD_PATTERN)) {
+        } else if (!signin && !value.matches(PASSWORD_PATTERN)) {
             password.setError("is too weak");
             return false;
         }

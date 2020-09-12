@@ -147,7 +147,7 @@ public class SignIn extends AppCompatActivity {
 
 
     public void loginUser(View view) {
-        if (!Utils.validateEmail(binding.email) | !Utils.validatePassword(binding.password)) {
+        if (!Utils.validateEmail(binding.email) | !Utils.validatePassword(true, binding.password)) {
             binding.progressBar.setVisibility(View.GONE);
             binding.submit.setEnabled(true);
         } else {
