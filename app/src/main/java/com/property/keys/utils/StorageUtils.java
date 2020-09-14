@@ -4,23 +4,14 @@ package com.property.keys.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.os.Build;
 import android.widget.ImageView;
 
 import androidx.annotation.RequiresApi;
-import androidx.core.content.ContextCompat;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
-import com.property.keys.R;
-import com.property.keys.entities.User;
-
-import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -28,6 +19,7 @@ import java.util.function.Consumer;
 
 import timber.log.Timber;
 
+import static com.property.keys.utils.ImageUtils.generateDefaultProfileImage;
 import static com.property.keys.utils.ImageUtils.getImage;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
@@ -77,30 +69,6 @@ public class StorageUtils {
                 Timber.tag(TAG).i("Image was not found in path " + id + " in remote storage");
             }
         });
-    }
-
-    @NotNull
-    private static Bitmap generateDefaultProfileImage(Context context, ImageView imageView) {
-        Bitmap bitmap = Bitmap.createBitmap(imageView.getWidth(), imageView.getHeight(), Bitmap.Config.ARGB_8888);
-        User localUser = UserUtils.getLocalUser(context);
-        String initials = String.valueOf(Character.toUpperCase(localUser.getFirstName().charAt(0))) + Character.toUpperCase(localUser.getLastName().charAt(0));
-
-        Canvas canvas = new Canvas(bitmap);
-        Paint paint = new Paint();
-        paint.setColor(ContextCompat.getColor(context, R.color.primaryColor));
-        paint.setStyle(Paint.Style.FILL);
-        canvas.drawPaint(paint);
-
-        Rect r = new Rect();
-        paint.setTextAlign(Paint.Align.CENTER);
-        paint.setColor(Color.WHITE);
-        paint.setTextSize(70);
-        paint.getTextBounds(initials, 0, initials.length(), r);
-        int x = canvas.getWidth() / 2;
-        int y = canvas.getHeight() / 2;
-        y += (Math.abs(r.height())) / 2;
-        canvas.drawText(initials, x, y, paint);
-        return bitmap;
     }
 
     private static void saveAndLoadImage(Context context, String id, Consumer<File> loader, Bitmap bitmap) {

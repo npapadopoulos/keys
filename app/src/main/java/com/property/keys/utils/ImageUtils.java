@@ -6,6 +6,10 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
@@ -31,6 +35,9 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.property.keys.R;
 import com.property.keys.camera.ImagePicker;
+import com.property.keys.entities.User;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -289,5 +296,30 @@ public class ImageUtils {
         Uri uri = Uri.fromParts("package", activity.getPackageName(), null);
         intent.setData(uri);
         activity.startActivityForResult(intent, 101);
+    }
+
+
+    @NotNull
+    public static Bitmap generateDefaultProfileImage(Context context, ImageView imageView) {
+        Bitmap bitmap = Bitmap.createBitmap(imageView.getWidth(), imageView.getHeight(), Bitmap.Config.ARGB_8888);
+        User localUser = UserUtils.getLocalUser(context);
+        String initials = String.valueOf(Character.toUpperCase(localUser.getFirstName().charAt(0))) + Character.toUpperCase(localUser.getLastName().charAt(0));
+
+        Canvas canvas = new Canvas(bitmap);
+        Paint paint = new Paint();
+        paint.setColor(ContextCompat.getColor(context, R.color.primaryColor));
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawPaint(paint);
+
+        Rect r = new Rect();
+        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setColor(Color.WHITE);
+        paint.setTextSize(70);
+        paint.getTextBounds(initials, 0, initials.length(), r);
+        int x = canvas.getWidth() / 2;
+        int y = canvas.getHeight() / 2;
+        y += (Math.abs(r.height())) / 2;
+        canvas.drawText(initials, x, y, paint);
+        return bitmap;
     }
 }
