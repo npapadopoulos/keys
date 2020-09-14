@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -22,6 +21,8 @@ import com.property.keys.utils.Utils;
 
 import java.util.UUID;
 import java.util.function.Consumer;
+
+import timber.log.Timber;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class SignUp extends AppCompatActivity {
@@ -93,7 +94,7 @@ public class SignUp extends AppCompatActivity {
         };
 
         Consumer<Task<AuthResult>> onCreationFailed = (Task<AuthResult> task) -> {
-            Log.i(TAG, "Account creation for " + emailValue + " failed.", task.getException());
+            Timber.tag(TAG).i(task.getException(), "Account creation for " + emailValue + " failed.");
             Snackbar.make(binding.main, "Account creation for " + emailValue + " failed.", Snackbar.LENGTH_SHORT).show();
 
             binding.progressBar.setVisibility(View.GONE);

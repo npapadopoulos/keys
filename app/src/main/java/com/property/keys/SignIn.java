@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.util.Pair;
 import android.view.View;
 import android.view.WindowManager;
@@ -34,6 +33,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
+
+import timber.log.Timber;
 
 import static android.Manifest.permission.ACCESS_NETWORK_STATE;
 import static android.Manifest.permission.CAMERA;
@@ -167,7 +168,7 @@ public class SignIn extends AppCompatActivity {
         };
 
         Consumer<Exception> onFailed = (Exception e) -> {
-            Log.e(TAG, "Failed to start Dashboard activity.", e);
+            Timber.tag(TAG).e(e, "Failed to start Dashboard activity.");
             Snackbar.make(binding.main, "Authentication failed. Try again later.", Snackbar.LENGTH_SHORT).show();
             binding.progressBar.setVisibility(View.GONE);
             binding.submit.setEnabled(true);
@@ -176,17 +177,17 @@ public class SignIn extends AppCompatActivity {
         Consumer<Task<AuthResult>> onAuthenticationFailed = (Task<AuthResult> task) -> {
             if (task.getException() instanceof FirebaseAuthInvalidUserException) {
                 // If sign in fails, display a message to the user.
-                Log.w(TAG, "No such User exists: ", task.getException());
+                Timber.tag(TAG).w(task.getException(), "No such User exists: ");
                 binding.email.setError("No such User exists");
             } else if (task.getException() instanceof FirebaseAuthInvalidCredentialsException) {
-                Log.w(TAG, "Wrong Password: ", task.getException());
+                Timber.tag(TAG).w(task.getException(), "Wrong Password: ");
                 binding.password.setError("Wrong Password");
             } else if (task.getException() instanceof FirebaseTooManyRequestsException) {
-                Log.w(TAG, "Try again later: ", task.getException());
+                Timber.tag(TAG).w(task.getException(), "Try again later: ");
                 Snackbar.make(binding.main, "Authentication failed. Max retries limit reached. Try again later.", Snackbar.LENGTH_SHORT).show();
             } else {
                 // If sign in fails, display a message to the user.
-                Log.w(TAG, "Authentication failed: ", task.getException());
+                Timber.tag(TAG).w(task.getException(), "Authentication failed: ");
                 Snackbar.make(binding.main, "Authentication failed. Try again later", Snackbar.LENGTH_SHORT).show();
             }
             binding.progressBar.setVisibility(View.GONE);

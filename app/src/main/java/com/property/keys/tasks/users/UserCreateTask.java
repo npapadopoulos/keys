@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -21,6 +20,7 @@ import com.property.keys.utils.Utils;
 import java.util.function.Consumer;
 
 import lombok.Builder;
+import timber.log.Timber;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 @Builder
@@ -38,13 +38,13 @@ public class UserCreateTask extends AbstractAsyncTask {
 
     @Override
     public void runInBackground() {
-        firebaseAuth.createUserWithEmailAndPassword(user.getEmail(), user.getPassword())
+        String hashedPassword = Utils.hash(user.getPassword());
+        firebaseAuth.createUserWithEmailAndPassword(user.getEmail(), hashedPassword)
                 .addOnCompleteListener(activity, task -> {
                     if (task.isSuccessful()) {
                         try {
                             DatabaseReference users = firebaseDatabase.getReference("users");
                             user.setId(firebaseAuth.getCurrentUser().getUid());
-                            String hashedPassword = Utils.hash(user.getPassword());
                             user.setPassword(hashedPassword);
                             users.child(user.getId()).setValue(user);
 
@@ -52,7 +52,7 @@ public class UserCreateTask extends AbstractAsyncTask {
                             next.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                             startActivity.accept(next);
                         } catch (Exception e) {
-                            Log.e(TAG, "Failed to start activity.", e);
+                            Timber.tag(TAG).e(e, "Failed to start activity.");
                         }
                     } else {
                         // If sign in fails, display a message to the user.

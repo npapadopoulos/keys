@@ -3,7 +3,6 @@ package com.property.keys.tasks.properties;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -25,6 +24,7 @@ import java.util.Set;
 import java.util.function.Consumer;
 
 import lombok.AllArgsConstructor;
+import timber.log.Timber;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 @AllArgsConstructor
@@ -64,7 +64,7 @@ public class PropertyCreateTask extends AbstractAsyncTask {
                             next.putExtra("selected", "Properties");
                             startActivity.accept(next);
                         } catch (Exception e) {
-                            Log.e(TAG, "Failed to start activity.", e);
+                            Timber.tag(TAG).e(e, "Failed to start activity.");
                         }
                     } else {
                         // If sign in fails, display a message to the user.

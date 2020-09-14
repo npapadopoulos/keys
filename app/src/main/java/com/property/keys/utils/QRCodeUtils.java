@@ -2,7 +2,6 @@ package com.property.keys.utils;
 
 import android.graphics.Bitmap;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -13,6 +12,7 @@ import java.io.ByteArrayOutputStream;
 
 import androidmads.library.qrgenearator.QRGContents;
 import androidmads.library.qrgenearator.QRGEncoder;
+import timber.log.Timber;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class QRCodeUtils {
@@ -26,9 +26,9 @@ public class QRCodeUtils {
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             //validate
             StorageUtils.uploadImage(key.getId(), "qrcode", baos.toByteArray());
-            Log.i(TAG, "Generated QR code for the  key " + key.getId() + " and uploaded to remote storage.");
+            Timber.tag(TAG).i("Generated QR code for the  key " + key.getId() + " and uploaded to remote storage.");
         } catch (WriterException e) {
-            Log.e(TAG, "Could not generate QR Code for key " + key.getId() + ": " + e.getMessage());
+            Timber.tag(TAG).e("Could not generate QR Code for key " + key.getId() + ": " + e.getMessage());
         }
     }
 }

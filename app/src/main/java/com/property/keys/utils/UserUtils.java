@@ -24,6 +24,7 @@ import com.property.keys.tasks.users.UserUpdateTask;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.function.Consumer;
 
@@ -44,16 +45,17 @@ public class UserUtils {
                                     Consumer<Intent> startActivity,
                                     Consumer<Task<AuthResult>> onAuthenticationFailed,
                                     Consumer<Exception> onFailed) {
-        new TaskExecutor().executeAsync(UserAuthenticateTask.builder()
-                .activity(activity)
-                .context(context)
-                .email(email)
-                .password(password)
-                .remember(remember)
-                .startActivity(startActivity)
-                .onAuthenticationFailed(onAuthenticationFailed)
-                .onFailed(onFailed)
-                .build()
+        new TaskExecutor().executeAsync(
+                UserAuthenticateTask.builder()
+                        .activity(activity)
+                        .context(context)
+                        .email(email)
+                        .password(password)
+                        .remember(remember)
+                        .startActivity(startActivity)
+                        .onAuthenticationFailed(onAuthenticationFailed)
+                        .onFailed(onFailed)
+                        .build()
         );
     }
 
@@ -107,11 +109,12 @@ public class UserUtils {
         );
     }
 
-    public static void updateSearchSuggestions(Context context, User user) {
+    public static void updateSearchSuggestions(Context context, String userId, List<String> propertySearchSuggestions) {
         new TaskExecutor().executeAsync(
                 UserPropertySearchSuggestionsUpdateTask.builder()
                         .context(context)
-                        .user(user)
+                        .userId(userId)
+                        .propertySearchSuggestions(propertySearchSuggestions)
                         .build()
         );
     }
@@ -172,6 +175,13 @@ public class UserUtils {
         if (user.isRemember() && password != null) {
             editor.putString("password", password);
         }
+        editor.apply();
+    }
+
+    public static void updateSuggestions(List<String> propertySearchSuggestions, Context context) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putStringSet("propertySearchSuggestions", new HashSet<>(propertySearchSuggestions));
         editor.apply();
     }
 }

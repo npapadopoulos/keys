@@ -76,12 +76,13 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
             binding.drawerLayout.closeDrawer(GravityCompat.START);
         } else if (fragment.getTag() == null || fragment.getTag().equalsIgnoreCase(getPackageName() + "." + "dashboard")) {
             new MaterialAlertDialogBuilder(this)
+                    .setBackground(ContextCompat.getDrawable(this, R.drawable.white_card_background))
                     .setMessage("Are you sure you want to log out?")
                     .setPositiveButton("Yes", (dialogInterface, i) -> UserUtils.signOut())
                     .setNegativeButton("No", Utils::onClick).create().show();
         } else if (fragment.getTag() != null && fragment.getTag().equalsIgnoreCase(getPackageName() + "." + "properties")
-                && ((Properties) fragment).getView().findViewById(R.id.floatingSearchView).isFocused()) {
-            FloatingSearchView propertiesView = ((Properties) fragment).getView().findViewById(R.id.floatingSearchView);
+                && fragment.getView().findViewById(R.id.floatingSearchView).isFocused()) {
+            FloatingSearchView propertiesView = fragment.getView().findViewById(R.id.floatingSearchView);
             propertiesView.clearSearchFocus();
         } else {
             FragmentManager fragmentManager = this.getSupportFragmentManager();

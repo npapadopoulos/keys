@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
@@ -21,6 +20,8 @@ import com.property.keys.utils.UserUtils;
 import com.property.keys.utils.Utils;
 
 import java.util.function.Consumer;
+
+import timber.log.Timber;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class ResetPassword extends AppCompatActivity {
@@ -66,7 +67,7 @@ public class ResetPassword extends AppCompatActivity {
 
             Consumer<Task<AuthResult>> onResetFailed = (Task<AuthResult> task) -> {
                 // If sign in fails, display a message to the user.
-                Log.i(TAG, "Password reset for " + phoneNumber + " failed.", task.getException());
+                Timber.tag(TAG).i(task.getException(), "Password reset for " + phoneNumber + " failed.");
                 Snackbar.make(binding.main, "Password reset for " + phoneNumber + " failed.", Snackbar.LENGTH_SHORT).show();
                 binding.progressBar.setVisibility(View.GONE);
                 binding.submit.setEnabled(true);

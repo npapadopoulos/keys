@@ -10,12 +10,12 @@ import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
-import android.util.Log;
 import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.bumptech.glide.Glide;
@@ -29,6 +29,7 @@ import com.karumi.dexter.MultiplePermissionsReport;
 import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
+import com.property.keys.R;
 import com.property.keys.camera.ImagePicker;
 
 import java.io.File;
@@ -36,8 +37,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
+import java.util.Objects;
 
 import timber.log.Timber;
+
+import static com.property.keys.utils.StorageUtils.downloadAndSaveImage;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class ImageUtils {
@@ -52,11 +56,11 @@ public class ImageUtils {
     public static final File getImage(Context context, String id) {
         File image = getFile(context.getExternalCacheDir(), id);
         if (image == null) {
-            Log.e(TAG, "Couldn't find the image in local storage for id " + id);
+            Timber.tag(TAG).e("Couldn't find the image in local storage for id " + id);
             return null;
         }
 
-        Log.i(TAG, "Got Image from : " + image.getPath());
+        Timber.tag(TAG).i("Got Image from : " + image.getPath());
         return image;
     }
 
@@ -81,7 +85,7 @@ public class ImageUtils {
     public static File loadImage(Context context, String name, ImageView imageView) {
         File image = getImage(context, name);
         if (image == null) {
-            Log.e(TAG, "No Image found for: " + name);
+            Timber.tag(TAG).e("No Image found for: " + name);
             return image;
         }
 
@@ -118,7 +122,7 @@ public class ImageUtils {
         } else {
             glideBuilder.into(imageView);
         }
-        Log.i(TAG, "Image " + image.getPath() + " has been loaded");
+        Timber.tag(TAG).i("Image " + image.getPath() + " has been loaded");
         return image;
     }
 
@@ -137,7 +141,7 @@ public class ImageUtils {
                 if (!child.getName().equals(name)) {
                     boolean deleted = child.delete();
                     if (deleted)
-                        Log.i(TAG, "File " + child.getAbsolutePath() + " has been deleted");
+                        Timber.tag(TAG).i("File " + child.getAbsolutePath() + " has been deleted");
                 }
             }
         }
@@ -156,7 +160,7 @@ public class ImageUtils {
         if (image != null) {
             loadImage(context, image, imageView, useBackround);
         } else {
-            StorageUtils.downloadAndSaveImage(context, name, directory, imageView);
+            downloadAndSaveImage(context, name, directory, imageView);
         }
     }
 
@@ -172,8 +176,8 @@ public class ImageUtils {
     public static File getFile(File cacheDir, String name) {
         File directory = new File(cacheDir, "images");
         directory = new File(directory, name);
-        if (directory != null && directory.exists() && directory.listFiles() != null && directory.listFiles().length > 0) {
-            return directory.listFiles()[0];
+        if (directory.exists() && directory.listFiles() != null && Objects.requireNonNull(directory.listFiles()).length > 0) {
+            return Objects.requireNonNull(directory.listFiles())[0];
         }
         return null;
     }
@@ -268,6 +272,7 @@ public class ImageUtils {
      */
     private static void showSettingsDialog(Activity activity) {
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity);
+        builder.setBackground(ContextCompat.getDrawable(activity, R.drawable.white_card_background));
         builder.setTitle("Grant Permissions");
         builder.setMessage("This app needs permission to use this feature. You can grant them in app settings.");
         builder.setPositiveButton("GOTO SETTINGS", (dialog, which) -> {

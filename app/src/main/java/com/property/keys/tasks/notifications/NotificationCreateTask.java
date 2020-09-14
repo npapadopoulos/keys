@@ -2,7 +2,6 @@ package com.property.keys.tasks.notifications;
 
 import android.app.Activity;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 
@@ -21,6 +20,7 @@ import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import timber.log.Timber;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 @AllArgsConstructor
@@ -52,7 +52,7 @@ public class NotificationCreateTask extends AbstractAsyncTask {
         notifications.child(notification.getId()).setValue(notification)
                 .addOnCompleteListener(activity, task -> {
                     if (task.isSuccessful()) {
-                        Log.i(TAG, "Created notification '" + notification.getDescription() + "'.");
+                        Timber.tag(TAG).i("Created notification '" + notification.getDescription() + "'.");
                         if (usersToNotify != null) {
                             Map<String, Object> updates = new HashMap<>();
                             notification.setUnread(true);
@@ -65,7 +65,7 @@ public class NotificationCreateTask extends AbstractAsyncTask {
                             }
                         }
                     } else {
-                        Log.i(TAG, "Failed to create notification '" + notification.getDescription() + "'.");
+                        Timber.tag(TAG).i("Failed to create notification '" + notification.getDescription() + "'.");
                     }
                 });
     }

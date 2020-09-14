@@ -7,12 +7,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.karumi.dexter.Dexter;
@@ -27,6 +27,8 @@ import com.yalantis.ucrop.UCrop;
 import java.io.File;
 import java.time.Instant;
 import java.util.List;
+
+import timber.log.Timber;
 
 import static androidx.core.content.FileProvider.getUriForFile;
 
@@ -54,6 +56,7 @@ public class ImagePicker extends AppCompatActivity {
     public static void showImagePickerOptions(Activity activity, PickerOptionListener listener) {
         // setup the alert builder
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity);
+        builder.setBackground(ContextCompat.getDrawable(activity, R.drawable.white_card_background));
         builder.setTitle(activity.getString(R.string.lbl_set_profile_photo));
 
         // add a list
@@ -172,7 +175,7 @@ public class ImagePicker extends AppCompatActivity {
                 break;
             case UCrop.RESULT_ERROR:
                 final Throwable cropError = UCrop.getError(data);
-                Log.e(TAG, "Crop error: " + cropError);
+                Timber.tag(TAG).e("Crop error: " + cropError);
                 setResultCancelled();
                 break;
             default:

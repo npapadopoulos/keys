@@ -4,7 +4,6 @@ package com.property.keys.tasks.users;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -29,6 +28,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import lombok.Builder;
+import timber.log.Timber;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 @Builder
@@ -69,7 +69,7 @@ public class UserResetPasswordTask extends AbstractAsyncTask {
                                         Intent nextIntent = new Intent(context, SignIn.class);
                                         startActivity.accept(nextIntent);
                                     } catch (Exception e) {
-                                        Log.e(TAG, "Failed to start Sign activity.", e);
+                                        Timber.tag(TAG).e(e, "Failed to start Sign activity.");
                                     }
                                 }
                             }

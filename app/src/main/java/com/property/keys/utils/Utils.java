@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.res.ColorStateList;
 import android.os.Build;
-import android.util.Log;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
@@ -21,6 +20,8 @@ import com.property.keys.helpers.RecyclerItemTouchHelper;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+
+import timber.log.Timber;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class Utils {
@@ -40,7 +41,7 @@ public class Utils {
     public static Boolean validateText(TextInputLayout textInputLayout) {
         String value = textInputLayout.getEditText().getText().toString().trim();
         if (value.isEmpty()) {
-            Log.v(TAG, "Cannot be empty: '" + value + "'");
+            Timber.tag(TAG).v("Cannot be empty: '" + value + "'");
             textInputLayout.setError("cannot be empty");
             return false;
         } else {
@@ -52,11 +53,11 @@ public class Utils {
     public static Boolean validateEmail(TextInputLayout email) {
         String value = email.getEditText().getText().toString().trim();
         if (value.isEmpty()) {
-            Log.v(TAG, "Email cannot be empty: '" + value + "'");
+            Timber.tag(TAG).v("Email cannot be empty: '" + value + "'");
             email.setError("cannot be empty");
             return false;
         } else if (!value.matches(EMAIL_PATTERN)) {
-            Log.v(TAG, "Email is not valid: '" + value + "'");
+            Timber.tag(TAG).v("Email is not valid: '" + value + "'");
             email.setError("is not valid");
             return false;
         } else {
@@ -68,11 +69,11 @@ public class Utils {
     public static Boolean validatePhoneNumber(TextInputLayout phoneNumber) {
         String value = phoneNumber.getEditText().getText().toString().trim();
         if (value.isEmpty()) {
-            Log.v(TAG, "Phone Number cannot be empty: '" + value + "'");
+            Timber.tag(TAG).v("Phone Number cannot be empty: '" + value + "'");
             phoneNumber.setError("cannot be empty");
             return false;
         } else if (value.length() != 8 && !(value.length() == 12 && value.startsWith("+357")) && !(value.length() == 13 && value.startsWith("00357"))) {
-            Log.v(TAG, "Phone Number is not valid: '" + value + "'");
+            Timber.tag(TAG).v("Phone Number is not valid: '" + value + "'");
             phoneNumber.setError("is not valid");
             return false;
         } else {
@@ -148,7 +149,7 @@ public class Utils {
             md.update(password.getBytes());
             return hex(md.digest());
         } catch (NoSuchAlgorithmException e) {
-            Log.e(TAG, "Couldn't hash the password. Plain text will be used instead.", e);
+            Timber.tag(TAG).e(e, "Couldn't hash the password. Plain text will be used instead.");
         }
 
         return password;

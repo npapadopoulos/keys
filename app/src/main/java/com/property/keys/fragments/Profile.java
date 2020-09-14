@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +31,8 @@ import com.property.keys.utils.Utils;
 
 import java.io.IOException;
 import java.util.function.Consumer;
+
+import timber.log.Timber;
 
 import static com.property.keys.utils.ImageUtils.REQUEST_IMAGE;
 
@@ -119,14 +120,14 @@ public class Profile extends Fragment {
 
             Consumer<Exception> onUpdateFailed = (Exception exception) -> {
                 // If sign in fails, display a message to the user.
-                Log.i(TAG, "Account update for " + user.getId() + " failed.", exception);
+                Timber.tag(TAG).i(exception, "Account update for " + user.getId() + " failed.");
                 Snackbar.make(this.container.getPlaceSnackBar(), "Account update for " + user.getId() + " failed. Try again later.", Snackbar.LENGTH_SHORT).show();
                 binding.update.setEnabled(true);
 //                Utils.hideProgressBar(getActivity());
             };
 
             Consumer<Task<Void>> onUpdateSucceeded = (Task<Void> task) -> {
-                Log.i(TAG, "Account update for " + user.getId() + " succeeded.");
+                Timber.tag(TAG).i("Account update for " + user.getId() + " succeeded.");
                 Snackbar.make(this.container.getPlaceSnackBar(), "Account details updated.", Snackbar.LENGTH_SHORT).show();
                 binding.update.setEnabled(true);
 //                Utils.hideProgressBar(getActivity());
@@ -158,7 +159,7 @@ public class Profile extends Fragment {
                     intent.setAction("com.property.keys.PROFILE_IMAGE_UPDATED");
                     getActivity().sendBroadcast(intent);
                 } catch (IOException e) {
-                    Log.e(TAG, e.getMessage(), e);
+                    Timber.tag(TAG).e(e, e.getMessage());
                 }
             }
         }

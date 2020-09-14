@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -26,6 +25,7 @@ import com.property.keys.utils.UserUtils;
 import java.io.IOException;
 
 import lombok.SneakyThrows;
+import timber.log.Timber;
 
 import static com.property.keys.utils.ImageUtils.REQUEST_IMAGE;
 import static com.property.keys.utils.Utils.updateFavourite;
@@ -155,7 +155,7 @@ public class PropertyDetails extends AppCompatActivity {
                     StorageUtils.uploadImage(property.getId(), "property", image);
                     ImageUtils.loadImage(this, property.getId(), binding.propertyImage);
                 } catch (IOException e) {
-                    Log.e(TAG, e.getMessage(), e);
+                    Timber.tag(TAG).e(e, e.getMessage());
                 }
             }
         }

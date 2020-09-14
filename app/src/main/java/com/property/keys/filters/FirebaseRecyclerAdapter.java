@@ -1,7 +1,6 @@
 package com.property.keys.filters;
 
 import android.os.Build;
-import android.util.Log;
 import android.widget.Filter;
 import android.widget.Filterable;
 
@@ -24,6 +23,7 @@ import java.util.Collection;
 import java.util.List;
 
 import lombok.Setter;
+import timber.log.Timber;
 
 import static com.google.android.gms.common.util.CollectionUtils.isEmpty;
 import static java.util.stream.Collectors.toList;
@@ -83,6 +83,7 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
                 notifyItemInserted(newIndex);
                 break;
             case CHANGED:
+                //FIXME when unliked a property in filtered state, an REMOVED event type should be fired after of CHANGED event type
                 filteredSnapshots.remove(newIndex);
                 filteredSnapshots.add(newIndex, mSnapshots.get(newIndex));
                 notifyItemChanged(newIndex);
@@ -107,7 +108,7 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
 
     @Override
     public void onError(@NonNull DatabaseError error) {
-        Log.w(TAG, error.toException());
+        Timber.tag(TAG).w(error.toException());
     }
 
     @NonNull

@@ -8,7 +8,6 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -37,6 +36,8 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.function.Consumer;
+
+import timber.log.Timber;
 
 import static com.property.keys.utils.ImageUtils.REQUEST_IMAGE;
 
@@ -137,14 +138,14 @@ public class AddProperty extends AppCompatActivity {
                 Bitmap image = BitmapFactory.decodeByteArray(data, 0, data.length);
                 StorageUtils.uploadImage(pregenaratedPropertyId, "property", image);
             } catch (IOException e) {
-                Log.e(TAG, "Couldn't upload property image for " + pregenaratedPropertyId + " to remote storage.", e);
+                Timber.tag(TAG).e(e, "Couldn't upload property image for " + pregenaratedPropertyId + " to remote storage.");
             }
             startActivity(intent);
             finish();
         };
 
         Consumer<Task<Void>> onCreationFailed = (Task<Void> task) -> {
-            Log.i(TAG, "Property creation for " + nameValue + " failed.", task.getException());
+            Timber.tag(TAG).i(task.getException(), "Property creation for " + nameValue + " failed.");
             Snackbar.make(binding.main, "Property creation for " + nameValue + " failed.", Snackbar.LENGTH_SHORT).show();
 
             binding.progressBar.setVisibility(View.GONE);
@@ -164,7 +165,7 @@ public class AddProperty extends AppCompatActivity {
                     ImageUtils.saveImage(getApplicationContext(), image, pregenaratedPropertyId);
                     ImageUtils.loadImage(this, pregenaratedPropertyId, binding.propertyImage);
                 } catch (IOException e) {
-                    Log.e(TAG, e.getMessage(), e);
+                    Timber.tag(TAG).e(e, e.getMessage());
                 }
             }
         }

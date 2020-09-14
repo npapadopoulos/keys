@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -110,6 +111,7 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
                         UserUtils.deleteNotifications(userId);
                         Snackbar.make(this.container.getPlaceSnackBar(), "All notifications removed", Snackbar.LENGTH_SHORT).show();
                     })
+                    .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
                     .setNegativeButton("No", Utils::onClick)
                     .setCancelable(false)
                     .create().show();
@@ -129,6 +131,7 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
                         UserUtils.deleteNotification(userId, adapter.getItem(viewHolder.getAdapterPosition()).getId());
                         Snackbar.make(container.getPlaceSnackBar(), "Notification removed.", Snackbar.LENGTH_LONG).show();
                     })
+                    .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
                     .setNegativeButton("No", (dialogInterface, i) -> adapter.notifyItemChanged(viewHolder.getAdapterPosition()))
                     .setCancelable(false)
                     .create().show();

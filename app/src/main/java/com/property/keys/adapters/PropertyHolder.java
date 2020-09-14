@@ -15,7 +15,6 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.property.keys.PropertyDetails;
 import com.property.keys.R;
@@ -72,13 +71,7 @@ public class PropertyHolder extends RecyclerView.ViewHolder implements Holder {
 
     private void addOnSetFavouriteClickListener(@NonNull Activity activity, @NonNull View itemView) {
         setFavourite = itemView.findViewById(R.id.setFavourite);
-        ChipGroup filters = activity.findViewById(R.id.filters);
-        setFavourite.setOnClickListener(view -> {
-            updateFavourite(activity, setFavourite, property, user);
-            if (filters.getCheckedChipId() == R.id.favouriteFilter) {
-
-            }
-        });
+        setFavourite.setOnClickListener(view -> updateFavourite(activity, setFavourite, property, user));
     }
 
     public void bind(@NonNull Activity activity, @NonNull Property property) {

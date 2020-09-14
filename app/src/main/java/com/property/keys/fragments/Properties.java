@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DefaultItemAnimator;
@@ -50,9 +51,7 @@ import com.property.keys.utils.Utils;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import lombok.Getter;
 
@@ -169,6 +168,16 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
 
     private void setupSearchBar() {
         binding.floatingSearchView.setShowMoveUpSuggestion(true);
+        View clearButton = binding.floatingSearchView.findViewById(R.id.clear_btn);
+
+        clearButton.setOnClickListener(view -> {
+            binding.floatingSearchView.clearQuery();
+            if (!binding.floatingSearchView.isSearchBarFocused()) {
+                view.setVisibility(View.INVISIBLE);
+                lastQuery = "";
+                search();
+            }
+        });
 
         binding.floatingSearchView.setOnQueryChangeListener((oldQuery, newQuery) -> {
             binding.floatingSearchView.showProgress();
@@ -176,9 +185,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
                 binding.floatingSearchView.clearSuggestions();
             } else {
                 lastQuery = newQuery;
-                FirebaseRecyclerAdapter.SearchFilter searchFilter = (FirebaseRecyclerAdapter.SearchFilter) adapter.getFilter();
-                searchFilter.setShowOnlyFavourites(binding.favouriteFilter.isChecked());
-                searchFilter.filter(newQuery);
+                search();
             }
             binding.floatingSearchView.hideProgress();
         });
@@ -188,9 +195,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
             public void onSuggestionClicked(final SearchSuggestion searchSuggestion) {
                 binding.floatingSearchView.showProgress();
                 lastQuery = searchSuggestion.getBody();
-                FirebaseRecyclerAdapter.SearchFilter searchFilter = (FirebaseRecyclerAdapter.SearchFilter) adapter.getFilter();
-                searchFilter.setShowOnlyFavourites(binding.favouriteFilter.isChecked());
-                searchFilter.filter(searchSuggestion.getBody());
+                search();
                 binding.floatingSearchView.setSearchFocused(false);
                 binding.floatingSearchView.hideProgress();
             }
@@ -200,9 +205,8 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
                 binding.floatingSearchView.showProgress();
                 lastQuery = query;
                 updateSuggestions();
-                FirebaseRecyclerAdapter.SearchFilter searchFilter = (FirebaseRecyclerAdapter.SearchFilter) adapter.getFilter();
-                searchFilter.setShowOnlyFavourites(binding.favouriteFilter.isChecked());
-                searchFilter.filter(query);
+                search();
+                binding.floatingSearchView.setSearchFocused(false);
                 binding.floatingSearchView.hideProgress();
             }
         });
@@ -210,6 +214,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
         binding.floatingSearchView.setOnFocusChangeListener(new FloatingSearchView.OnFocusChangeListener() {
             @Override
             public void onFocus() {
+                clearButton.setVisibility(View.INVISIBLE);
                 //show suggestions when search bar gains focus (typically history suggestions)
                 binding.floatingSearchView.swapSuggestions(new ArrayList<>(suggestions));
             }
@@ -221,6 +226,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
                 String title = "";
                 if (lastQuery != null && !lastQuery.isEmpty()) {
                     title = lastQuery;
+                    clearButton.setVisibility(View.VISIBLE);
                 }
 
                 //set the title of the bar so that when focus is returned a new query begins
@@ -266,26 +272,22 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
         });
     }
 
+    private void search() {
+        FirebaseRecyclerAdapter.SearchFilter searchFilter = (FirebaseRecyclerAdapter.SearchFilter) adapter.getFilter();
+        searchFilter.setShowOnlyFavourites(binding.favouriteFilter.isChecked());
+        searchFilter.filter(lastQuery);
+    }
+
     private void updateSuggestions() {
-        boolean updated = false;
         if (lastQuery != null && !lastQuery.isEmpty()) {
-            if (suggestions.size() > 3) {
-                updated = true;
-                suggestions.removeLast();
-            }
             PropertySuggestion newSuggestion = new PropertySuggestion(lastQuery, true);
             if (!suggestions.contains(newSuggestion)) {
-                updated = true;
+                if (suggestions.size() >= 3) {
+                    suggestions.removeLast();
+                }
                 suggestions.addFirst(newSuggestion);
+                UserUtils.updateSearchSuggestions(requireContext(), user.getId(), suggestions.stream().map(SearchSuggestion::getBody).collect(toList()));
             }
-        }
-        if (updated) {
-            User user = UserUtils.getLocalUser(requireContext());
-            user.setPropertySearchSuggestions(Stream.of(user.getPropertySearchSuggestions(), suggestions.stream().map(SearchSuggestion::getBody).collect(toList()))
-                    .flatMap(List::stream)
-                    .distinct()
-                    .collect(toList()));
-            UserUtils.updateSearchSuggestions(requireContext(), user);
         }
     }
 
@@ -339,6 +341,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
                         PropertyUtils.delete(this.getActivity(), adapter.getItem(viewHolder.getAdapterPosition()));
                         Snackbar.make(container.getPlaceSnackBar(), "Property removed.", Snackbar.LENGTH_LONG).show();
                     })
+                    .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
                     .setNegativeButton("No", (dialogInterface, i) -> adapter.notifyItemChanged(viewHolder.getAdapterPosition()))
                     .setCancelable(false)
                     .create().show();

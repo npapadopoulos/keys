@@ -4,19 +4,31 @@ package com.property.keys.utils;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
+import android.graphics.Rect;
 import android.os.Build;
-import android.util.Log;
 import android.widget.ImageView;
 
 import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
+import com.property.keys.R;
+import com.property.keys.entities.User;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.function.Consumer;
+
+import timber.log.Timber;
+
+import static com.property.keys.utils.ImageUtils.getImage;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class StorageUtils {
@@ -37,29 +49,64 @@ public class StorageUtils {
     public static void uploadImage(String id, String name, byte[] data) {
         reference.child(id + "/images/" + name + ".jpg").putBytes(data).addOnFailureListener(exception -> {
             //TODO Handle unsuccessful uploads
-            Log.e(TAG, exception.getMessage(), exception);
+            Timber.tag(TAG).e(exception, exception.getMessage());
         }).addOnSuccessListener(taskSnapshot -> {
-            Log.i(TAG, "Profile image successfully has been synced with remote storage");
+            Timber.tag(TAG).i("Profile image successfully has been synced with remote storage");
             //TODO taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
         });
     }
 
     public static void downloadAndSaveImage(Context context, String id, String name, ImageView imageView) {
-        downloadImage(context, id, name, image -> ImageUtils.loadImage(context, image, imageView));
+        downloadImage(context, id, name, image -> ImageUtils.loadImage(context, image, imageView), imageView);
     }
 
-    public static void downloadImage(Context context, String id, String name, Consumer<File> loader) {
+    public static void downloadImage(Context context, String id, String name, Consumer<File> loader, ImageView imageView) {
         reference.child(id + "/images/" + name + ".jpg").getBytes(Long.MAX_VALUE).addOnSuccessListener(data -> {
             // Use the bytes to display the image
-            File image = ImageUtils.saveImage(context, BitmapFactory.decodeByteArray(data, 0, data.length), id);
-            if (loader != null && image != null) {
-                loader.accept(image);
-            }
+            saveAndLoadImage(context, id, loader, BitmapFactory.decodeByteArray(data, 0, data.length));
         }).addOnFailureListener(exception -> {
             StorageException storageException = (StorageException) exception;
             if (storageException.getHttpResultCode() == 404) {
-                Log.i(TAG, "Image was not found in path " + id + " in remote storage");
+                File defaultProfileImage = getImage(context, "default");
+                if (defaultProfileImage == null) {
+                    saveAndLoadImage(context, "default", loader, generateDefaultProfileImage(context, imageView));
+                } else {
+                    loader.accept(defaultProfileImage);
+                }
+                //TODO GENERATED DEFAULT IMAGE of not already generated before
+                Timber.tag(TAG).i("Image was not found in path " + id + " in remote storage");
             }
         });
+    }
+
+    @NotNull
+    private static Bitmap generateDefaultProfileImage(Context context, ImageView imageView) {
+        Bitmap bitmap = Bitmap.createBitmap(imageView.getWidth(), imageView.getHeight(), Bitmap.Config.ARGB_8888);
+        User localUser = UserUtils.getLocalUser(context);
+        String initials = String.valueOf(Character.toUpperCase(localUser.getFirstName().charAt(0))) + Character.toUpperCase(localUser.getLastName().charAt(0));
+
+        Canvas canvas = new Canvas(bitmap);
+        Paint paint = new Paint();
+        paint.setColor(ContextCompat.getColor(context, R.color.primaryColor));
+        paint.setStyle(Paint.Style.FILL);
+        canvas.drawPaint(paint);
+
+        Rect r = new Rect();
+        paint.setTextAlign(Paint.Align.CENTER);
+        paint.setColor(Color.WHITE);
+        paint.setTextSize(70);
+        paint.getTextBounds(initials, 0, initials.length(), r);
+        int x = canvas.getWidth() / 2;
+        int y = canvas.getHeight() / 2;
+        y += (Math.abs(r.height())) / 2;
+        canvas.drawText(initials, x, y, paint);
+        return bitmap;
+    }
+
+    private static void saveAndLoadImage(Context context, String id, Consumer<File> loader, Bitmap bitmap) {
+        File image = ImageUtils.saveImage(context, bitmap, id);
+        if (loader != null && image != null) {
+            loader.accept(image);
+        }
     }
 }
