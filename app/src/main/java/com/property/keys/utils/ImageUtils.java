@@ -45,6 +45,7 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
+import java.util.Random;
 
 import timber.log.Timber;
 
@@ -307,7 +308,8 @@ public class ImageUtils {
 
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();
-        paint.setColor(ContextCompat.getColor(context, R.color.primaryColor));
+        Random rnd = new Random();
+        paint.setARGB(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
         paint.setStyle(Paint.Style.FILL);
         canvas.drawPaint(paint);
 

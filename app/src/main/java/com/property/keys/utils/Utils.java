@@ -189,5 +189,4 @@ public class Utils {
     public static void onClick(DialogInterface dialogInterface, int i) {
         //does nothing, used in some alert dialogs when user presses "No"
     }
-
 }

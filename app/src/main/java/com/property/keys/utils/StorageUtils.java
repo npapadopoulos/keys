@@ -41,7 +41,7 @@ public class StorageUtils {
     public static void uploadImage(String id, String name, byte[] data) {
         reference.child(id + "/images/" + name + ".jpg").putBytes(data).addOnFailureListener(exception -> {
             //TODO Handle unsuccessful uploads
-            Timber.tag(TAG).e(exception, exception.getMessage());
+            Timber.tag(TAG).e(exception);
         }).addOnSuccessListener(taskSnapshot -> {
             Timber.tag(TAG).i("Profile image successfully has been synced with remote storage");
             //TODO taskSnapshot.getMetadata() contains file metadata such as size, content-type, etc.
@@ -59,13 +59,13 @@ public class StorageUtils {
         }).addOnFailureListener(exception -> {
             StorageException storageException = (StorageException) exception;
             if (storageException.getHttpResultCode() == 404) {
+                Timber.tag(TAG).i("Image was not found in path " + id + " in remote storage");
                 File defaultProfileImage = getImage(context, "default");
                 if (defaultProfileImage == null) {
                     saveAndLoadImage(context, "default", loader, generateDefaultProfileImage(context, imageView));
                 } else {
                     loader.accept(defaultProfileImage);
                 }
-                //TODO GENERATED DEFAULT IMAGE of not already generated before
                 Timber.tag(TAG).i("Image was not found in path " + id + " in remote storage");
             }
         });
