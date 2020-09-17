@@ -8,11 +8,13 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.budiyev.android.codescanner.CodeScanner;
 import com.budiyev.android.codescanner.CodeScannerView;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.DataSnapshot;
@@ -25,6 +27,7 @@ import com.property.keys.databinding.FragmentScannerBinding;
 import com.property.keys.entities.Key;
 import com.property.keys.entities.User;
 import com.property.keys.utils.UserUtils;
+import com.property.keys.utils.Utils;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -71,20 +74,39 @@ public class Scanner extends Fragment {
                             requireActivity().runOnUiThread(() -> {
                                 Map<String, Object> updates = new HashMap<>();
                                 if (key.getCheckedInDate() == null) {
-                                    key.setCheckedInDate(DATE_TIME_FORMATTER.format(LocalDateTime.now()));
-                                    updates.put("/users/" + user.getId() + "/keys/" + key.getId(), key);
-                                    Snackbar.make(binding.scannerView, "Key checked in successfully.", Snackbar.LENGTH_LONG).show();
+                                    new MaterialAlertDialogBuilder(requireContext())
+                                            .setMessage("Are you sure you want to check in?")
+                                            .setPositiveButton("Yes", (dialogInterface, i) -> {
+                                                key.setCheckedInDate(DATE_TIME_FORMATTER.format(LocalDateTime.now()));
+                                                updates.put("users/" + user.getId() + "/keys/" + key.getId(), key);
+                                                updates.put("keys/" + key.getId(), key);
+                                                updates.put("properties/" + key.getPropertyId() + "/keys/" + key.getId(), key);
+                                                firebaseDatabase.getReference("/").updateChildren(updates);
+                                                Snackbar.make(binding.scannerView, "Key checked in successfully.", Snackbar.LENGTH_LONG).show();
+                                            })
+                                            .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
+                                            .setNegativeButton("No", Utils::onClick)
+                                            .setCancelable(false)
+                                            .create().show();
                                 } else {
-                                    key.setCheckedOutDate(DATE_TIME_FORMATTER.format(LocalDateTime.now()));
-                                    key.setLastCheckOutDate(key.getLastCheckOutDate());
-                                    updates.put("/users/" + user.getId() + "/keys/" + key.getId(), null);
-                                    Snackbar.make(binding.scannerView, "Key released successfully.", Snackbar.LENGTH_LONG).show();
+                                    new MaterialAlertDialogBuilder(requireContext())
+                                            .setMessage("Key was checked on " + key.getCheckedInDate() + ". Are you sure you want to check out?")
+                                            .setPositiveButton("Yes", (dialogInterface, i) -> {
+                                                key.setCheckedInDate(DATE_TIME_FORMATTER.format(LocalDateTime.now()));
+                                                updates.put("users/" + user.getId() + "/keys/" + key.getId(), key);
+                                                updates.put("keys/" + key.getId(), key);
+                                                updates.put("properties/" + key.getPropertyId() + "/keys/" + key.getId(), key);
+                                                firebaseDatabase.getReference("/").updateChildren(updates);
+                                                Snackbar.make(binding.scannerView, "Key checked out successfully.", Snackbar.LENGTH_LONG).show();
+                                            })
+                                            .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
+                                            .setNegativeButton("No", Utils::onClick)
+                                            .setCancelable(false)
+                                            .create().show();
                                 }
-                                updates.put("/keys/" + key.getId(), key);
-                                updates.put("/properties" + key.getPropertyId() + "/keys/", key);
-
-                                firebaseDatabase.getReference("/").updateChildren(updates);
                             });
+                        } else {
+                            Snackbar.make(binding.scannerView, "No key found.", Snackbar.LENGTH_LONG).show();
                         }
                     }
 
@@ -94,7 +116,6 @@ public class Scanner extends Fragment {
                     }
                 }));
         scannerView.setOnClickListener(view -> mCodeScanner.startPreview());
-
         return binding.getRoot();
     }
 

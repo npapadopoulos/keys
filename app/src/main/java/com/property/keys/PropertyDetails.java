@@ -199,7 +199,7 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
             new MaterialAlertDialogBuilder(viewHolder.itemView.getContext())
                     .setMessage("Are you sure?")
                     .setPositiveButton("Yes", (dialogInterface, i) -> {
-//                        UserUtils.deleteNotification(user.getId(), adapter.getItem(viewHolder.getAdapterPosition()).getId());
+//                        //FIXME UserUtils.deleteNotification(user.getId(), adapter.getItem(viewHolder.getAdapterPosition()).getId());
                         Snackbar.make(binding.main, "Key deleted.", Snackbar.LENGTH_LONG).show();
                     })
                     .setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.white_card_background))

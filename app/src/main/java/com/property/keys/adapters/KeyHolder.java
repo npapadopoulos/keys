@@ -32,7 +32,7 @@ public class KeyHolder extends RecyclerView.ViewHolder {
 
     public void bind(@NonNull Context context, @NonNull Key key) {
         if (key.getCheckedInDate() != null) {
-            checkedInDetails.setText(key.getId());
+            checkedInDetails.setText("Key was checked in on " + key.getCheckedInDate());
         }
         ImageUtils.syncAndloadImagesKey(context, key.getId(), qrCodeImage, (image) -> {
             ImageView qrCodeImage = itemView.findViewById(R.id.qrCodeImage);
