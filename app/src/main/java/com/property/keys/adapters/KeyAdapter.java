@@ -31,7 +31,7 @@ public class KeyAdapter extends FirebaseRecyclerAdapter<Key, KeyHolder> {
     @NonNull
     @Override
     public KeyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new KeyHolder(activity, LayoutInflater.from(parent.getContext())
+        return new KeyHolder(LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.key, parent, false));
     }
 }

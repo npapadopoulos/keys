@@ -1,16 +1,13 @@
 package com.property.keys.utils;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
-import android.os.Bundle;
 
 import androidx.annotation.RequiresApi;
 
 import com.google.android.gms.tasks.Task;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
-import com.mapbox.mapboxsdk.maps.MapView;
 import com.property.keys.R;
 import com.property.keys.entities.Action;
 import com.property.keys.entities.Property;
@@ -18,7 +15,6 @@ import com.property.keys.tasks.TaskExecutor;
 import com.property.keys.tasks.properties.KeyGenerateTask;
 import com.property.keys.tasks.properties.PropertyCreateTask;
 import com.property.keys.tasks.properties.PropertyDeleteTask;
-import com.property.keys.tasks.properties.PropertyMapCreateTask;
 import com.property.keys.tasks.properties.PropertyUpdateTask;
 
 import java.util.function.Consumer;
@@ -44,7 +40,15 @@ public class PropertyUtils {
     }
 
     public static void delete(Activity activity, Property property) {
-        new TaskExecutor().executeAsync(new PropertyDeleteTask(activity, property));
+        new TaskExecutor().executeAsync(new PropertyDeleteTask(activity, property, false, false));
+    }
+
+    public static void remove(Activity activity, Property property) {
+        new TaskExecutor().executeAsync(new PropertyDeleteTask(activity, property, true, false));
+    }
+
+    public static void restore(Activity activity, Property property) {
+        new TaskExecutor().executeAsync(new PropertyDeleteTask(activity, property, false, true));
     }
 
     public static void like(Activity activity, Property property, boolean liked) {
@@ -55,9 +59,9 @@ public class PropertyUtils {
         new TaskExecutor().executeAsync(new KeyGenerateTask(activity, property));
     }
 
-    public static void createMap(Context context, Bundle savedInstanceState, MapView view, Property property) {
-        new TaskExecutor().executeAsync(new PropertyMapCreateTask(context, savedInstanceState, view, property));
-    }
+//    public static void createMap(Context context, Bundle savedInstanceState, MapView view, Property property) {
+//        new TaskExecutor().executeAsync(new PropertyMapCreateTask(context, savedInstanceState, view, property));
+//    }
 
     public static void updateBadge(Activity activity, long itemCount) {
         ChipNavigationBar bottomNavigationMenu = activity.findViewById(R.id.bottom_navigation_menu);

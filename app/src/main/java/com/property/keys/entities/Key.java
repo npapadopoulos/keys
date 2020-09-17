@@ -19,6 +19,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Key implements Parcelable {
     private String id;
+    private String propertyId;
     private String checkedInDate;
     private String checkedOutDate;
     private String lastCheckOutDate;
@@ -38,6 +39,7 @@ public class Key implements Parcelable {
 
     protected Key(Parcel in) {
         id = in.readString();
+        propertyId = in.readString();
         checkedInDate = in.readString();
         checkedOutDate = in.readString();
         lastCheckOutDate = in.readString();
@@ -51,6 +53,7 @@ public class Key implements Parcelable {
     @Override
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(id);
+        parcel.writeString(propertyId);
         parcel.writeString(checkedInDate);
         parcel.writeString(checkedOutDate);
         parcel.writeString(lastCheckOutDate);

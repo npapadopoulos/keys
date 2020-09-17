@@ -1,14 +1,13 @@
 package com.property.keys.adapters;
 
 import android.app.Activity;
-import android.content.res.ColorStateList;
 import android.os.Build;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.core.content.ContextCompat;
 
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -44,13 +43,6 @@ public class NotificationAdapter extends FirebaseRecyclerAdapter<Notification, N
 
     @Override
     public void onDataChanged() {
-        if (getItemCount() == 0) {
-            deleteNotifications.setEnabled(false);
-            deleteNotifications.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(activity, R.color.dark_gray)));
-
-        } else {
-            deleteNotifications.setEnabled(true);
-            deleteNotifications.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(activity, R.color.primaryColor)));
-        }
+        deleteNotifications.setVisibility(getItemCount() == 0 ? View.INVISIBLE : View.VISIBLE);
     }
 }

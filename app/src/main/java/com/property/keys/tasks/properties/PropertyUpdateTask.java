@@ -46,26 +46,29 @@ public class PropertyUpdateTask extends AbstractAsyncTask {
         User localUser = UserUtils.getLocalUser(activity);
         if (action == Action.UNLIKED_PROPERTY) {
             property.getFavouredBy().remove(localUser.getId());
-            updates.put("/" + localUser.getId() + "/properties/" + property.getId(), null);
+            updates.put("users/" + localUser.getId() + "/properties/" + property.getId(), null);
         } else {
             property.getFavouredBy().put(localUser.getId(), true);
         }
-        reference.child(property.getId()).setValue(property)
-                .addOnCompleteListener(activity, task -> {
-                    if (task.isSuccessful()) {
-                        NotificationUtils.create(activity, property, property.getFavouredBy().keySet(), action);
-                        if (property.getFavouredBy() != null) {
-                            property.getFavouredBy().keySet().forEach(userId -> updates.put("/" + userId + "/properties/" + property.getId(), property));
-                            if (!updates.isEmpty()) {
-                                firebaseDatabase.getReference("users").updateChildren(updates);
+        updates.put("properties/" + property.getId() + "/favouredBy", property.getFavouredBy());
+        if (!updates.isEmpty()) {
+            firebaseDatabase.getReference("/").updateChildren(updates)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            NotificationUtils.create(activity, property, action);
+                            if (property.getFavouredBy() != null) {
+                                property.getFavouredBy().keySet().forEach(userId -> updates.put("/" + userId + "/properties/" + property.getId(), property));
+                                if (!updates.isEmpty()) {
+                                    firebaseDatabase.getReference("users").updateChildren(updates);
+                                }
+                            }
+                        } else {
+                            if (onUpdateFailed != null) {
+                                // If property update fails, display a message to the user.
+                                onUpdateFailed.accept(task);
                             }
                         }
-                    } else {
-                        if (onUpdateFailed != null) {
-                            // If property update fails, display a message to the user.
-                            onUpdateFailed.accept(task);
-                        }
-                    }
-                });
+                    });
+        }
     }
 }

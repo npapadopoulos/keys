@@ -9,18 +9,35 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.view.WindowManager;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
+import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.property.keys.adapters.KeyAdapter;
+import com.property.keys.adapters.KeyHolder;
 import com.property.keys.databinding.ActivityPropertyDetailsBinding;
+import com.property.keys.entities.Key;
 import com.property.keys.entities.Property;
 import com.property.keys.entities.User;
+import com.property.keys.helpers.RecyclerItemTouchHelper;
 import com.property.keys.utils.ImageUtils;
 import com.property.keys.utils.PropertyUtils;
 import com.property.keys.utils.StorageUtils;
 import com.property.keys.utils.UserUtils;
+import com.property.keys.utils.Utils;
 
 import java.io.IOException;
 
@@ -31,10 +48,13 @@ import static com.property.keys.utils.ImageUtils.REQUEST_IMAGE;
 import static com.property.keys.utils.Utils.updateFavourite;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
-public class PropertyDetails extends AppCompatActivity {
+public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.AuthStateListener, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
     private static final String TAG = Container.class.getSimpleName();
 
+    private final DatabaseReference propertiesDatabaseReference = FirebaseDatabase.getInstance().getReference().child("properties");
+
     private ActivityPropertyDetailsBinding binding;
+    private KeyAdapter adapter;
     private Property property;
     private User user;
 
@@ -42,6 +62,15 @@ public class PropertyDetails extends AppCompatActivity {
     public void onBackPressed() {
         finish();
         super.onBackPressed();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            attachRecyclerViewAdapter();
+        }
+        FirebaseAuth.getInstance().addAuthStateListener(this);
     }
 
     @SneakyThrows
@@ -52,6 +81,7 @@ public class PropertyDetails extends AppCompatActivity {
         binding = ActivityPropertyDetailsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        binding.keyList.setHasFixedSize(false);
         property = getIntent().getParcelableExtra("property");
         binding.name.setText(property.getName());
         binding.address.setText(property.getAddress());
@@ -64,21 +94,28 @@ public class PropertyDetails extends AppCompatActivity {
         updateFavourite(this, binding.setFavourite, property.getFavouredBy().get(user.getId()) != null);
         addOnSetFavouriteClickListener();
 
-        PropertyUtils.createMap(this, savedInstanceState, binding.mapquestMapView, property);
+//        PropertyUtils.createMap(this, savedInstanceState, binding.mapquestMapView, property);
+        initLayoutManager();
+        addOnScrollListener();
 
-//        binding.progressBar.setVisibility(View.GONE);
-//        binding.addKey.setOnClickListener(this::addKey);
+        binding.addNewKey.setOnClickListener(this::addNewKey);
+    }
 
-//        binding.update.setOnClickListener(view -> {
-//            InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-//            in.hideSoftInputFromWindow(view.getWindowToken(), 0);
-//
-//            binding.progressBar.setVisibility(View.VISIBLE);
-//            binding.update.setEnabled(false);
-//
-//            updateProperty();
-//        });
+    private void initLayoutManager() {
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        linearLayoutManager.setStackFromEnd(true);
+        linearLayoutManager.setReverseLayout(true);
+        binding.keyList.setLayoutManager(linearLayoutManager);
+    }
 
+    private void addOnScrollListener() {
+        binding.content.setOnScrollChangeListener((NestedScrollView.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+            if ((scrollY - oldScrollY) > 0) {
+                binding.addNewKey.hide();
+            } else {
+                binding.addNewKey.show();
+            }
+        });
     }
 
     private void addOnSetFavouriteClickListener() {
@@ -94,54 +131,18 @@ public class PropertyDetails extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
-//    private void updateProperty() {
-//        if (!Utils.validateText(binding.name) | !Utils.validateText(binding.address)) {
-//            binding.progressBar.setVisibility(View.GONE);
-//            binding.update.setEnabled(true);
-//            return;
-//        }
-//
-//        String nameValue = binding.name.getEditText().getText().toString();
-//        String addressValue = binding.address.getEditText().getText().toString();
-//
-//        property.setAddress(addressValue);
-//        property.setName(nameValue);
-//
-////        Consumer<Intent> startActivity = intent -> {
-////            try {
-////
-////                File file = ImageUtils.loadImage(this, property.getId(), binding.propertyImage);
-////                byte[] data = Files.readAllBytes(Paths.get(file.getPath()).toAbsolutePath());
-////                Bitmap image = BitmapFactory.decodeByteArray(data, 0, data.length);
-////                StorageUtils.uploadImage(property.getId(), "property", image);
-////            } catch (IOException e) {
-////                Log.e(TAG, "Couldn't upload property image for " + property.getId() + " to remote storage.", e);
-////            }
-////            startActivity(intent);
-////            finish();
-////        };
-////
-////        Consumer<Task<Void>> onCreationFailed = (Task<Void> task) -> {
-////            Log.i(TAG, "Property update for " + nameValue + " failed.", task.getException());
-////            Snackbar.make(binding.main, "Property update for " + nameValue + " failed.", Snackbar.LENGTH_SHORT).show();
-////
-////            binding.progressBar.setVisibility(View.GONE);
-////            binding.update.setEnabled(true);
-////        };
-//
-//        PropertyUtils.update(this, property, property.getFavouredBy().containsKey(UserUtils.getLocalUser(getApplicationContext()).getId()));
-//
-//        binding.progressBar.setVisibility(View.GONE);
-//        Snackbar.make(binding.main, "Property updated successfully.", Snackbar.LENGTH_SHORT).show();
-//        binding.update.setEnabled(true);
-//    }
-
     private void updateImage(View v) {
         ImageUtils.updateImage(this, property.getId());
     }
 
-    private void addKey(View v) {
-        PropertyUtils.generateKey(this, property);
+    private void addNewKey(View v) {
+        new MaterialAlertDialogBuilder(this)
+                .setMessage("Are you sure you want to add new key?")
+                .setPositiveButton("Yes", (dialogInterface, i) -> PropertyUtils.generateKey(this, property))
+                .setBackground(ContextCompat.getDrawable(this, R.drawable.white_card_background))
+                .setNegativeButton("No", Utils::onClick)
+                .setCancelable(false)
+                .create().show();
     }
 
     @Override
@@ -155,7 +156,7 @@ public class PropertyDetails extends AppCompatActivity {
                     StorageUtils.uploadImage(property.getId(), "property", image);
                     ImageUtils.loadImage(this, property.getId(), binding.propertyImage);
                 } catch (IOException e) {
-                    Timber.tag(TAG).e(e, e.getMessage());
+                    Timber.tag(TAG).e(e);
                 }
             }
         }
@@ -166,24 +167,66 @@ public class PropertyDetails extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        binding.mapquestMapView.onResume();
+//        binding.mapquestMapView.onResume();
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        binding.mapquestMapView.onPause();
+//        binding.mapquestMapView.onPause();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        binding.mapquestMapView.onDestroy();
+//        binding.mapquestMapView.onDestroy();
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        binding.mapquestMapView.onSaveInstanceState(outState);
+//        binding.mapquestMapView.onSaveInstanceState(outState);
+    }
+
+    @Override
+    public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+        attachRecyclerViewAdapter();
+    }
+
+    @Override
+    public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction, int position) {
+        if (viewHolder instanceof KeyHolder) {
+            new MaterialAlertDialogBuilder(viewHolder.itemView.getContext())
+                    .setMessage("Are you sure?")
+                    .setPositiveButton("Yes", (dialogInterface, i) -> {
+//                        UserUtils.deleteNotification(user.getId(), adapter.getItem(viewHolder.getAdapterPosition()).getId());
+                        Snackbar.make(binding.main, "Key deleted.", Snackbar.LENGTH_LONG).show();
+                    })
+                    .setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.white_card_background))
+                    .setNegativeButton("No", (dialogInterface, i) -> adapter.notifyItemChanged(viewHolder.getAdapterPosition()))
+                    .setCancelable(false)
+                    .create().show();
+        }
+    }
+
+    private void attachRecyclerViewAdapter() {
+        Query query = propertiesDatabaseReference.child(property.getId()).child("keys").orderByChild("id");
+        FirebaseRecyclerOptions<Key> options =
+                new FirebaseRecyclerOptions.Builder<Key>()
+                        .setQuery(query, Key.class)
+                        .setLifecycleOwner(this)
+                        .build();
+
+        adapter = new KeyAdapter(options, this);
+
+        // Scroll to bottom on new messages
+        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+            @Override
+            public void onItemRangeInserted(int positionStart, int itemCount) {
+                binding.keyList.smoothScrollToPosition(adapter.getItemCount());
+            }
+        });
+
+        binding.keyList.setAdapter(adapter);
     }
 }

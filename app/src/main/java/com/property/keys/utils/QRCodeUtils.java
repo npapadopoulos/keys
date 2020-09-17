@@ -6,7 +6,6 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.google.zxing.WriterException;
-import com.property.keys.entities.Key;
 
 import java.io.ByteArrayOutputStream;
 
@@ -18,17 +17,19 @@ import timber.log.Timber;
 public class QRCodeUtils {
     private static final String TAG = QRCodeUtils.class.getSimpleName();
 
-    public static void generateCode(Key key) {
+    public static Bitmap generateCode(String id) {
         try {
-            QRGEncoder qrgEncoder = new QRGEncoder(key.getId(), null, QRGContents.Type.TEXT, 350);
+            QRGEncoder qrgEncoder = new QRGEncoder(id, null, QRGContents.Type.TEXT, 350);
             Bitmap bitmap = qrgEncoder.encodeAsBitmap();
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             bitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos);
             //validate
-            StorageUtils.uploadImage(key.getId(), "qrcode", baos.toByteArray());
-            Timber.tag(TAG).i("Generated QR code for the  key " + key.getId() + " and uploaded to remote storage.");
+            StorageUtils.uploadImage(id, "key", baos.toByteArray());
+            Timber.tag(TAG).i("Generated QR code for the  key " + id + " and uploaded to remote storage.");
+            return bitmap;
         } catch (WriterException e) {
-            Timber.tag(TAG).e("Could not generate QR Code for key " + key.getId() + ": " + e.getMessage());
+            Timber.tag(TAG).e("Could not generate QR Code for key " + id + ": " + e.getMessage());
         }
+        return null;
     }
 }

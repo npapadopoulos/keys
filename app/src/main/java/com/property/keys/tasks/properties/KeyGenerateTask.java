@@ -1,7 +1,6 @@
 package com.property.keys.tasks.properties;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
@@ -11,15 +10,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.property.keys.entities.Action;
 import com.property.keys.entities.Key;
 import com.property.keys.entities.Property;
-import com.property.keys.entities.User;
 import com.property.keys.tasks.AbstractAsyncTask;
-import com.property.keys.utils.QRCodeUtils;
-import com.property.keys.utils.UserUtils;
+import com.property.keys.utils.NotificationUtils;
 
 import java.util.UUID;
 
 import lombok.AllArgsConstructor;
 import timber.log.Timber;
+
+import static java.util.Collections.singletonMap;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 @AllArgsConstructor
@@ -33,27 +32,18 @@ public class KeyGenerateTask extends AbstractAsyncTask {
 
     @Override
     public void runInBackground() {
-        User user = UserUtils.getLocalUser(activity.getApplicationContext());
-
         Key key = Key.builder()
                 .id(UUID.randomUUID().toString())
+                .propertyId(property.getId())
                 .build();
 
         DatabaseReference keys = firebaseDatabase.getReference("keys");
         keys.child(key.getId()).setValue(key)
                 .addOnCompleteListener(activity, task -> {
                     if (task.isSuccessful()) {
+                        firebaseDatabase.getReference("properties").updateChildren(singletonMap("/" + property.getId() + "/keys/" + key.getId(), key));
+                        NotificationUtils.create(activity, property, Action.ADDED_KEY);
                         Timber.tag(TAG).i("Generated new key " + key.getId() + " for property '" + property.getName() + "'.");
-                        QRCodeUtils.generateCode(key);
-                        //TODO add information when finish to pop message
-                        //Snackbar.make(binding.main, "Account update for " + user.getId() + " failed. Try again later.", Snackbar.LENGTH_SHORT).show();
-                        Intent intent = new Intent();
-                        intent.putExtra("userId", user.getId());
-                        intent.putExtra("description", user.getFirstName() + " added new key for property '" + property.getName() + "'.");
-                        intent.putExtra("action", Action.ADDED_KEY.name());
-                        intent.putExtra("property", property);
-                        intent.setAction("com.property.keys.ACTION_PERFORMED");
-                        activity.sendBroadcast(intent);
                     } else {
                         Timber.tag(TAG).i(task.getException(), "Failed to generated new key " + key.getId() + " for property '" + property.getName() + "'.");
                     }

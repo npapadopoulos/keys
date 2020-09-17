@@ -22,44 +22,48 @@ public class NotificationUtils {
         throw new AssertionError("No instance for you!");
     }
 
-    public static void create(Activity activity, Property property, Set<String> usersToNotify, Action action) {
+    public static void create(Activity activity, Property property, Action action) {
+        create(activity, property.getName(), property.getFavouredBy().keySet(), action);
+    }
+
+    public static void create(Activity activity, String propertyName, Set<String> usersToNotify, Action action) {
         User currentUser = UserUtils.getLocalUser(activity.getApplicationContext());
         String description;
         switch (action) {
             case ADDED_PROPERTY: {
-                description = currentUser.getFirstName() + " added new property '" + property.getName() + "'.";
+                description = currentUser.getFirstName() + " added new property '" + propertyName + "'.";
                 break;
             }
             case DELETED_PROPERTY: {
-                description = currentUser.getFirstName() + " deleted property '" + property.getName() + "'.";
+                description = currentUser.getFirstName() + " deleted property '" + propertyName + "'.";
                 break;
             }
             case UPDATED_PROPERTY: {
-                description = currentUser.getFirstName() + " updated property '" + property.getName() + "'.";
+                description = currentUser.getFirstName() + " updated property '" + propertyName + "'.";
                 break;
             }
             case LIKED_PROPERTY: {
-                description = currentUser.getFirstName() + " is now following property '" + property.getName() + "'.";
+                description = currentUser.getFirstName() + " is now following property '" + propertyName + "'.";
                 break;
             }
             case UNLIKED_PROPERTY: {
-                description = currentUser.getFirstName() + " stopped following property '" + property.getName() + "'.";
+                description = currentUser.getFirstName() + " stopped following property '" + propertyName + "'.";
                 break;
             }
             case ADDED_KEY: {
-                description = currentUser.getFirstName() + " added new key for property '" + property.getName() + "'.";
+                description = currentUser.getFirstName() + " added new key for property '" + propertyName + "'.";
                 break;
             }
             case DELETED_KEY: {
-                description = currentUser.getFirstName() + " deleted key from property '" + property.getName() + "'.";
+                description = currentUser.getFirstName() + " deleted key from property '" + propertyName + "'.";
                 break;
             }
             case CHECKED_IN: {
-                description = currentUser.getFirstName() + " checked in key for property '" + property.getName() + "'.";
+                description = currentUser.getFirstName() + " checked in key for property '" + propertyName + "'.";
                 break;
             }
             case CHECKED_OUT: {
-                description = currentUser.getFirstName() + " checked out key for property '" + property.getName() + "'.";
+                description = currentUser.getFirstName() + " checked out key for property '" + propertyName + "'.";
                 break;
             }
             default:

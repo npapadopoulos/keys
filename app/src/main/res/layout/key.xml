@@ -44,45 +44,27 @@
                     android:layout_height="100dp"
                     android:scaleType="fitCenter" />
 
-                <TextView
-                    android:id="@+id/keyId"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginStart="127dp"
-                    android:maxLines="1"
-                    android:text="Key #1 "
-                    android:textAppearance="?attr/textAppearanceHeadline4" />
-
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_alignParentStart="true"
                     android:layout_centerHorizontal="true"
+                    android:layout_centerVertical="true"
                     android:layout_marginStart="120dp"
                     android:layout_marginTop="50dp"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:padding="10dp">
 
-                    <RelativeLayout
+                    <TextView
+                        android:id="@+id/checkedInDetails"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center">
-
-                        <TextView
-                            android:id="@+id/keyDescription"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:maxLines="2"
-                            android:text="Tap on QR code to scan the key."
-                            android:textAppearance="?attr/textAppearanceHeadline6"
-                            android:textSize="14sp" />
-                    </RelativeLayout>
+                        android:maxLines="2"
+                        android:text="@string/key_is_available"
+                        android:textAppearance="?attr/textAppearanceHeadline6"
+                        android:textSize="14sp" />
                 </LinearLayout>
-
             </RelativeLayout>
-
         </com.google.android.material.card.MaterialCardView>
     </RelativeLayout>
 

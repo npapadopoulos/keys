@@ -108,7 +108,7 @@ public class AddProperty extends AppCompatActivity {
             return;
         }
 
-        File file = ImageUtils.loadImage(this, pregenaratedPropertyId, binding.propertyImage);
+        File file = (File) ImageUtils.loadImage(this, pregenaratedPropertyId, binding.propertyImage);
         if (file == null || !file.exists()) {
             binding.progressBar.setVisibility(View.GONE);
             binding.submit.setEnabled(true);

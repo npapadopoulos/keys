@@ -35,6 +35,7 @@ import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.property.keys.R;
 import com.property.keys.camera.ImagePicker;
+import com.property.keys.entities.ImageGenerationType;
 import com.property.keys.entities.User;
 
 import org.jetbrains.annotations.NotNull;
@@ -46,6 +47,7 @@ import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.function.Consumer;
 
 import timber.log.Timber;
 
@@ -64,11 +66,11 @@ public class ImageUtils {
     public static final File getImage(Context context, String id) {
         File image = getFile(context.getExternalCacheDir(), id);
         if (image == null) {
-            Timber.tag(TAG).e("Couldn't find the image in local storage for id " + id);
+            Timber.tag(TAG).e("Couldn't find the image in local storage for id %s", id);
             return null;
         }
 
-        Timber.tag(TAG).i("Got Image from : " + image.getPath());
+        Timber.tag(TAG).i("Got Image from : %s", image.getPath());
         return image;
     }
 
@@ -90,26 +92,28 @@ public class ImageUtils {
         return null;
     }
 
-    public static File loadImage(Context context, String name, ImageView imageView) {
+    public static Object loadImage(Context context, String name, ImageView imageView) {
         File image = getImage(context, name);
         if (image == null) {
-            Timber.tag(TAG).e("No Image found for: " + name);
-            return image;
+            Timber.tag(TAG).e("No Image found for: %s", name);
+            return null;
         }
 
         return loadImage(context, image, imageView);
     }
 
-    public static File loadImage(Context context, File image, ImageView imageView) {
-        return loadImage(context, image, imageView, false);
+    public static Object loadImage(Context context, Object image, ImageView imageView) {
+        return loadImage(context, image, imageView, false, null);
     }
 
-    public static File loadImage(Context context, File image, ImageView imageView, boolean useBackground) {
+    public static Object loadImage(Context context, Object image, ImageView imageView, boolean useBackground,
+                                   Consumer<File> onComplete) {
         RequestBuilder<Drawable> glideBuilder = Glide.with(context)
                 .load(image)
                 .skipMemoryCache(true)
                 .diskCacheStrategy(DiskCacheStrategy.NONE)
                 .dontTransform();
+
         if (useBackground) {
             glideBuilder.into(new CustomViewTarget<ImageView, Drawable>(imageView) {
                 @Override
@@ -130,7 +134,10 @@ public class ImageUtils {
         } else {
             glideBuilder.into(imageView);
         }
-        Timber.tag(TAG).i("Image " + image.getPath() + " has been loaded");
+
+        if (onComplete != null) {
+            onComplete.accept((File) image);
+        }
         return image;
     }
 
@@ -156,19 +163,25 @@ public class ImageUtils {
     }
 
     public static void syncAndloadImagesProfile(Context context, @NonNull String name, ImageView imageView) {
-        syncAndloadImages(context, "profile", name, imageView, false);
+        syncAndloadImages(context, "profile", name, imageView, false, ImageGenerationType.PROFILE, null);
     }
 
     public static void syncAndloadImagesProperty(Context context, @NonNull String name, ImageView imageView, boolean useBackround) {
-        syncAndloadImages(context, "property", name, imageView, useBackround);
+        syncAndloadImages(context, "property", name, imageView, useBackround, ImageGenerationType.NONE, null);
     }
 
-    private static void syncAndloadImages(Context context, String directory, @NonNull String name, ImageView imageView, boolean useBackround) {
+    public static void syncAndloadImagesKey(Context context, @NonNull String name, ImageView imageView, Consumer<File> onComplete) {
+        syncAndloadImages(context, "key", name, imageView, false, ImageGenerationType.KEY, onComplete);
+    }
+
+    private static void syncAndloadImages(Context context, String directory, @NonNull String name, ImageView imageView, boolean useBackround,
+                                          ImageGenerationType type,
+                                          Consumer<File> onComplete) {
         File image = getImage(context, name);
         if (image != null) {
-            loadImage(context, image, imageView, useBackround);
+            loadImage(context, image, imageView, useBackround, onComplete);
         } else {
-            downloadAndSaveImage(context, name, directory, imageView);
+            downloadAndSaveImage(context, name, directory, imageView, type, onComplete);
         }
     }
 

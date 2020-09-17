@@ -28,19 +28,6 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <androidx.core.widget.NestedScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:clipToPadding="false"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:clipToPadding="false"
-            android:textSize="18sp" />
-    </androidx.core.widget.NestedScrollView>
-
     <com.google.android.material.chip.ChipGroup
         android:id="@+id/filters"
         android:layout_width="wrap_content"

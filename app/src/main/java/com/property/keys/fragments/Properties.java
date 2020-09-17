@@ -51,6 +51,7 @@ import com.property.keys.utils.Utils;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
@@ -63,7 +64,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
     private static final String TAG = Properties.class.getSimpleName();
 
     @NonNull
-    protected static final Query propertiesQuery = FirebaseDatabase.getInstance().getReference().child("properties").orderByChild("name").limitToLast(20);
+    protected static final Query propertiesQuery = FirebaseDatabase.getInstance().getReference().child("properties").orderByChild("deleted").equalTo(false).limitToLast(20);
     private FragmentPropertiesBinding binding;
 
     @Getter
@@ -88,7 +89,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
                              Bundle savedInstanceState) {
         binding = FragmentPropertiesBinding.inflate(getLayoutInflater(), container, false);
         this.container = (Container) getActivity();
-        binding.propertyList.setHasFixedSize(true);
+        binding.propertyList.setHasFixedSize(false);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setStackFromEnd(true);
         linearLayoutManager.setReverseLayout(true);
@@ -308,9 +309,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
 
     @Override
     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-        if (adapter == null) {
-            attachRecyclerViewAdapter();
-        }
+        attachRecyclerViewAdapter();
     }
 
     private void attachRecyclerViewAdapter() {
@@ -338,8 +337,23 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
             new MaterialAlertDialogBuilder(viewHolder.itemView.getContext())
                     .setMessage("Are you sure?")
                     .setPositiveButton("Yes", (dialogInterface, i) -> {
-                        PropertyUtils.delete(this.getActivity(), adapter.getItem(viewHolder.getAdapterPosition()));
-                        Snackbar.make(container.getPlaceSnackBar(), "Property removed.", Snackbar.LENGTH_LONG).show();
+                        final Property property = adapter.getItem(viewHolder.getAdapterPosition());
+                        PropertyUtils.remove(getActivity(), property);
+                        AtomicBoolean restored = new AtomicBoolean(false);
+                        Snackbar undo = Snackbar.make(container.getPlaceSnackBar(), "Property deleted.", Snackbar.LENGTH_LONG)
+                                .setAction("Undo", v -> {
+                                    PropertyUtils.restore(getActivity(), property);
+                                    restored.set(true);
+                                });
+                        undo.addCallback(new Snackbar.Callback() {
+                            @Override
+                            public void onDismissed(Snackbar transientBottomBar, @DismissEvent int event) {
+                                if (!restored.get()) {
+                                    PropertyUtils.delete(getActivity(), property);
+                                }
+                            }
+                        });
+                        undo.show();
                     })
                     .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
                     .setNegativeButton("No", (dialogInterface, i) -> adapter.notifyItemChanged(viewHolder.getAdapterPosition()))

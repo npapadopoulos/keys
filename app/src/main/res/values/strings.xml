@@ -63,4 +63,7 @@
     <string name="maps_key">uznpzwz1exjqRuDIRSGUASUIzFoLAB08</string>
     <string name="login">Login</string>
     <string name="clear">Clear</string>
+    <string name="key_is_available">Key is available</string>
+    <string name="tap_on_qr_code_to_scan_the_key">Tap on QR code to scan the key.</string>
+    <string name="print_qrcode">Share to pring the current QRCode to be used in keyring.</string>
 </resources>

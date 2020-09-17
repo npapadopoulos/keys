@@ -59,7 +59,7 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentNotificationsBinding.inflate(getLayoutInflater(), container, false);
-        binding.notificationsList.setHasFixedSize(true);
+        binding.notificationsList.setHasFixedSize(false);
         bottomNavigationMenu.setItemSelected(R.id.bottom_navigation_notification, true);
         navigation.setCheckedItem(R.id.navigationNotifications);
         navigation.getCheckedItem().setChecked(true);
@@ -109,7 +109,7 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
                     .setMessage("Are you sure you want to remove all notifications?")
                     .setPositiveButton("Yes", (dialogInterface, i) -> {
                         UserUtils.deleteNotifications(userId);
-                        Snackbar.make(this.container.getPlaceSnackBar(), "All notifications removed", Snackbar.LENGTH_SHORT).show();
+                        Snackbar.make(this.container.getPlaceSnackBar(), "All notifications deleted", Snackbar.LENGTH_SHORT).show();
                     })
                     .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
                     .setNegativeButton("No", Utils::onClick)
@@ -129,7 +129,7 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
                     .setMessage("Are you sure?")
                     .setPositiveButton("Yes", (dialogInterface, i) -> {
                         UserUtils.deleteNotification(userId, adapter.getItem(viewHolder.getAdapterPosition()).getId());
-                        Snackbar.make(container.getPlaceSnackBar(), "Notification removed.", Snackbar.LENGTH_LONG).show();
+                        Snackbar.make(container.getPlaceSnackBar(), "Notification deleted.", Snackbar.LENGTH_LONG).show();
                     })
                     .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
                     .setNegativeButton("No", (dialogInterface, i) -> adapter.notifyItemChanged(viewHolder.getAdapterPosition()))

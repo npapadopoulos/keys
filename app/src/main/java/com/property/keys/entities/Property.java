@@ -1,8 +1,11 @@
 package com.property.keys.entities;
 
 
+import android.os.Build;
 import android.os.Parcel;
 import android.os.Parcelable;
+
+import androidx.annotation.RequiresApi;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
@@ -19,6 +22,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@RequiresApi(api = Build.VERSION_CODES.Q)
 public class Property implements Parcelable {
 
     public static final Creator<Property> CREATOR = new Creator<Property>() {
@@ -36,13 +40,15 @@ public class Property implements Parcelable {
     private String id;
     private String name;
     private String address;
-    private Map<String, Key> keys;
+    private boolean deleted;
+    private Map<String, Object> keys;
     private Map<String, Object> favouredBy = new HashMap<>();
 
     protected Property(Parcel in) {
         id = in.readString();
         name = in.readString();
         address = in.readString();
+        deleted = in.readBoolean();
         favouredBy = in.readHashMap(String.class.getClassLoader());
         keys = in.readHashMap(String.class.getClassLoader());
     }
@@ -57,6 +63,7 @@ public class Property implements Parcelable {
         parcel.writeString(id);
         parcel.writeString(name);
         parcel.writeString(address);
+        parcel.writeBoolean(deleted);
         parcel.writeMap(favouredBy == null ? new HashMap<>() : favouredBy);
         parcel.writeMap(keys == null ? new HashMap<>() : keys);
     }

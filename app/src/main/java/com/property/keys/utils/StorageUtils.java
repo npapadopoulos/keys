@@ -12,6 +12,7 @@ import androidx.annotation.RequiresApi;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageException;
 import com.google.firebase.storage.StorageReference;
+import com.property.keys.entities.ImageGenerationType;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -48,33 +49,47 @@ public class StorageUtils {
         });
     }
 
-    public static void downloadAndSaveImage(Context context, String id, String name, ImageView imageView) {
-        downloadImage(context, id, name, image -> ImageUtils.loadImage(context, image, imageView), imageView);
+    public static void downloadAndSaveImage(Context context, String id, String name, ImageView imageView, ImageGenerationType type,
+                                            Consumer<File> onComplete) {
+        downloadImage(context, id, name, image -> ImageUtils.loadImage(context, image, imageView), imageView, type, onComplete);
     }
 
-    public static void downloadImage(Context context, String id, String name, Consumer<File> loader, ImageView imageView) {
+    public static void downloadImage(Context context, String id, String name, Consumer<Object> loader, ImageView imageView, ImageGenerationType type,
+                                     Consumer<File> onComplete) {
         reference.child(id + "/images/" + name + ".jpg").getBytes(Long.MAX_VALUE).addOnSuccessListener(data -> {
             // Use the bytes to display the image
-            saveAndLoadImage(context, id, loader, BitmapFactory.decodeByteArray(data, 0, data.length));
+            saveAndLoadImage(context, id, loader, onComplete, BitmapFactory.decodeByteArray(data, 0, data.length));
         }).addOnFailureListener(exception -> {
             StorageException storageException = (StorageException) exception;
             if (storageException.getHttpResultCode() == 404) {
                 Timber.tag(TAG).i("Image was not found in path " + id + " in remote storage");
-                File defaultProfileImage = getImage(context, "default");
-                if (defaultProfileImage == null) {
-                    saveAndLoadImage(context, "default", loader, generateDefaultProfileImage(context, imageView));
-                } else {
-                    loader.accept(defaultProfileImage);
+                Bitmap generated;
+                switch (type) {
+                    case PROFILE: {
+                        File existing = getImage(context, "default");
+                        if (existing == null) {
+                            generated = generateDefaultProfileImage(context, imageView);
+                            saveAndLoadImage(context, "default", loader, null, generated);
+                        }
+                        break;
+                    }
+                    case KEY: {
+                        generated = QRCodeUtils.generateCode(id);
+                        saveAndLoadImage(context, "default", loader, onComplete, generated);
+                        break;
+                    }
                 }
-                Timber.tag(TAG).i("Image was not found in path " + id + " in remote storage");
             }
         });
     }
 
-    private static void saveAndLoadImage(Context context, String id, Consumer<File> loader, Bitmap bitmap) {
+    private static void saveAndLoadImage(Context context, String id, Consumer<Object> loader, Consumer<File> onComplete, Bitmap bitmap) {
         File image = ImageUtils.saveImage(context, bitmap, id);
         if (loader != null && image != null) {
             loader.accept(image);
+            if (onComplete != null) {
+                onComplete.accept(image);
+            }
         }
     }
 }

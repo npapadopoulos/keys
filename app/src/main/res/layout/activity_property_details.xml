@@ -35,13 +35,45 @@
                 android:background="@drawable/background"
                 android:fitsSystemWindows="true"
                 android:scaleType="centerCrop"
-                android:src="@drawable/gradient"
                 android:transitionName="propertyImage"
                 app:layout_collapseMode="parallax" />
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/propertyDetailsToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:layout_marginTop="20dp"
+                app:layout_collapseMode="pin"
+                app:layout_scrollFlags="scroll|enterAlways|snap"
+                app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
+
+                <TextView
+                    android:id="@id/name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:text="@string/default_property_name"
+                    android:textAppearance="?attr/textAppearanceHeadline6"
+                    android:transitionName="propertyName" />
+            </com.google.android.material.appbar.MaterialToolbar>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
 
     </com.google.android.material.appbar.AppBarLayout>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/setFavourite"
+        style="@style/FloatingActionBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="20dp"
+        android:src="@drawable/favourite_selected"
+        android:transitionName="favourite"
+        app:layout_anchor="@id/propertyDetailsToolbarLayout"
+        app:layout_anchorGravity="bottom|end" />
+
 
     <androidx.core.widget.NestedScrollView
         android:id="@+id/content"
@@ -53,92 +85,41 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="5dp"
             android:background="@color/colorGrey"
             android:orientation="vertical">
 
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/propertyDetailsToolbar"
-                android:layout_width="match_parent"
-                android:layout_height="80dp"
-                android:layout_marginTop="?attr/actionBarSize"
-                app:layout_collapseMode="pin"
-                app:layout_scrollFlags="scroll|enterAlways|snap"
-                app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
-                app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="start"
-                    android:orientation="horizontal">
-
-                    <LinearLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="start"
-                        android:orientation="vertical">
-
-                        <TextView
-                            android:id="@id/name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/default_property_name"
-                            android:textAppearance="?attr/textAppearanceHeadline6"
-                            android:transitionName="propertyName" />
-
-
-                        <LinearLayout
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal">
-
-                            <ImageView
-                                android:layout_width="20dp"
-                                android:layout_height="20dp"
-                                android:src="@drawable/place"
-                                android:transitionName="propertyPlace" />
-
-                            <TextView
-                                android:id="@id/address"
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:layout_marginStart="5dp"
-                                android:text="@string/default_property_address"
-                                android:textAppearance="?attr/textAppearanceBody2"
-                                android:transitionName="propertyAddress" />
-                        </LinearLayout>
-
-                    </LinearLayout>
-
-                    <RelativeLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content">
-
-                        <com.google.android.material.floatingactionbutton.FloatingActionButton
-                            android:id="@+id/setFavourite"
-                            style="@style/FloatingActionBar"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:src="@drawable/favourite_selected"
-                            android:transitionName="favourite"
-                            app:fabSize="mini"
-                            app:layout_anchorGravity="end" />
-                    </RelativeLayout>
-                </LinearLayout>
-
-            </com.google.android.material.appbar.MaterialToolbar>
-
-            <com.mapquest.mapping.maps.MapView
-                android:id="@+id/mapquestMapView"
-                android:layout_width="match_parent"
-                android:layout_height="200dp"
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginStart="10dp"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="35dp"
                 android:layout_marginEnd="10dp"
-                app:mapquest_app_key="@string/maps_key" />
+                android:orientation="horizontal">
 
+                <ImageView
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/place"
+                    android:transitionName="propertyPlace" />
+
+                <TextView
+                    android:id="@id/address"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="5dp"
+                    android:text="@string/default_property_address"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:transitionName="propertyAddress" />
+            </LinearLayout>
+
+            <!--            <com.mapquest.mapping.maps.MapView-->
+            <!--                android:id="@+id/mapquestMapView"-->
+            <!--                android:layout_width="match_parent"-->
+            <!--                android:layout_height="200dp"-->
+            <!--                android:layout_marginStart="10dp"-->
+            <!--                android:layout_marginTop="20dp"-->
+            <!--                android:layout_marginEnd="10dp"-->
+            <!--                app:mapquest_app_key="@string/maps_key" />-->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -237,46 +218,24 @@
                 android:id="@+id/keyList"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginStart="10dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="?attr/actionBarSize"
                 android:clipToPadding="false"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 tools:listitem="@layout/key" />
-
-            <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
-                android:id="@+id/addNewKey"
-                style="@style/FloatingActionBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|end"
-                android:layout_marginEnd="20dp"
-                android:layout_marginBottom="35dp"
-                android:contentDescription="@string/add_new_key"
-                android:src="@drawable/plus"
-                android:text="@string/add_new_key"
-                android:textSize="14sp"
-                android:transitionName="addNew"
-                app:icon="@drawable/plus" />
-
-
-            <!--            <com.google.android.material.button.MaterialButton-->
-            <!--                android:id="@+id/update"-->
-            <!--                style="@style/Widget.MaterialComponents.Button.Icon"-->
-            <!--                android:layout_width="235dp"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:layout_gravity="center"-->
-            <!--                android:layout_marginBottom="20dp"-->
-            <!--                android:text="@string/update"-->
-            <!--                android:textAllCaps="false"-->
-            <!--                app:cornerRadius="5dp"-->
-            <!--                app:icon="@drawable/right_arrow"-->
-            <!--                app:iconGravity="end"-->
-            <!--                app:iconPadding="-20dp" />-->
-
-            <!--            <ProgressBar-->
-            <!--                android:id="@+id/progressBar"-->
-            <!--                style="@style/ProgressBar"-->
-            <!--                android:layout_width="wrap_content"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:layout_gravity="bottom|center" />-->
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/addNewKey"
+        style="@style/FloatingActionBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="50dp"
+        android:src="@drawable/plus"
+        android:transitionName="addNew"
+        app:icon="@drawable/plus" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

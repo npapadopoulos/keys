@@ -51,7 +51,7 @@ public class PropertyCreateTask extends AbstractAsyncTask {
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                                             Set<String> usersToNotify = ((Map<String, Object>) snapshot.getValue()).keySet();
                                             if (!usersToNotify.isEmpty()) {
-                                                NotificationUtils.create(activity, property, usersToNotify, Action.ADDED_PROPERTY);
+                                                NotificationUtils.create(activity, property.getName(), usersToNotify, Action.ADDED_PROPERTY);
                                             }
                                         }
 

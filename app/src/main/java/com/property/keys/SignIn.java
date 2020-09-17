@@ -80,7 +80,7 @@ public class SignIn extends AppCompatActivity {
             }
         });
 
-        addOnSubmitClickListener();
+        addOnLoginClickListener();
         addOnSignUpClickListener();
         addOnForgotPasswordClickListener();
     }
@@ -123,7 +123,7 @@ public class SignIn extends AppCompatActivity {
         });
     }
 
-    private void addOnSubmitClickListener() {
+    private void addOnLoginClickListener() {
         binding.submit.setOnClickListener(v -> {
             InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
             in.hideSoftInputFromWindow(v.getWindowToken(), 0);

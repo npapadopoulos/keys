@@ -19,13 +19,18 @@ import com.property.keys.helpers.RecyclerItemTouchHelper;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 
+import lombok.Getter;
 import timber.log.Timber;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
+
+    @Getter
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     private final static String EMAIL_PATTERN = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     private final static String PASSWORD_PATTERN = "^" +
