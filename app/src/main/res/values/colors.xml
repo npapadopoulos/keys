@@ -10,7 +10,7 @@
     <color name="navigationBarColor">@color/colorGrey</color>
     <color name="colorGrey">#F6F6F6</color>
 
-    <color name="red_600">#fc636e</color> <!--Color error (light)-->
+    <color name="red_600">#fc636e</color>
 
     <color name="white_50">#ffffff</color>
 

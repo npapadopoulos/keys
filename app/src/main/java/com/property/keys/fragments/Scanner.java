@@ -1,5 +1,6 @@
 package com.property.keys.fragments;
 
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -22,9 +23,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
+import com.property.keys.PropertyDetails;
 import com.property.keys.R;
 import com.property.keys.databinding.FragmentScannerBinding;
 import com.property.keys.entities.Key;
+import com.property.keys.entities.Property;
 import com.property.keys.entities.User;
 import com.property.keys.utils.UserUtils;
 import com.property.keys.utils.Utils;
@@ -39,7 +42,8 @@ import static com.property.keys.utils.Utils.DATE_TIME_FORMATTER;
 public class Scanner extends Fragment {
     private static final String TAG = Scanner.class.getSimpleName();
 
-    private static FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+
+    private final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
     private CodeScanner mCodeScanner;
 
@@ -85,6 +89,22 @@ public class Scanner extends Fragment {
                                                 updates.put("properties/" + key.getPropertyId() + "/keys/" + key.getId(), key);
                                                 firebaseDatabase.getReference("/").updateChildren(updates);
                                                 Snackbar.make(binding.scannerView, "Key checked in successfully.", Snackbar.LENGTH_LONG).show();
+                                                firebaseDatabase.getReference("properties").child(key.getPropertyId())
+                                                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                                Property property = snapshot.getValue(Property.class);
+                                                                Intent propertyDetails = new Intent(requireContext(), PropertyDetails.class);
+                                                                propertyDetails.putExtra("property", property);
+                                                                requireContext().startActivity(propertyDetails);
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(@NonNull DatabaseError error) {
+
+                                                            }
+                                                        });
+
                                             })
                                             .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
                                             .setNegativeButton("No", Utils::onClick)

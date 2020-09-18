@@ -42,11 +42,11 @@ public class KeyHolder extends RecyclerView.ViewHolder implements Holder {
         if (key.getCheckedInDate() != null) {
             checkedInDate.setText(key.getCheckedInDate());
             checkedInDetails.setText(key.getLastCheckedInUser() + " has the key.");
-            keyDetails.setBackground(ContextCompat.getDrawable(context, R.drawable.red_card_background));
+            keyDetails.setBackground(ContextCompat.getDrawable(context, R.drawable.key_busy_background));
         } else {
             checkedInDate.setText("");
             checkedInDetails.setText("Key is available.");
-            keyDetails.setBackground(ContextCompat.getDrawable(context, R.drawable.green_card_background));
+            keyDetails.setBackground(ContextCompat.getDrawable(context, R.drawable.key_available_background));
         }
         ImageUtils.syncAndloadImagesKey(context, key.getId(), qrCodeImage, (image) -> itemView.setOnClickListener(v -> {
             Intent shareIntent = new Intent();

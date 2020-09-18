@@ -26,9 +26,12 @@ import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
 import com.property.keys.adapters.KeyAdapter;
 import com.property.keys.adapters.KeyHolder;
 import com.property.keys.databinding.ActivityPropertyDetailsBinding;
@@ -54,7 +57,7 @@ import static com.property.keys.utils.Utils.updateFavourite;
 public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.AuthStateListener, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
     private static final String TAG = Container.class.getSimpleName();
 
-    private final DatabaseReference propertiesDatabaseReference = FirebaseDatabase.getInstance().getReference().child("properties");
+    private final DatabaseReference propertiesDatabaseReference = FirebaseDatabase.getInstance().getReference("properties");
 
     private ActivityPropertyDetailsBinding binding;
     private KeyAdapter adapter;
@@ -85,8 +88,22 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
         binding = ActivityPropertyDetailsBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        binding.keyList.setHasFixedSize(false);
         property = getIntent().getParcelableExtra("property");
+        binding.keyList.setHasFixedSize(false);
+        propertiesDatabaseReference.child(property.getId())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        property = snapshot.getValue(Property.class);
+                        binding.availableSum.setText(String.valueOf(property.getKeys().values().stream().filter(k -> k.getCheckedInDate() == null).count()));
+                        binding.busySum.setText(String.valueOf(property.getKeys().values().stream().filter(k -> k.getCheckedInDate() != null).count()));
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
 
         binding.name.setText(property.getName());
         binding.address.setText(property.getAddress());

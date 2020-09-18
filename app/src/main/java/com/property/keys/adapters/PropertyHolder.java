@@ -27,10 +27,8 @@ import static com.property.keys.utils.Utils.updateFavourite;
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class PropertyHolder extends RecyclerView.ViewHolder implements Holder {
 
-    private TextView name;
-    private TextView address;
-    private ImageView propertyImage;
-    private ImageView availableSumImage, busySumImage;
+    private TextView name, address, availableSum, busySum;
+    private ImageView propertyImage, availableSumImage, busySumImage;
     private FloatingActionButton setFavourite;
     private RelativeLayout propertyBackground, propertyForeground;
     private Property property;
@@ -44,6 +42,8 @@ public class PropertyHolder extends RecyclerView.ViewHolder implements Holder {
         address = itemView.findViewById(R.id.address);
         propertyImage = itemView.findViewById(R.id.propertyImage);
         availableSumImage = itemView.findViewById(R.id.availableSumImage);
+        availableSum = itemView.findViewById(R.id.availableSum);
+        busySum = itemView.findViewById(R.id.busySum);
         busySumImage = itemView.findViewById(R.id.busySumImage);
         propertyBackground = itemView.findViewById(R.id.propertyBackground);
         propertyForeground = itemView.findViewById(R.id.propertyForeground);
@@ -77,6 +77,8 @@ public class PropertyHolder extends RecyclerView.ViewHolder implements Holder {
     public void bind(@NonNull Activity activity, @NonNull Property property) {
         name.setText(property.getName());
         address.setText(property.getAddress());
+        availableSum.setText(String.valueOf(property.getKeys().values().stream().filter(k -> k.getCheckedInDate() == null).count()));
+        busySum.setText(String.valueOf(property.getKeys().values().stream().filter(k -> k.getCheckedInDate() != null).count()));
         this.property = property;
         ImageUtils.syncAndloadImagesProperty(activity, property.getId(), propertyImage, false);
         updateFavourite(activity, setFavourite, property.getFavouredBy().containsKey(user.getId()));

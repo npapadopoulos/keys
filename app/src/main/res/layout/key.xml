@@ -37,7 +37,7 @@
                 android:id="@+id/keyDetails"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:background="@drawable/green_card_background">
+                android:background="@drawable/key_available_background">
 
                 <ImageView
                     android:id="@+id/qrCodeImage"
