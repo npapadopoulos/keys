@@ -78,6 +78,8 @@ public class Scanner extends Fragment {
                                             .setMessage("Are you sure you want to check in?")
                                             .setPositiveButton("Yes", (dialogInterface, i) -> {
                                                 key.setCheckedInDate(DATE_TIME_FORMATTER.format(LocalDateTime.now()));
+                                                key.setCheckedOutDate(null);
+                                                key.setLastCheckedInUser(user.getFirstName() + " " + user.getLastName());
                                                 updates.put("users/" + user.getId() + "/keys/" + key.getId(), key);
                                                 updates.put("keys/" + key.getId(), key);
                                                 updates.put("properties/" + key.getPropertyId() + "/keys/" + key.getId(), key);
@@ -88,11 +90,15 @@ public class Scanner extends Fragment {
                                             .setNegativeButton("No", Utils::onClick)
                                             .setCancelable(false)
                                             .create().show();
+                                } else if (!key.getLastCheckedInUser().equalsIgnoreCase(user.getFirstName() + " " + user.getLastName())) {
+                                    Snackbar.make(binding.scannerView, "Key was checked in on " + key.getCheckedInDate() + " by another user. Contact " + key.getLastCheckedInUser() + " to check out the key.", Snackbar.LENGTH_LONG).show();
                                 } else {
                                     new MaterialAlertDialogBuilder(requireContext())
-                                            .setMessage("Key was checked on " + key.getCheckedInDate() + ". Are you sure you want to check out?")
+                                            .setMessage("Key was checked in on " + key.getCheckedInDate() + " by " + key.getLastCheckedInUser() + ". Are you sure you want to check out?")
                                             .setPositiveButton("Yes", (dialogInterface, i) -> {
-                                                key.setCheckedInDate(DATE_TIME_FORMATTER.format(LocalDateTime.now()));
+                                                key.setCheckedInDate(null);
+                                                key.setCheckedOutDate(DATE_TIME_FORMATTER.format(LocalDateTime.now()));
+                                                key.setLastCheckOutDate(key.getCheckedOutDate());
                                                 updates.put("users/" + user.getId() + "/keys/" + key.getId(), key);
                                                 updates.put("keys/" + key.getId(), key);
                                                 updates.put("properties/" + key.getPropertyId() + "/keys/" + key.getId(), key);

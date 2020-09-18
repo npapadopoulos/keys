@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -43,12 +44,15 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.function.Consumer;
 
+import lombok.SneakyThrows;
 import timber.log.Timber;
 
 import static com.property.keys.utils.StorageUtils.downloadAndSaveImage;
@@ -63,7 +67,7 @@ public class ImageUtils {
         throw new AssertionError("No instance for you!");
     }
 
-    public static final File getImage(Context context, String id) {
+    public static File getImage(Context context, String id) {
         File image = getFile(context.getExternalCacheDir(), id);
         if (image == null) {
             Timber.tag(TAG).e("Couldn't find the image in local storage for id %s", id);
@@ -74,7 +78,13 @@ public class ImageUtils {
         return image;
     }
 
-    public static final File saveImage(Context context, Bitmap image, String name) {
+    @SneakyThrows
+    public static Bitmap getBitmapImage(Context context, String id) {
+        byte[] data = Files.readAllBytes(Paths.get(getImage(context, id).getPath()).toAbsolutePath());
+        return BitmapFactory.decodeByteArray(data, 0, data.length);
+    }
+
+    public static File saveImage(Context context, Bitmap image, String name) {
         try {
             clearCache(context);
             File file = newFile(context.getExternalCacheDir(), name);

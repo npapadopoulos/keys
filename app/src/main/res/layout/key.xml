@@ -6,7 +6,7 @@
     android:layout_margin="5dp">
 
     <RelativeLayout
-        android:id="@+id/propertyBackground"
+        android:id="@+id/keyBackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@drawable/red_card_background">
@@ -22,38 +22,45 @@
     </RelativeLayout>
 
     <RelativeLayout
-        android:id="@+id/propertyForeground"
+        android:id="@+id/keyForeground"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/white_card_background">
+        android:layout_height="100dp">
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card"
             style="@style/MaterialCardView"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:background="@color/colorGrey">
 
             <RelativeLayout
+                android:id="@+id/keyDetails"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                android:background="@drawable/green_card_background">
 
                 <ImageView
                     android:id="@+id/qrCodeImage"
                     android:layout_width="100dp"
-                    android:layout_height="100dp"
+                    android:layout_height="match_parent"
                     android:scaleType="fitCenter" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_alignParentStart="true"
                     android:layout_centerHorizontal="true"
                     android:layout_centerVertical="true"
                     android:layout_marginStart="120dp"
-                    android:layout_marginTop="50dp"
                     android:orientation="vertical"
                     android:padding="10dp">
+
+                    <TextView
+                        android:id="@+id/checkedInDate"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?attr/textAppearanceHeadline6"
+                        android:textSize="12sp" />
 
                     <TextView
                         android:id="@+id/checkedInDetails"

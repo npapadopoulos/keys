@@ -3,6 +3,7 @@ package com.property.keys;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -14,7 +15,9 @@ import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.core.graphics.ColorUtils;
 import androidx.core.widget.NestedScrollView;
+import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -57,6 +60,7 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
     private KeyAdapter adapter;
     private Property property;
     private User user;
+    private int titleTextColor;
 
     @Override
     public void onBackPressed() {
@@ -83,6 +87,7 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
 
         binding.keyList.setHasFixedSize(false);
         property = getIntent().getParcelableExtra("property");
+
         binding.name.setText(property.getName());
         binding.address.setText(property.getAddress());
         binding.propertyImage.setOnClickListener(this::updateImage);
@@ -122,13 +127,45 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
         binding.setFavourite.setOnClickListener(view -> updateFavourite(this, binding.setFavourite, property, user));
     }
 
+    @SneakyThrows
     private void initToolbar() {
+        generateTitleTextColor(ImageUtils.getBitmapImage(this, property.getId()));
         MaterialToolbar propertyDetailsToolbar = binding.propertyDetailsToolbar;
+        // Set the toolbar background and text colors
         propertyDetailsToolbar.setNavigationOnClickListener(view -> finish());
 
         setSupportActionBar(propertyDetailsToolbar);
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+    }
+
+    private void generateTitleTextColor(Bitmap bitmap) throws IOException {
+        Palette.from(bitmap)
+                .generate(palette -> {
+                    Palette.Swatch swatch = palette.getVibrantSwatch();
+                    if (swatch == null && palette.getSwatches().size() > 0) {
+                        swatch = palette.getSwatches().get(0);
+                    }
+
+                    titleTextColor = Color.WHITE;
+
+                    if (swatch != null) {
+                        titleTextColor = swatch.getTitleTextColor();
+                        titleTextColor = ColorUtils.setAlphaComponent(titleTextColor, 255);
+                    }
+                    binding.name.setTextColor(titleTextColor);
+
+                    binding.propertyDetailsToolbarLayout.addOnOffsetChangedListener((appBarLayout, verticalOffset) -> {
+                        if (Math.abs(verticalOffset) - appBarLayout.getTotalScrollRange() == 0) {
+                            //  Collapsed
+                            binding.name.setTextColor(ContextCompat.getColor(this, R.color.black_900));
+                        } else {
+                            //  Expanded
+                            binding.name.setTextColor(titleTextColor);
+
+                        }
+                    });
+                });
     }
 
     private void updateImage(View v) {
@@ -155,6 +192,7 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
                     ImageUtils.saveImage(getApplicationContext(), image, property.getId());
                     StorageUtils.uploadImage(property.getId(), "property", image);
                     ImageUtils.loadImage(this, property.getId(), binding.propertyImage);
+                    generateTitleTextColor(image);
                 } catch (IOException e) {
                     Timber.tag(TAG).e(e);
                 }

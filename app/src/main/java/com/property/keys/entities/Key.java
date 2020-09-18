@@ -23,6 +23,7 @@ public class Key implements Parcelable {
     private String checkedInDate;
     private String checkedOutDate;
     private String lastCheckOutDate;
+    private String lastCheckedInUser;
 
     public static final Parcelable.Creator<Key> CREATOR = new Parcelable.Creator<Key>() {
         @Override
@@ -43,6 +44,7 @@ public class Key implements Parcelable {
         checkedInDate = in.readString();
         checkedOutDate = in.readString();
         lastCheckOutDate = in.readString();
+        lastCheckedInUser = in.readString();
     }
 
     @Override
@@ -57,5 +59,6 @@ public class Key implements Parcelable {
         parcel.writeString(checkedInDate);
         parcel.writeString(checkedOutDate);
         parcel.writeString(lastCheckOutDate);
+        parcel.writeString(lastCheckedInUser);
     }
 }
