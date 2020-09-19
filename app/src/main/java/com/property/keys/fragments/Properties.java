@@ -64,7 +64,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
     private static final String TAG = Properties.class.getSimpleName();
 
     @NonNull
-    protected static final Query propertiesQuery = FirebaseDatabase.getInstance().getReference().child("properties").orderByChild("deleted").equalTo(false).limitToLast(20);
+    protected static final Query propertiesQuery = FirebaseDatabase.getInstance().getReference().child("properties").orderByChild("deleted").equalTo(false);
     private FragmentPropertiesBinding binding;
 
     @Getter

@@ -15,8 +15,8 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:itemIconTint="@drawable/drawer_menu_item_style"
-        app:itemTextColor="@drawable/drawer_menu_item_style"
+        app:itemIconTint="@drawable/menu_item_style"
+        app:itemTextColor="@drawable/menu_item_style"
         app:headerLayout="@layout/left_menu_header"
         app:menu="@menu/left_navigation_menu" />
 

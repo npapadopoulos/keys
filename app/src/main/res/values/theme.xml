@@ -9,9 +9,9 @@
         <!--colorSecondary colors are most often used as accents on components, such as FABs and -->
         <!--selection controls.-->
         <item name="colorPrimary">@color/primaryColor</item>
-        <item name="colorSecondary">@color/secondaryColor</item>
+        <item name="colorSecondary">@color/primaryColor</item>
         <item name="colorPrimaryDark">@color/primaryDarkColor</item>
-        <item name="colorAccent">@color/accentColor</item>
+        <!--        <item name="colorAccent">@color/pink</item>-->
         <item name="android:navigationBarColor">@color/navigationBarColor</item>
         <!--colorBackground appears behind scrollable content and is used for the default window-->
         <!--background. colorSurface is mapped to the surface of components such as cards, sheets-->
@@ -21,7 +21,7 @@
         <item name="colorError">@color/red_600</item>
         <!--"On" colors define how text, icons and strokes are colored in relation to the surface-->
         <!--on which they appear.-->
-        <item name="colorOnPrimary">@color/secondaryColor</item>
+        <item name="colorOnPrimary">@color/white_50</item>
         <item name="colorOnSecondary">@color/white_50</item>
 
         <item name="android:windowContentTransitions">true</item>

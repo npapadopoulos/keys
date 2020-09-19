@@ -64,6 +64,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
     implementation 'androidmads.library.qrgenearator:QRGenearator:1.0.3'
     compile 'com.github.arimorty:floatingsearchview:2.1.1'
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
     //TODO https://github.com/Krupen/FabulousFilter
     //compile 'com.allattentionhere:fabulousfilter:0.0.5'

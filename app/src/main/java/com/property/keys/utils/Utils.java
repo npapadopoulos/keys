@@ -176,7 +176,7 @@ public class Utils {
 
     public static void updateFavourite(Activity activity, FloatingActionButton view, boolean liked) {
         if (liked) {
-            view.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(activity, R.color.accentColor)));
+            view.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(activity, R.color.pink)));
         } else {
             view.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(activity, R.color.primaryColor)));
         }

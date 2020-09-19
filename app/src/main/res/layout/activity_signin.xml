@@ -119,12 +119,10 @@
 
         <ProgressBar
             android:id="@+id/progressBar"
-            style="@style/ProgressBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginBottom="20dp"
-            android:progressBackgroundTint="@color/white_50" />
+            android:layout_marginBottom="20dp" />
 
         <RelativeLayout
             android:id="@+id/footer"

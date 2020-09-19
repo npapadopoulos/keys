@@ -31,10 +31,4 @@
         <item name="android:paddingBottom">24dp</item>
         <item name="android:orientation">vertical</item>
     </style>
-
-    <style name="ProgressBar" parent="Widget.AppCompat.ProgressBar">
-        <item name="colorFillColor">@color/primaryColor</item>
-        <item name="backgroundColor">@color/primaryColor</item>
-        <item name="colorAccent">@color/primaryColor</item>
-    </style>
 </resources>
