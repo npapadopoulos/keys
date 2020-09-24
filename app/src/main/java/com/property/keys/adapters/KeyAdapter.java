@@ -19,7 +19,7 @@ public class KeyAdapter extends FirebaseRecyclerAdapter<Key, KeyHolder> {
     private Activity activity;
 
     public KeyAdapter(@NonNull FirebaseRecyclerOptions<Key> options, Activity activity) {
-        super(options);
+        super(options, false);
         this.activity = activity;
     }
 
@@ -33,5 +33,11 @@ public class KeyAdapter extends FirebaseRecyclerAdapter<Key, KeyHolder> {
     public KeyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new KeyHolder(LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.key, parent, false));
+    }
+
+    @NonNull
+    @Override
+    public String getId(Key key) {
+        return key.getId();
     }
 }

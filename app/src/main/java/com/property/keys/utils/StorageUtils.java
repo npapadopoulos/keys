@@ -49,12 +49,12 @@ public class StorageUtils {
         });
     }
 
-    public static void downloadAndSaveImage(Context context, String id, String name, ImageView imageView, ImageGenerationType type,
+    public static void downloadAndSaveImage(Context context, String id, String name, String firstName, String lastName, ImageView imageView, ImageGenerationType type,
                                             Consumer<File> onComplete) {
-        downloadImage(context, id, name, image -> ImageUtils.loadImage(context, image, imageView), imageView, type, onComplete);
+        downloadImage(context, id, name, firstName, lastName, image -> ImageUtils.loadImage(context, image, imageView), imageView, type, onComplete);
     }
 
-    public static void downloadImage(Context context, String id, String name, Consumer<Object> loader, ImageView imageView, ImageGenerationType type,
+    public static void downloadImage(Context context, String id, String name, String firstName, String lastName, Consumer<Object> loader, ImageView imageView, ImageGenerationType type,
                                      Consumer<File> onComplete) {
         reference.child(id + "/images/" + name + ".jpg").getBytes(Long.MAX_VALUE).addOnSuccessListener(data -> {
             // Use the bytes to display the image
@@ -68,7 +68,7 @@ public class StorageUtils {
                     case PROFILE: {
                         File existing = getImage(context, "default");
                         if (existing == null) {
-                            generated = generateDefaultProfileImage(context, imageView);
+                            generated = generateDefaultProfileImage(context, imageView, firstName, lastName);
                             saveAndLoadImage(context, "default", loader, null, generated);
                         }
                         break;

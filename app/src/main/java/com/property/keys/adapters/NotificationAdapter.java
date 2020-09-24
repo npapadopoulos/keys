@@ -24,7 +24,7 @@ public class NotificationAdapter extends FirebaseRecyclerAdapter<Notification, N
     private FloatingActionButton deleteNotifications;
 
     public NotificationAdapter(@NonNull FirebaseRecyclerOptions<Notification> options, @NotNull Activity activity) {
-        super(options);
+        super(options, false);
         this.activity = activity;
         deleteNotifications = activity.findViewById(R.id.deleteNotifications);
     }
@@ -44,5 +44,11 @@ public class NotificationAdapter extends FirebaseRecyclerAdapter<Notification, N
     @Override
     public void onDataChanged() {
         deleteNotifications.setVisibility(getItemCount() == 0 ? View.INVISIBLE : View.VISIBLE);
+    }
+
+    @NonNull
+    @Override
+    public String getId(Notification notification) {
+        return notification.getId();
     }
 }

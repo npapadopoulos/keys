@@ -46,7 +46,7 @@ public class NotificationUtils {
                 description = currentUser.getFirstName() + " is now following property '" + propertyName + "'.";
                 break;
             }
-            case UNLIKED_PROPERTY: {
+            case DISLIKED_PROPERTY: {
                 description = currentUser.getFirstName() + " stopped following property '" + propertyName + "'.";
                 break;
             }
@@ -75,6 +75,7 @@ public class NotificationUtils {
                         .activity(activity)
                         .description(description)
                         .usersToNotify(usersToNotify)
+                        .action(action)
                         .build());
     }
 }

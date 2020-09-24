@@ -34,11 +34,6 @@ public class PropertyUtils {
         new TaskExecutor().executeAsync(new PropertyCreateTask(activity, property, startActivity, onCreationFailed));
     }
 
-    public static void update(Activity activity, Property property,
-                              Consumer<Task<Void>> onUpdateFailed) {
-        new TaskExecutor().executeAsync(new PropertyUpdateTask(activity, property, onUpdateFailed, Action.UPDATED_PROPERTY));
-    }
-
     public static void delete(Activity activity, Property property) {
         new TaskExecutor().executeAsync(new PropertyDeleteTask(activity, property, false, false));
     }
@@ -52,7 +47,7 @@ public class PropertyUtils {
     }
 
     public static void like(Activity activity, Property property, boolean liked) {
-        new TaskExecutor().executeAsync(new PropertyUpdateTask(activity, property, null, liked ? Action.LIKED_PROPERTY : Action.UNLIKED_PROPERTY));
+        new TaskExecutor().executeAsync(new PropertyUpdateTask(activity, property, null, liked ? Action.LIKED_PROPERTY : Action.DISLIKED_PROPERTY));
     }
 
     public static void generateKey(Activity activity, Property property) {

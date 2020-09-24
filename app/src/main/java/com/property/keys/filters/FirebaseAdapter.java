@@ -46,4 +46,12 @@ interface FirebaseAdapter<T> extends ChangeEventListener, LifecycleObserver {
      */
     @NonNull
     DatabaseReference getRef(int position);
+
+    /**
+     * Gets the item at the specified position from the backing snapshot array.
+     *
+     * @see ObservableSnapshotArray#get(int)
+     */
+    @NonNull
+    String getId(T item);
 }

@@ -13,7 +13,6 @@ import com.property.keys.R;
 import com.property.keys.entities.Property;
 import com.property.keys.entities.User;
 import com.property.keys.filters.FirebaseRecyclerAdapter;
-import com.property.keys.utils.UserUtils;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class PropertyAdapter extends FirebaseRecyclerAdapter<Property, PropertyHolder> {
@@ -24,7 +23,7 @@ public class PropertyAdapter extends FirebaseRecyclerAdapter<Property, PropertyH
     private User user;
 
     public PropertyAdapter(@NonNull FirebaseRecyclerOptions<Property> options, Activity activity, User user) {
-        super(options);
+        super(options, true);
         this.activity = activity;
         this.user = user;
     }
@@ -35,14 +34,13 @@ public class PropertyAdapter extends FirebaseRecyclerAdapter<Property, PropertyH
     }
 
     @Override
-    protected boolean filterCondition(Property model, String pattern) {
-        return model.getName().toLowerCase().contains(pattern) || model.getAddress().toLowerCase().contains(pattern);
-    }
+    protected boolean filterCondition(Property property, String pattern, boolean showOnlyFavourites) {
+        boolean filtered = property.getName().toLowerCase().contains(pattern) || property.getAddress().toLowerCase().contains(pattern);
+        if (showOnlyFavourites) {
+            return filtered && property.getFavouredBy().get(user.getId()) != null;
+        }
 
-    @Override
-    public boolean filterFavourites(Property model) {
-        String currentUserId = UserUtils.getLocalUser(activity.getApplicationContext()).getId();
-        return model.getFavouredBy().keySet().stream().anyMatch(currentUserId::equalsIgnoreCase);
+        return filtered;
     }
 
     @NonNull
@@ -50,5 +48,11 @@ public class PropertyAdapter extends FirebaseRecyclerAdapter<Property, PropertyH
     public PropertyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new PropertyHolder(activity, user, LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.property, parent, false));
+    }
+
+    @NonNull
+    @Override
+    public String getId(Property property) {
+        return property.getId();
     }
 }

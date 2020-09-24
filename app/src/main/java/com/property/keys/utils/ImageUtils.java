@@ -172,26 +172,30 @@ public class ImageUtils {
         }
     }
 
-    public static void syncAndloadImagesProfile(Context context, @NonNull String name, ImageView imageView) {
-        syncAndloadImages(context, "profile", name, imageView, false, ImageGenerationType.PROFILE, null);
+    public static void syncAndLoadImagesProfile(Context context, User user, ImageView imageView) {
+        syncAndloadImages(context, "profile", user.getId(), user.getFirstName(), user.getLastName(), imageView, false, ImageGenerationType.PROFILE, null);
     }
 
-    public static void syncAndloadImagesProperty(Context context, @NonNull String name, ImageView imageView, boolean useBackround) {
-        syncAndloadImages(context, "property", name, imageView, useBackround, ImageGenerationType.NONE, null);
+    public static void syncAndLoadImagesProfile(Context context, @NonNull String name, String firstName, String lastName, ImageView imageView) {
+        syncAndloadImages(context, "profile", name, firstName, lastName, imageView, false, ImageGenerationType.PROFILE, null);
+    }
+
+    public static void syncAndloadImagesProperty(Context context, @NonNull String name, ImageView imageView, boolean useBackground) {
+        syncAndloadImages(context, "property", name, null, null, imageView, useBackground, ImageGenerationType.NONE, null);
     }
 
     public static void syncAndloadImagesKey(Context context, @NonNull String name, ImageView imageView, Consumer<File> onComplete) {
-        syncAndloadImages(context, "key", name, imageView, false, ImageGenerationType.KEY, onComplete);
+        syncAndloadImages(context, "key", name, null, null, imageView, false, ImageGenerationType.KEY, onComplete);
     }
 
-    private static void syncAndloadImages(Context context, String directory, @NonNull String name, ImageView imageView, boolean useBackround,
+    private static void syncAndloadImages(Context context, String directory, @NonNull String name, String firstName, String lastName, ImageView imageView, boolean useBackground,
                                           ImageGenerationType type,
                                           Consumer<File> onComplete) {
         File image = getImage(context, name);
         if (image != null) {
-            loadImage(context, image, imageView, useBackround, onComplete);
+            loadImage(context, image, imageView, useBackground, onComplete);
         } else {
-            downloadAndSaveImage(context, name, directory, imageView, type, onComplete);
+            downloadAndSaveImage(context, name, directory, firstName, lastName, imageView, type, onComplete);
         }
     }
 
@@ -324,10 +328,9 @@ public class ImageUtils {
 
 
     @NotNull
-    public static Bitmap generateDefaultProfileImage(Context context, ImageView imageView) {
+    public static Bitmap generateDefaultProfileImage(Context context, ImageView imageView, String firstName, String lastName) {
         Bitmap bitmap = Bitmap.createBitmap(imageView.getWidth(), imageView.getHeight(), Bitmap.Config.ARGB_8888);
-        User localUser = UserUtils.getLocalUser(context);
-        String initials = String.valueOf(Character.toUpperCase(localUser.getFirstName().charAt(0))) + Character.toUpperCase(localUser.getLastName().charAt(0));
+        String initials = String.valueOf(Character.toUpperCase(firstName.charAt(0))) + Character.toUpperCase(lastName.charAt(0));
 
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();

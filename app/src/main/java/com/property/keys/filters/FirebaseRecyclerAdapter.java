@@ -18,36 +18,40 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
-import lombok.Setter;
 import timber.log.Timber;
 
-import static com.google.android.gms.common.util.CollectionUtils.isEmpty;
-import static java.util.stream.Collectors.toList;
+import static java.util.function.Function.identity;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
         extends RecyclerView.Adapter<VH> implements FirebaseAdapter<T>, Filterable {
     private static final String TAG = "FirebaseRecyclerAdapter";
 
+    private final boolean isFilterable;
     private ObservableSnapshotArray<T> mSnapshots;
-    protected List<T> filteredSnapshots;
+    private FirebaseRecyclerOptions<T> mOptions;
     private Filter filter;
+    private Map<String, T> list, backupList;
 
     /**
      * Initialize a {@link RecyclerView.Adapter} that listens to a Firebase query. See
      * {@link FirebaseRecyclerOptions} for configuration options.
      */
-    public FirebaseRecyclerAdapter(@NonNull FirebaseRecyclerOptions<T> options) {
+    public FirebaseRecyclerAdapter(@NonNull FirebaseRecyclerOptions<T> options, boolean isFilterable) {
+        mOptions = options;
         mSnapshots = options.getSnapshots();
+        list = mSnapshots.stream().collect(Collectors.toMap(this::getId, identity()));
+        backupList = new HashMap<>(list);
 
-        filteredSnapshots = isEmpty(options.getSnapshots()) ? new ArrayList<>() : new ArrayList<>(options.getSnapshots());
+        this.isFilterable = isFilterable;
 
-        if (options.getOwner() != null) {
-            options.getOwner().getLifecycle().addObserver(this);
+        if (mOptions.getOwner() != null) {
+            mOptions.getOwner().getLifecycle().addObserver(this);
         }
     }
 
@@ -76,30 +80,50 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
                                @NonNull DataSnapshot snapshot,
                                int newIndex,
                                int oldIndex) {
+        T model = null;
+        if (type != ChangeEventType.REMOVED && mSnapshots != null && !mSnapshots.isEmpty()) {
+            model = mSnapshots.get(newIndex);
+        }
+        onChildUpdate(model, type, newIndex, oldIndex, snapshot.getKey());
+    }
 
+    protected void onChildUpdate(T model, ChangeEventType type,
+                                 int newIndex,
+                                 int oldIndex,
+                                 String key) {
         switch (type) {
             case ADDED:
-                filteredSnapshots.add(newIndex, mSnapshots.get(newIndex));
+                update(key, model);
                 notifyItemInserted(newIndex);
                 break;
             case CHANGED:
-                //FIXME when unliked a property in filtered state, an REMOVED event type should be fired after of CHANGED event type
-                filteredSnapshots.remove(newIndex);
-                filteredSnapshots.add(newIndex, mSnapshots.get(newIndex));
+                update(key, model);
                 notifyItemChanged(newIndex);
                 break;
             case REMOVED:
-                filteredSnapshots.remove(newIndex);
+                remove(key);
                 notifyItemRemoved(newIndex);
                 break;
             case MOVED:
-                filteredSnapshots.remove(oldIndex);
-                filteredSnapshots.add(newIndex, mSnapshots.get(newIndex));
+                update(key, model);
                 notifyItemMoved(oldIndex, newIndex);
                 break;
             default:
                 throw new IllegalStateException("Incomplete case statement");
         }
+    }
+
+    private void update(String key, T t) {
+        list.put(key, t);
+        if (isFilterable) {
+            backupList.put(key, t);
+        }
+    }
+
+    private void remove(String key) {
+        list.remove(key);
+        if (isFilterable)
+            backupList.remove(key);
     }
 
     @Override
@@ -120,7 +144,11 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
     @NonNull
     @Override
     public T getItem(int position) {
-        return filteredSnapshots.get(position);
+        String key = mSnapshots.getSnapshot(position).getKey();
+        if (!list.containsKey(key)) {
+            return getItem(++position);
+        }
+        return Objects.requireNonNull(list.get(key));
     }
 
     @NonNull
@@ -131,7 +159,36 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-        return mSnapshots.isListening(this) ? filteredSnapshots.size() : 0;
+        return mSnapshots.isListening(this) ? list.size() : 0;
+    }
+
+    /**
+     * Re-initialize the Adapter with a new set of options. Can be used to change the query
+     * without re-constructing the entire adapter.
+     */
+    public void updateOptions(@NonNull FirebaseRecyclerOptions<T> options) {
+        // Tear down old options
+        boolean wasListening = mSnapshots.isListening(this);
+        if (mOptions.getOwner() != null) {
+            mOptions.getOwner().getLifecycle().removeObserver(this);
+        }
+        mSnapshots.clear();
+        list.clear();
+        backupList.clear();
+        stopListening();
+
+        // Set up new options
+        mOptions = options;
+        mSnapshots = options.getSnapshots();
+        list = mSnapshots.stream().collect(Collectors.toMap(this::getId, identity()));
+        backupList = new HashMap<>(list);
+
+        if (options.getOwner() != null) {
+            options.getOwner().getLifecycle().addObserver(this);
+        }
+        if (wasListening) {
+            startListening();
+        }
     }
 
     @Override
@@ -151,17 +208,8 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
      * @param model   model T
      * @param pattern filter pattern with Lower Case
      */
-    protected boolean filterCondition(T model, String pattern) {
+    protected boolean filterCondition(T model, String pattern, boolean showOnlyFavourite) {
         return true;
-    }
-
-    /**
-     * show only favourites condition for Filter
-     *
-     * @param model model T
-     */
-    protected boolean filterFavourites(T model) {
-        return false;
     }
 
     @Override
@@ -172,47 +220,44 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
         return filter;
     }
 
-    public void removeItem(int position) {
-        getRef(position).removeValue();
-    }
-
     /**
      * Simple search on arrived data from firebase.
      * Note that the search query doesn't apply on firebase directly.
      */
     public class SearchFilter extends Filter {
 
-        @Setter
         private boolean showOnlyFavourites;
 
+        public Filter showOnlyFavourites(boolean showOnlyFavourites) {
+            this.showOnlyFavourites = showOnlyFavourites;
+            return this;
+        }
+
         @Override
-        protected FilterResults performFiltering(CharSequence charSequence) {
-            filteredSnapshots.clear();
-            filteredSnapshots.addAll(getSnapshots());
-
-            List<T> filtered = new ArrayList<>();
-            if (charSequence == null || charSequence.toString().isEmpty()) {
-                filtered.addAll(filteredSnapshots);
+        protected FilterResults performFiltering(CharSequence constraint) {
+            final FilterResults results = new FilterResults();
+            if (constraint == null || constraint.length() == 0) {
+                results.values = backupList;
+                results.count = backupList.size();
             } else {
-                filtered.addAll(filteredSnapshots.stream()
-                        .filter(model -> filterCondition(model, charSequence.toString()))
-                        .collect(toList()));
+                Map<String, T> filteredList = new HashMap<>();
+                final String filterPattern = constraint.toString().toLowerCase().trim();
+                for (T t : backupList.values()) {
+                    if (filterCondition(t, filterPattern, showOnlyFavourites)) {
+                        filteredList.put(getId(t), t);
+                    }
+                }
+                results.values = filteredList;
+                results.count = filteredList.size();
             }
 
-            if (showOnlyFavourites) {
-                filtered = filtered.stream().filter(FirebaseRecyclerAdapter.this::filterFavourites).collect(toList());
-            }
-
-            FilterResults results = new FilterResults();
-            results.values = filtered;
-            results.count = filtered.size();
             return results;
         }
 
         @Override
-        protected void publishResults(CharSequence charSequence, FilterResults filterResults) {
-            filteredSnapshots.clear();
-            filteredSnapshots.addAll((Collection<? extends T>) filterResults.values);
+        protected void publishResults(CharSequence charSequence, FilterResults results) {
+            list.clear();
+            list.putAll((Map<? extends String, ? extends T>) results.values);
             notifyDataSetChanged();
         }
     }

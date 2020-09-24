@@ -7,7 +7,9 @@ import androidx.annotation.RequiresApi;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.property.keys.entities.Action;
 import com.property.keys.entities.Notification;
+import com.property.keys.entities.User;
 import com.property.keys.tasks.AbstractAsyncTask;
 import com.property.keys.utils.UserUtils;
 
@@ -35,17 +37,22 @@ public class NotificationCreateTask extends AbstractAsyncTask {
 
     private final String description;
     private final Set<String> usersToNotify;
+    private final Action action;
 
     /**
      * Adds notification to all users who liked current property except of the user who acted on the property.
      */
     @Override
     public void runInBackground() {
+        User localUser = UserUtils.getLocalUser(activity);
         Notification notification = Notification.builder()
                 .id(UUID.randomUUID().toString())
                 .date(DATE_TIME_FORMATTER.format(LocalDateTime.now()))
                 .description(description)
-                .userId(UserUtils.getLocalUser(activity).getId())
+                .userId(localUser.getId())
+                .firstName(localUser.getFirstName())
+                .lastName(localUser.getLastName())
+                .action(action)
                 .build();
 
         DatabaseReference notifications = firebaseDatabase.getReference("notifications");

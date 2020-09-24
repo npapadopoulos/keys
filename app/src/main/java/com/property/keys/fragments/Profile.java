@@ -137,7 +137,7 @@ public class Profile extends Fragment {
             UserUtils.updateBasics(user, onUpdateFailed, onUpdateSucceeded);
         });
 
-        ImageUtils.syncAndloadImagesProfile(getActivity(), user.getId(), binding.profileImage);
+        ImageUtils.syncAndLoadImagesProfile(getActivity(), user, binding.profileImage);
         binding.addImage.setOnClickListener(this::updateImage);
         binding.profileImage.setOnClickListener(this::updateImage);
 

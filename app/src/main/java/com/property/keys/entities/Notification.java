@@ -16,7 +16,10 @@ public class Notification {
 
     private String id;
     private String userId;
+    private String firstName;
+    private String lastName;
     private String description;
     private String date;
+    private Action action;
     private Boolean unread = Boolean.TRUE;
 }

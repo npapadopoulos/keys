@@ -6,7 +6,6 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.property.keys.entities.Action;
 import com.property.keys.entities.Property;
@@ -40,11 +39,9 @@ public class PropertyUpdateTask extends AbstractAsyncTask {
      */
     @Override
     public void runInBackground() {
-        DatabaseReference reference = firebaseDatabase.getReference("properties");
-
         final Map<String, Object> updates = new HashMap<>();
         User localUser = UserUtils.getLocalUser(activity);
-        if (action == Action.UNLIKED_PROPERTY) {
+        if (action == Action.DISLIKED_PROPERTY) {
             property.getFavouredBy().remove(localUser.getId());
             updates.put("users/" + localUser.getId() + "/properties/" + property.getId(), null);
         } else {
@@ -57,9 +54,9 @@ public class PropertyUpdateTask extends AbstractAsyncTask {
                         if (task.isSuccessful()) {
                             NotificationUtils.create(activity, property, action);
                             if (property.getFavouredBy() != null) {
-                                property.getFavouredBy().keySet().forEach(userId -> updates.put("/" + userId + "/properties/" + property.getId(), property));
+                                property.getFavouredBy().keySet().forEach(userId -> updates.put("users/" + userId + "/properties/" + property.getId(), property));
                                 if (!updates.isEmpty()) {
-                                    firebaseDatabase.getReference("users").updateChildren(updates);
+                                    firebaseDatabase.getReference("/").updateChildren(updates);
                                 }
                             }
                         } else {

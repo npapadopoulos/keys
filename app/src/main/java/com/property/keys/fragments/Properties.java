@@ -64,7 +64,10 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
     private static final String TAG = Properties.class.getSimpleName();
 
     @NonNull
-    protected static final Query propertiesQuery = FirebaseDatabase.getInstance().getReference().child("properties").orderByChild("deleted").equalTo(false);
+    protected static final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    protected static final Query propertiesQuery = firebaseDatabase.getReference("properties").orderByChild("deleted").equalTo(false);
+    protected static Query userQuery = null;
+
     private FragmentPropertiesBinding binding;
 
     @Getter
@@ -100,6 +103,11 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
         toolbar.setVisibility(View.GONE);
 
         user = UserUtils.getLocalUser(requireContext());
+
+        if (userQuery == null) {
+            userQuery = firebaseDatabase.getReference("users").child(user.getId()).child("properties");
+        }
+
         suggestions = user.getPropertySearchSuggestions().stream()
                 .map(suggestion -> new PropertySuggestion(suggestion, true))
                 .distinct()
@@ -136,18 +144,25 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
 
         binding.filters.setOnCheckedChangeListener((group, checkedId) -> {
             FirebaseRecyclerAdapter.SearchFilter searchFilter = (FirebaseRecyclerAdapter.SearchFilter) adapter.getFilter();
+            boolean showOnlyFavourites;
             switch (checkedId) {
                 case R.id.favouriteFilter: {
-                    searchFilter.setShowOnlyFavourites(true);
+                    binding.favouriteFilter.setClickable(false);
+                    binding.allFilter.setClickable(true);
+                    showOnlyFavourites = true;
+                    attachRecyclerViewAdapter(userQuery, true, false);
                     break;
                 }
                 case R.id.allFilter:
                 default: {
-                    searchFilter.setShowOnlyFavourites(false);
+                    binding.allFilter.setClickable(false);
+                    binding.favouriteFilter.setClickable(true);
+                    showOnlyFavourites = false;
+                    attachRecyclerViewAdapter(propertiesQuery, true, false);
                     break;
                 }
             }
-            searchFilter.filter(lastQuery);
+            searchFilter.showOnlyFavourites(showOnlyFavourites).filter(lastQuery);
         });
 
         //TODO
@@ -275,7 +290,6 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
 
     private void search() {
         FirebaseRecyclerAdapter.SearchFilter searchFilter = (FirebaseRecyclerAdapter.SearchFilter) adapter.getFilter();
-        searchFilter.setShowOnlyFavourites(binding.favouriteFilter.isChecked());
         searchFilter.filter(lastQuery);
     }
 
@@ -296,7 +310,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
     public void onStart() {
         super.onStart();
         if (FirebaseAuth.getInstance().getCurrentUser() != null) {
-            attachRecyclerViewAdapter();
+            attachRecyclerViewAdapter(propertiesQuery, true);
         }
         FirebaseAuth.getInstance().addAuthStateListener(this);
     }
@@ -309,26 +323,40 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
 
     @Override
     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-        attachRecyclerViewAdapter();
+        if (adapter == null) {
+            attachRecyclerViewAdapter(propertiesQuery, true);
+        }
     }
 
-    private void attachRecyclerViewAdapter() {
+    private void attachRecyclerViewAdapter(Query query, boolean filter) {
+        attachRecyclerViewAdapter(query, false, filter);
+    }
+
+    private void attachRecyclerViewAdapter(Query query, boolean updateOptions, boolean filter) {
         FirebaseRecyclerOptions<Property> options =
                 new FirebaseRecyclerOptions.Builder<Property>()
-                        .setQuery(propertiesQuery, Property.class)
+                        .setQuery(query, Property.class)
                         .setLifecycleOwner(this)
                         .build();
 
+        if (adapter != null && updateOptions) {
+            adapter.updateOptions(options);
+        } else {
+            adapter = new PropertyAdapter(options, this.getActivity(), user);
+            // Scroll to bottom on new properties
+            adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
+                @Override
+                public void onItemRangeInserted(int positionStart, int itemCount) {
+                    binding.propertyList.smoothScrollToPosition(adapter.getItemCount());
+                }
+            });
+            binding.propertyList.setAdapter(adapter);
+        }
 
-        adapter = new PropertyAdapter(options, this.getActivity(), user);
-        // Scroll to bottom on new properties
-        adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
-            @Override
-            public void onItemRangeInserted(int positionStart, int itemCount) {
-                binding.propertyList.smoothScrollToPosition(adapter.getItemCount());
-            }
-        });
-        binding.propertyList.setAdapter(adapter);
+        String currentQuery = binding.floatingSearchView.getQuery();
+        if (filter && currentQuery != null && currentQuery.length() > 0) {
+            adapter.getFilter().filter(currentQuery);
+        }
     }
 
     @Override

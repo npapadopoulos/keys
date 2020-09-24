@@ -26,9 +26,11 @@ import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 import com.property.keys.PropertyDetails;
 import com.property.keys.R;
 import com.property.keys.databinding.FragmentScannerBinding;
+import com.property.keys.entities.Action;
 import com.property.keys.entities.Key;
 import com.property.keys.entities.Property;
 import com.property.keys.entities.User;
+import com.property.keys.utils.NotificationUtils;
 import com.property.keys.utils.UserUtils;
 import com.property.keys.utils.Utils;
 
@@ -94,6 +96,7 @@ public class Scanner extends Fragment {
                                                             @Override
                                                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                                 Property property = snapshot.getValue(Property.class);
+                                                                NotificationUtils.create(requireActivity(), property, Action.CHECKED_IN);
                                                                 Intent propertyDetails = new Intent(requireContext(), PropertyDetails.class);
                                                                 propertyDetails.putExtra("property", property);
                                                                 requireContext().startActivity(propertyDetails);
@@ -129,6 +132,7 @@ public class Scanner extends Fragment {
                                                             @Override
                                                             public void onDataChange(@NonNull DataSnapshot snapshot) {
                                                                 Property property = snapshot.getValue(Property.class);
+                                                                NotificationUtils.create(requireActivity(), property, Action.CHECKED_OUT);
                                                                 Intent propertyDetails = new Intent(requireContext(), PropertyDetails.class);
                                                                 propertyDetails.putExtra("property", property);
                                                                 requireContext().startActivity(propertyDetails);

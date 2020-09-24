@@ -34,14 +34,17 @@ import com.google.firebase.database.ValueEventListener;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 import com.property.keys.R;
 import com.property.keys.databinding.FragmentDashboardBinding;
+import com.property.keys.entities.Action;
 import com.property.keys.entities.Notification;
-import com.property.keys.entities.User;
 
+import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
+import static com.property.keys.utils.Utils.DATE_TIME_FORMATTER;
+import static java.util.stream.Collectors.groupingBy;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class Dashboard extends Fragment implements SeekBar.OnSeekBarChangeListener,
@@ -54,8 +57,6 @@ public class Dashboard extends Fragment implements SeekBar.OnSeekBarChangeListen
 
     private static final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     private static final Query notificationsQuery = firebaseDatabase.getReference("notifications");
-    private static final Query usersQuery = firebaseDatabase.getReference("users");
-    private final Map<String, User> usersPerId = new HashMap<>();
     private final Map<String, List<Notification>> notificationPerUserId = new HashMap<>();
     private PieChart chart;
     private SeekBar seekBarX;
@@ -76,37 +77,21 @@ public class Dashboard extends Fragment implements SeekBar.OnSeekBarChangeListen
         navigation.getCheckedItem().setChecked(true);
         toolbar.setTitle("Dashboard");
 
-        usersQuery.addListenerForSingleValueEvent(new ValueEventListener() {
+
+        notificationsQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                List<Notification> temp = new ArrayList<>();
                 dataSnapshot.getChildren().forEach(child -> {
-                    User user = child.getValue(User.class);
-                    if (user != null) {
-                        usersPerId.put(user.getId(), user);
+                    Notification notification = child.getValue(Notification.class);
+                    if (notification != null && (notification.getAction() == Action.CHECKED_IN || notification.getAction() == Action.CHECKED_OUT)) {
+                        temp.add(notification);
                     }
                 });
 
-
-                notificationsQuery.addValueEventListener(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        List<Notification> temp = new ArrayList<>();
-                        dataSnapshot.getChildren().forEach(child -> {
-                            Notification notification = child.getValue(Notification.class);
-                            if (notification != null) {
-                                temp.add(notification);
-                            }
-                        });
-
-                        notificationPerUserId.putAll(temp.stream().collect(Collectors.groupingBy(Notification::getUserId)));
-                        setData(notificationPerUserId, 4);
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
+                notificationPerUserId.clear();
+                notificationPerUserId.putAll(temp.stream().collect(groupingBy(notification -> DayOfWeek.from(DATE_TIME_FORMATTER.parse(notification.getDate())).toString())));
+                setData(notificationPerUserId, 4);
             }
 
             @Override
@@ -156,10 +141,9 @@ public class Dashboard extends Fragment implements SeekBar.OnSeekBarChangeListen
         // NOTE: The order of the entries when being added to the entries array determines their position around the center of
         // the chart.
         int i = 0;
-        notificationPerUserId.forEach((userId, notifications) -> {
+        notificationPerUserId.forEach((dayOfWeek, notifications) -> {
             if (i < count) {
-                User user = usersPerId.get(userId);
-                entries.add(new PieEntry(notifications.size(), user.getFirstName() + " " + user.getLastName()));
+                entries.add(new PieEntry(notifications.size(), dayOfWeek));
             }
         });
 

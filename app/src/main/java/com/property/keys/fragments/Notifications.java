@@ -38,7 +38,7 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
 
     private static final String TAG = Notifications.class.getSimpleName();
 
-    private final DatabaseReference usersDatabaseReference = FirebaseDatabase.getInstance().getReference().child("users");
+    private final DatabaseReference usersDatabaseReference = FirebaseDatabase.getInstance().getReference("users");
 
     private FragmentNotificationsBinding binding;
     private NotificationAdapter adapter;
@@ -96,7 +96,7 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
                 super.onScrolled(recyclerView, dx, dy);
                 if (dy > 0) {
                     binding.deleteNotifications.hide();
-                } else {
+                } else if (adapter.getItemCount() > 0) {
                     binding.deleteNotifications.show();
                 }
             }
@@ -109,6 +109,7 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
                     .setMessage("Are you sure you want to remove all notifications?")
                     .setPositiveButton("Yes", (dialogInterface, i) -> {
                         UserUtils.deleteNotifications(userId);
+                        binding.deleteNotifications.hide();
                         Snackbar.make(this.container.getPlaceSnackBar(), "All notifications deleted", Snackbar.LENGTH_SHORT).show();
                     })
                     .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))

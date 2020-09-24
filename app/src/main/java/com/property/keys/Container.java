@@ -60,7 +60,7 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
 
     private final int REQUEST_CODE_SIGN_IN = 100;
 
-    private final DatabaseReference usersDatabaseReference = FirebaseDatabase.getInstance().getReference().child("users");
+    private final DatabaseReference usersDatabaseReference = FirebaseDatabase.getInstance().getReference("users");
 
     private ActivityContainerBinding binding;
     private FirebaseAuth firebaseAuth = FirebaseAuth.getInstance();
@@ -154,10 +154,10 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
         toggle.syncState();
 
         NavigationUtils.initNavigation(binding.navigation, binding.drawerLayout, binding.content);
-        ImageUtils.syncAndloadImagesProfile(this, user.getId(), navigationProfileImage);
+        ImageUtils.syncAndLoadImagesProfile(this, user, navigationProfileImage);
 
         onImageChangedBroadcastReceiver = new OnImageChangedBroadcastReceiver();
-        onImageChangedBroadcastReceiver.setUserId(user.getId());
+        onImageChangedBroadcastReceiver.setUser(user);
         onImageChangedBroadcastReceiver.setImageView(navigationProfileImage);
 
         imageChangedFilter = new IntentFilter();
@@ -303,12 +303,12 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
     @Setter
     public final static class OnImageChangedBroadcastReceiver extends BroadcastReceiver {
 
-        private String userId;
+        private User user;
         private ImageView imageView;
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            ImageUtils.syncAndloadImagesProfile(context, userId, imageView);
+            ImageUtils.syncAndLoadImagesProfile(context, user, imageView);
         }
     }
 }
