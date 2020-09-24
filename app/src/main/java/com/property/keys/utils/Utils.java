@@ -44,10 +44,18 @@ public class Utils {
     }
 
     public static Boolean validateText(TextInputLayout textInputLayout) {
+        return validateText(textInputLayout, -1);
+    }
+
+    public static Boolean validateText(TextInputLayout textInputLayout, int max) {
         String value = textInputLayout.getEditText().getText().toString().trim();
         if (value.isEmpty()) {
             Timber.tag(TAG).v("Cannot be empty: '" + value + "'");
             textInputLayout.setError("cannot be empty");
+            return false;
+        } else if (value.length() > max && max != -1) {
+            Timber.tag(TAG).v("Cannot exceed " + max + " characters length: '" + value + "'.");
+            textInputLayout.setError("Cannot exceed " + max + " characters length.");
             return false;
         } else {
             reset(textInputLayout);

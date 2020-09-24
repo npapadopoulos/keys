@@ -17,15 +17,17 @@ import com.property.keys.filters.FirebaseRecyclerAdapter;
 public class KeyAdapter extends FirebaseRecyclerAdapter<Key, KeyHolder> {
     @NonNull
     private Activity activity;
+    private String propertyName;
 
-    public KeyAdapter(@NonNull FirebaseRecyclerOptions<Key> options, Activity activity) {
+    public KeyAdapter(@NonNull FirebaseRecyclerOptions<Key> options, Activity activity, String propertyName) {
         super(options, false);
         this.activity = activity;
+        this.propertyName = propertyName;
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull KeyHolder holder, int position, @NonNull Key model) {
-        holder.bind(activity, model);
+    protected void onBindViewHolder(@NonNull KeyHolder holder, int position, @NonNull Key key) {
+        holder.bind(activity, key, propertyName);
     }
 
     @NonNull

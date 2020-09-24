@@ -74,8 +74,8 @@ public class StorageUtils {
                         break;
                     }
                     case KEY: {
-                        generated = QRCodeUtils.generateCode(id);
-                        saveAndLoadImage(context, "default", loader, onComplete, generated);
+                        generated = QRCodeUtils.generateCode(context, id);
+                        saveAndLoadImage(context, "code", loader, onComplete, generated);
                         break;
                     }
                 }

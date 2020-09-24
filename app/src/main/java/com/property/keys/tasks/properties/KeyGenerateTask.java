@@ -5,7 +5,6 @@ import android.os.Build;
 
 import androidx.annotation.RequiresApi;
 
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.property.keys.entities.Action;
 import com.property.keys.entities.Key;
@@ -37,8 +36,7 @@ public class KeyGenerateTask extends AbstractAsyncTask {
                 .propertyId(property.getId())
                 .build();
 
-        DatabaseReference keys = firebaseDatabase.getReference("keys");
-        keys.child(key.getId()).setValue(key)
+        firebaseDatabase.getReference("keys").child(key.getId()).setValue(key)
                 .addOnCompleteListener(activity, task -> {
                     if (task.isSuccessful()) {
                         firebaseDatabase.getReference("properties").updateChildren(singletonMap("/" + property.getId() + "/keys/" + key.getId(), key));

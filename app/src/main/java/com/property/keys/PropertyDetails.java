@@ -95,8 +95,17 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         property = snapshot.getValue(Property.class);
-                        binding.availableSum.setText(String.valueOf(property.getKeys().values().stream().filter(k -> k.getCheckedInDate() == null).count()));
-                        binding.busySum.setText(String.valueOf(property.getKeys().values().stream().filter(k -> k.getCheckedInDate() != null).count()));
+                        if (property != null) {
+                            binding.availableSum.setText(String.valueOf(property.getKeys().values().stream().filter(k -> k.getCheckedInDate() == null).count()));
+                            binding.busySum.setText(String.valueOf(property.getKeys().values().stream().filter(k -> k.getCheckedInDate() != null).count()));
+                        } else {
+                            new MaterialAlertDialogBuilder(getApplicationContext())
+                                    .setMessage("It seems that the current property has been deleted.")
+                                    .setPositiveButton("Ok", (dialogInterface, i) -> moveTaskToBack(true))
+                                    .setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.white_card_background))
+                                    .setCancelable(false)
+                                    .create().show();
+                        }
                     }
 
                     @Override
@@ -272,7 +281,7 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
                         .setLifecycleOwner(this)
                         .build();
 
-        adapter = new KeyAdapter(options, this);
+        adapter = new KeyAdapter(options, this, property.getName());
 
         // Scroll to bottom on new messages
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {

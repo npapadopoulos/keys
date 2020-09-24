@@ -102,7 +102,7 @@ public class AddProperty extends AppCompatActivity {
     }
 
     private void createProperty() {
-        if (!Utils.validateText(binding.name) | !Utils.validateText(binding.address)) {
+        if (!Utils.validateText(binding.name, 20) | !Utils.validateText(binding.address)) {
             binding.progressBar.setVisibility(View.GONE);
             binding.submit.setEnabled(true);
             return;
