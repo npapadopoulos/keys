@@ -143,7 +143,6 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
         setupSearchBar();
 
         binding.filters.setOnCheckedChangeListener((group, checkedId) -> {
-            FirebaseRecyclerAdapter.SearchFilter searchFilter = (FirebaseRecyclerAdapter.SearchFilter) adapter.getFilter();
             boolean showOnlyFavourites;
             switch (checkedId) {
                 case R.id.favouriteFilter: {
@@ -162,7 +161,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
                     break;
                 }
             }
-            searchFilter.showOnlyFavourites(showOnlyFavourites).filter(lastQuery);
+            search(lastQuery, showOnlyFavourites);
         });
 
         //TODO
@@ -288,9 +287,20 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
         });
     }
 
+    private FirebaseRecyclerAdapter.SearchFilter getFilter() {
+        return (FirebaseRecyclerAdapter.SearchFilter) adapter.getFilter();
+    }
+
     private void search() {
-        FirebaseRecyclerAdapter.SearchFilter searchFilter = (FirebaseRecyclerAdapter.SearchFilter) adapter.getFilter();
-        searchFilter.filter(lastQuery);
+        search(lastQuery);
+    }
+
+    private void search(String query) {
+        search(query, binding.filters.getCheckedChipId() == R.id.favouriteFilter);
+    }
+
+    private void search(String query, boolean showOnlyFavourites) {
+        getFilter().showOnlyFavourites(showOnlyFavourites).filter(query);
     }
 
     private void updateSuggestions() {
@@ -355,7 +365,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
 
         String currentQuery = binding.floatingSearchView.getQuery();
         if (filter && currentQuery != null && currentQuery.length() > 0) {
-            adapter.getFilter().filter(currentQuery);
+            search(currentQuery);
         }
     }
 

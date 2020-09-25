@@ -13,11 +13,43 @@
     android:padding="20dp"
     tools:context=".fragments.Notifications">
 
+    <LinearLayout
+        android:id="@+id/empty_notifications"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:visibility="invisible">
+
+        <ImageView
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:layout_gravity="center"
+            android:src="@drawable/empty_notifications" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:text="@string/nothing_s_happened_yet"
+            android:textAlignment="center"
+            android:textStyle="bold" />
+
+        <TextView
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="5dp"
+            android:lines="2"
+            android:text="@string/nothing_s_happened_yet_description"
+            android:textAlignment="center" />
+    </LinearLayout>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/notificationsList"
-        android:layout_marginTop="20dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
         android:layout_marginBottom="?attr/actionBarSize"
         android:clipToPadding="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -28,11 +60,11 @@
         style="@style/FloatingActionBar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="invisible"
         android:layout_gravity="bottom|center"
-        app:backgroundTint="@color/primaryColor"
         android:layout_marginEnd="20dp"
         android:layout_marginBottom="50dp"
         android:contentDescription="@string/add_new_key"
-        android:src="@drawable/clear" />
+        android:src="@drawable/clear"
+        android:visibility="invisible"
+        app:backgroundTint="@color/primaryColor" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -67,4 +67,7 @@
     <string name="key_is_available">Key is available</string>
     <string name="tap_on_qr_code_to_scan_the_key">Tap on QR code to scan the key.</string>
     <string name="print_qrcode">Share to pring the current QRCode to be used in keyring.</string>
+    <string name="nothing_s_happened_yet">Nothing\'s happened yet</string>
+    <string name="nothing_s_happened_yet_description">When there\'s activity on properties, this is where we\'ll let you know.</string>
+    <string name="no_property_found">No property found</string>
 </resources>

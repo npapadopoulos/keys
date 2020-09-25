@@ -131,6 +131,10 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
     }
 
     @Override
+    public void postFilterUpdate(int count) {
+    }
+
+    @Override
     public void onError(@NonNull DatabaseError error) {
         Timber.tag(TAG).w(error.toException());
     }
@@ -258,6 +262,8 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
         protected void publishResults(CharSequence charSequence, FilterResults results) {
             list.clear();
             list.putAll((Map<? extends String, ? extends T>) results.values);
+
+            postFilterUpdate(list.size());
             notifyDataSetChanged();
         }
     }

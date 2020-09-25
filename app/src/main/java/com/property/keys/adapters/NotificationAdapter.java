@@ -5,6 +5,7 @@ import android.os.Build;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -22,11 +23,13 @@ public class NotificationAdapter extends FirebaseRecyclerAdapter<Notification, N
     @NonNull
     private Activity activity;
     private FloatingActionButton deleteNotifications;
+    private LinearLayout emptyNotifications;
 
     public NotificationAdapter(@NonNull FirebaseRecyclerOptions<Notification> options, @NotNull Activity activity) {
         super(options, false);
         this.activity = activity;
         deleteNotifications = activity.findViewById(R.id.deleteNotifications);
+        emptyNotifications = activity.findViewById(R.id.empty_notifications);
     }
 
     @Override
@@ -43,7 +46,13 @@ public class NotificationAdapter extends FirebaseRecyclerAdapter<Notification, N
 
     @Override
     public void onDataChanged() {
-        deleteNotifications.setVisibility(getItemCount() == 0 ? View.INVISIBLE : View.VISIBLE);
+        if (getItemCount() == 0) {
+            emptyNotifications.setVisibility(View.VISIBLE);
+            deleteNotifications.setVisibility(View.INVISIBLE);
+        } else {
+            emptyNotifications.setVisibility(View.INVISIBLE);
+            deleteNotifications.setVisibility(View.VISIBLE);
+        }
     }
 
     @NonNull

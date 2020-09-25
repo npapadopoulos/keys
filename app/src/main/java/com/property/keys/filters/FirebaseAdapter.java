@@ -54,4 +54,6 @@ interface FirebaseAdapter<T> extends ChangeEventListener, LifecycleObserver {
      */
     @NonNull
     String getId(T item);
+
+    void postFilterUpdate(int count);
 }
