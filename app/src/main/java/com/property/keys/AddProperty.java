@@ -47,7 +47,7 @@ public class AddProperty extends AppCompatActivity {
     private static final String TAG = AddProperty.class.getSimpleName();
 
     private ActivityAddPropertyBinding binding;
-    private String pregenaratedPropertyId = UUID.randomUUID().toString();
+    private String pregeneratedPropertyId = UUID.randomUUID().toString();
 
     @Override
     protected void onStart() {
@@ -62,11 +62,12 @@ public class AddProperty extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
         binding = ActivityAddPropertyBinding.inflate(getLayoutInflater());
+
+        initToolbar();
         setContentView(binding.getRoot());
 
         updateStatusBarOptions();
         addOnButtonsClickListeners();
-        initToolbar();
     }
 
     private void addOnButtonsClickListeners() {
@@ -86,9 +87,10 @@ public class AddProperty extends AppCompatActivity {
 
     private void initToolbar() {
         MaterialToolbar propertyToolbar = binding.addPropertyToolbar;
+        setSupportActionBar(propertyToolbar);
+
         propertyToolbar.setNavigationOnClickListener(view -> finish());
 
-        setSupportActionBar(propertyToolbar);
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -108,7 +110,7 @@ public class AddProperty extends AppCompatActivity {
             return;
         }
 
-        File file = (File) ImageUtils.loadImage(this, pregenaratedPropertyId, binding.propertyImage);
+        File file = (File) ImageUtils.loadImage(this, pregeneratedPropertyId, binding.propertyImage);
         if (file == null || !file.exists()) {
             binding.progressBar.setVisibility(View.GONE);
             binding.submit.setEnabled(true);
@@ -126,7 +128,7 @@ public class AddProperty extends AppCompatActivity {
         HashMap<String, Object> favouredBy = new HashMap<>();
         favouredBy.put(UserUtils.getLocalUser(this).getId(), true);
         Property property = Property.builder()
-                .id(pregenaratedPropertyId)
+                .id(pregeneratedPropertyId)
                 .name(nameValue)
                 .address(addressValue)
                 .favouredBy(favouredBy)
@@ -136,9 +138,9 @@ public class AddProperty extends AppCompatActivity {
             try {
                 byte[] data = Files.readAllBytes(Paths.get(file.getPath()).toAbsolutePath());
                 Bitmap image = BitmapFactory.decodeByteArray(data, 0, data.length);
-                StorageUtils.uploadImage(pregenaratedPropertyId, "property", image);
+                StorageUtils.uploadImage(pregeneratedPropertyId, "property", image);
             } catch (IOException e) {
-                Timber.tag(TAG).e(e, "Couldn't upload property image for " + pregenaratedPropertyId + " to remote storage.");
+                Timber.tag(TAG).e(e, "Couldn't upload property image for " + pregeneratedPropertyId + " to remote storage.");
             }
             startActivity(intent);
             finish();
@@ -162,8 +164,8 @@ public class AddProperty extends AppCompatActivity {
                 try {
                     Bitmap image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getParcelableExtra("path"));
                     ImageUtils.clearCache(getApplicationContext());
-                    ImageUtils.saveImage(getApplicationContext(), image, pregenaratedPropertyId);
-                    ImageUtils.loadImage(this, pregenaratedPropertyId, binding.propertyImage);
+                    ImageUtils.saveImage(getApplicationContext(), image, pregeneratedPropertyId);
+                    ImageUtils.loadImage(this, pregeneratedPropertyId, binding.propertyImage);
                 } catch (IOException e) {
                     Timber.tag(TAG).e(e, e.getMessage());
                 }
@@ -173,6 +175,6 @@ public class AddProperty extends AppCompatActivity {
     }
 
     private void updateImage(View v) {
-        ImageUtils.updateImage(this, null, pregenaratedPropertyId);
+        ImageUtils.updateImage(this, null, pregeneratedPropertyId);
     }
 }

@@ -153,7 +153,7 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
         binding.drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationUtils.initNavigation(binding.navigation, binding.drawerLayout, binding.content);
+        NavigationUtils.initNavigation(binding.navigation);
         ImageUtils.syncAndLoadImagesProfile(this, user, navigationProfileImage);
 
         onImageChangedBroadcastReceiver = new OnImageChangedBroadcastReceiver();

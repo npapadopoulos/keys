@@ -16,15 +16,29 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/addPropertyToolbar"
-            style="@style/Toolbar"
+
+        <!--        <com.google.android.material.appbar.MaterialToolbar-->
+        <!--            android:id="@+id/addPropertyToolbar"-->
+        <!--            style="@style/Toolbar"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="?attr/actionBarSize"-->
+        <!--            android:background="@color/colorGrey"-->
+        <!--            android:transitionName="toolbar"-->
+        <!--            app:navigationIcon="@drawable/ic_arrow_back_black_24dp"-->
+        <!--            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />-->
+
+        <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="@color/colorGrey"
-            android:transitionName="toolbar"
-            app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+            android:layout_height="wrap_content"
+            app:elevation="0dp">
+
+            <com.google.android.material.appbar.MaterialToolbar
+                android:id="@+id/addPropertyToolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@color/colorGrey"
+                app:navigationIcon="@drawable/ic_arrow_back_black_24dp" />
+        </com.google.android.material.appbar.AppBarLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -86,9 +100,9 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginBottom="10dp"
+                        android:hint="@string/name"
                         app:counterEnabled="true"
-                        app:counterMaxLength="20"
-                        android:hint="@string/name">
+                        app:counterMaxLength="20">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:layout_width="match_parent"

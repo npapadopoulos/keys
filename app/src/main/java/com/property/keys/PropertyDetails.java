@@ -1,6 +1,9 @@
 package com.property.keys;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -86,7 +89,12 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         binding = ActivityPropertyDetailsBinding.inflate(getLayoutInflater());
+
+        property = getIntent().getParcelableExtra("property");
+        initToolbar();
         setContentView(binding.getRoot());
+
+        Context context = this;
 
         property = getIntent().getParcelableExtra("property");
         binding.keyList.setHasFixedSize(false);
@@ -99,12 +107,21 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
                             binding.availableSum.setText(String.valueOf(property.getKeys().values().stream().filter(k -> k.getCheckedInDate() == null).count()));
                             binding.busySum.setText(String.valueOf(property.getKeys().values().stream().filter(k -> k.getCheckedInDate() != null).count()));
                         } else {
-                            new MaterialAlertDialogBuilder(getApplicationContext())
-                                    .setMessage("It seems that the current property has been deleted.")
-                                    .setPositiveButton("Ok", (dialogInterface, i) -> moveTaskToBack(true))
-                                    .setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.white_card_background))
-                                    .setCancelable(false)
-                                    .create().show();
+                            binding.setFavourite.setClickable(false);
+                            binding.addNewKey.setClickable(false);
+                            binding.propertyImage.setClickable(false);
+                            ActivityManager am = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
+                            ComponentName cn = am.getRunningTasks(1).get(0).topActivity;
+                            if (cn.getClassName().equalsIgnoreCase("com.property.keys.PropertyDetails")) {
+                                Snackbar snackbar = Snackbar.make(binding.placeSnackBar, "The current property has been deleted.", Snackbar.LENGTH_LONG);
+                                snackbar.addCallback(new Snackbar.Callback() {
+                                    @Override
+                                    public void onDismissed(Snackbar transientBottomBar, @DismissEvent int event) {
+                                        finish();
+                                    }
+                                });
+                                snackbar.show();
+                            }
                         }
                     }
 
@@ -119,8 +136,6 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
         binding.propertyImage.setOnClickListener(this::updateImage);
 
         user = UserUtils.getLocalUser(this);
-
-        initToolbar();
         ImageUtils.syncAndloadImagesProperty(this, property.getId(), binding.propertyImage, true);
         updateFavourite(this, binding.setFavourite, property.getFavouredBy().get(user.getId()) != null);
         addOnSetFavouriteClickListener();
@@ -157,10 +172,10 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
     private void initToolbar() {
         generateTitleTextColor(ImageUtils.getBitmapImage(this, property.getId()));
         MaterialToolbar propertyDetailsToolbar = binding.propertyDetailsToolbar;
+        setSupportActionBar(propertyDetailsToolbar);
         // Set the toolbar background and text colors
         propertyDetailsToolbar.setNavigationOnClickListener(view -> finish());
 
-        setSupportActionBar(propertyDetailsToolbar);
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }

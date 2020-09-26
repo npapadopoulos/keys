@@ -23,10 +23,10 @@ public class NotificationUtils {
     }
 
     public static void create(Activity activity, Property property, Action action) {
-        create(activity, property.getName(), property.getFavouredBy().keySet(), action);
+        create(activity, property.getId(), property.getName(), property.getFavouredBy().keySet(), action);
     }
 
-    public static void create(Activity activity, String propertyName, Set<String> usersToNotify, Action action) {
+    public static void create(Activity activity, String propertyId, String propertyName, Set<String> usersToNotify, Action action) {
         User currentUser = UserUtils.getLocalUser(activity.getApplicationContext());
         String description;
         switch (action) {
@@ -74,6 +74,7 @@ public class NotificationUtils {
                 NotificationCreateTask.builder()
                         .activity(activity)
                         .description(description)
+                        .propertyId(propertyId)
                         .usersToNotify(usersToNotify)
                         .action(action)
                         .build());

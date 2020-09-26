@@ -16,6 +16,7 @@ public class Notification {
 
     private String id;
     private String userId;
+    private String propertyId;
     private String firstName;
     private String lastName;
     private String description;

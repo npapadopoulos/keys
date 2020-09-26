@@ -40,7 +40,7 @@ public class NotificationAdapter extends FirebaseRecyclerAdapter<Notification, N
     @NonNull
     @Override
     public NotificationHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new NotificationHolder(LayoutInflater.from(parent.getContext())
+        return new NotificationHolder(activity, LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.notification, parent, false));
     }
 
