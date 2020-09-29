@@ -352,7 +352,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
         if (adapter != null && updateOptions) {
             adapter.updateOptions(options);
         } else {
-            adapter = new PropertyAdapter(options, this.getActivity(), user);
+            adapter = new PropertyAdapter(options, this.getActivity(), user, binding.emptyPropertySearchResults, false);
             // Scroll to bottom on new properties
             adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                 @Override
@@ -383,14 +383,6 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
                                     PropertyUtils.restore(getActivity(), property);
                                     restored.set(true);
                                 });
-                        undo.addCallback(new Snackbar.Callback() {
-                            @Override
-                            public void onDismissed(Snackbar transientBottomBar, @DismissEvent int event) {
-                                if (!restored.get()) {
-                                    PropertyUtils.delete(getActivity(), property);
-                                }
-                            }
-                        });
                         undo.show();
                     })
                     .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))

@@ -30,11 +30,12 @@ public class PropertyHolder extends RecyclerView.ViewHolder implements Holder {
     private TextView name, address, availableSum, busySum;
     private ImageView propertyImage, availableSumImage, busySumImage;
     private FloatingActionButton setFavourite;
-    private RelativeLayout propertyBackground, propertyForeground;
+    private final boolean inTrash;
     private Property property;
     private User user;
+    private RelativeLayout propertyBackground, propertyRestoreBackground, propertyForeground;
 
-    public PropertyHolder(@NonNull Activity activity, User user, @NonNull View itemView) {
+    public PropertyHolder(@NonNull Activity activity, User user, @NonNull View itemView, boolean inTrash) {
         super(itemView);
 
         this.user = user;
@@ -46,32 +47,38 @@ public class PropertyHolder extends RecyclerView.ViewHolder implements Holder {
         busySum = itemView.findViewById(R.id.busySum);
         busySumImage = itemView.findViewById(R.id.busySumImage);
         propertyBackground = itemView.findViewById(R.id.propertyBackground);
+        propertyRestoreBackground = itemView.findViewById(R.id.propertyRestoreBackground);
         propertyForeground = itemView.findViewById(R.id.propertyForeground);
+        this.inTrash = inTrash;
 
         addOnSetFavouriteClickListener(activity, itemView);
         addOnPropertyClickListener(activity, itemView);
     }
 
     private void addOnPropertyClickListener(@NonNull Activity activity, @NonNull View itemView) {
-        itemView.setOnClickListener(view -> {
-            Pair[] pairs = new Pair[6];
-            pairs[0] = new Pair<View, String>(propertyImage, "propertyImage");
-            pairs[1] = new Pair<View, String>(name, "propertyName");
-            pairs[2] = new Pair<View, String>(address, "propertyAddress");
-            pairs[3] = new Pair<View, String>(availableSumImage, "propertyKeyAvailableSumImage");
-            pairs[4] = new Pair<View, String>(busySumImage, "propertyKeyBusySumImage");
-            pairs[5] = new Pair<View, String>(setFavourite, "favourite");
+        if (!inTrash) {
+            itemView.setOnClickListener(view -> {
+                Pair[] pairs = new Pair[6];
+                pairs[0] = new Pair<View, String>(propertyImage, "propertyImage");
+                pairs[1] = new Pair<View, String>(name, "propertyName");
+                pairs[2] = new Pair<View, String>(address, "propertyAddress");
+                pairs[3] = new Pair<View, String>(availableSumImage, "propertyKeyAvailableSumImage");
+                pairs[4] = new Pair<View, String>(busySumImage, "propertyKeyBusySumImage");
+                pairs[5] = new Pair<View, String>(setFavourite, "favourite");
 
-            Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(activity, pairs).toBundle();
-            Intent propertyDetails = new Intent(itemView.getContext(), PropertyDetails.class);
-            propertyDetails.putExtra("property", property);
-            view.getContext().startActivity(propertyDetails, bundle);
-        });
+                Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(activity, pairs).toBundle();
+                Intent propertyDetails = new Intent(itemView.getContext(), PropertyDetails.class);
+                propertyDetails.putExtra("property", property);
+                view.getContext().startActivity(propertyDetails, bundle);
+            });
+        }
     }
 
     private void addOnSetFavouriteClickListener(@NonNull Activity activity, @NonNull View itemView) {
         setFavourite = itemView.findViewById(R.id.setFavourite);
-        setFavourite.setOnClickListener(view -> updateFavourite(activity, setFavourite, property, user));
+        if (!inTrash) {
+            setFavourite.setOnClickListener(view -> updateFavourite(activity, setFavourite, property, user));
+        }
     }
 
     public void bind(@NonNull Activity activity, @NonNull Property property) {
@@ -87,6 +94,11 @@ public class PropertyHolder extends RecyclerView.ViewHolder implements Holder {
     @Override
     public RelativeLayout getBackground() {
         return propertyBackground;
+    }
+
+    @Override
+    public RelativeLayout getRestoreBackground() {
+        return propertyRestoreBackground;
     }
 
     @Override

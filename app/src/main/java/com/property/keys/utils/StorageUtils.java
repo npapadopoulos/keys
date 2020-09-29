@@ -22,6 +22,7 @@ import timber.log.Timber;
 
 import static com.property.keys.utils.ImageUtils.generateDefaultProfileImage;
 import static com.property.keys.utils.ImageUtils.getImage;
+import static com.property.keys.utils.ImageUtils.loadImage;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class StorageUtils {
@@ -70,6 +71,8 @@ public class StorageUtils {
                         if (existing == null) {
                             generated = generateDefaultProfileImage(context, imageView, firstName, lastName);
                             saveAndLoadImage(context, "default", loader, null, generated);
+                        } else {
+                            loadImage(context, existing, imageView);
                         }
                         break;
                     }

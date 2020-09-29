@@ -94,12 +94,9 @@ public class Profile extends Fragment {
 
 
         binding.update.setOnClickListener(view -> {
-//            Utils.showProgressBar(getActivity());
-
             binding.update.setEnabled(false);
             if (!Utils.validateText(binding.firstName) | !Utils.validateText(binding.lastName) | !Utils.validateEmail(binding.email) | !Utils.validatePhoneNumber(binding.phoneNumber)) {
                 binding.update.setEnabled(true);
-//                Utils.hideProgressBar(getActivity());
                 return;
             }
 
@@ -108,7 +105,6 @@ public class Profile extends Fragment {
                     && user.getPhoneNumber().equals(phoneNumberEditText.getText().toString())
                     && user.getEmail().equalsIgnoreCase(emailEditText.getText().toString())) {
                 binding.update.setEnabled(true);
-//                Utils.hideProgressBar(getActivity());
                 Snackbar.make(this.container.getPlaceSnackBar(), "Nothing to update.", Snackbar.LENGTH_SHORT).show();
                 return;
             }
@@ -123,14 +119,12 @@ public class Profile extends Fragment {
                 Timber.tag(TAG).i(exception, "Account update for " + user.getId() + " failed.");
                 Snackbar.make(this.container.getPlaceSnackBar(), "Account update for " + user.getId() + " failed. Try again later.", Snackbar.LENGTH_SHORT).show();
                 binding.update.setEnabled(true);
-//                Utils.hideProgressBar(getActivity());
             };
 
             Consumer<Task<Void>> onUpdateSucceeded = (Task<Void> task) -> {
                 Timber.tag(TAG).i("Account update for " + user.getId() + " succeeded.");
                 Snackbar.make(this.container.getPlaceSnackBar(), "Account details updated.", Snackbar.LENGTH_SHORT).show();
                 binding.update.setEnabled(true);
-//                Utils.hideProgressBar(getActivity());
                 UserUtils.saveUser(user, getActivity().getApplicationContext());
             };
             //updates only basic fields, firstName, lastName, email and phoneNumber
@@ -159,7 +153,7 @@ public class Profile extends Fragment {
                     intent.setAction("com.property.keys.PROFILE_IMAGE_UPDATED");
                     getActivity().sendBroadcast(intent);
                 } catch (IOException e) {
-                    Timber.tag(TAG).e(e, e.getMessage());
+                    Timber.tag(TAG).e(e);
                 }
             }
         }

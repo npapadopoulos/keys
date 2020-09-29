@@ -8,23 +8,16 @@ import android.view.ViewGroup;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.appbar.MaterialToolbar;
-import com.google.android.material.navigation.NavigationView;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 import com.property.keys.databinding.FragmentHistoryBinding;
 
 public class History extends Fragment {
 
     private ChipNavigationBar bottomNavigationMenu;
-    private NavigationView navigation;
     private MaterialToolbar toolbar;
 
-    public History(NavigationView navigation, MaterialToolbar toolbar) {
-        this(null, navigation, toolbar);
-    }
-
-    public History(ChipNavigationBar bottomNavigationMenu, NavigationView navigation, MaterialToolbar toolbar) {
+    public History(ChipNavigationBar bottomNavigationMenu, MaterialToolbar toolbar) {
         this.bottomNavigationMenu = bottomNavigationMenu;
-        this.navigation = navigation;
         this.toolbar = toolbar;
     }
 

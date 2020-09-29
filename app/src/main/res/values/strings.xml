@@ -70,4 +70,6 @@
     <string name="nothing_s_happened_yet">Nothing\'s happened yet</string>
     <string name="nothing_s_happened_yet_description">When there\'s activity on properties, this is where we\'ll let you know.</string>
     <string name="no_property_found">No property found</string>
+    <string name="trash_is_empty">Trash is empty</string>
+    <string name="trash">Trash</string>
 </resources>

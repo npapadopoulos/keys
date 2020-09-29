@@ -36,7 +36,7 @@ public class NotificationHolder extends RecyclerView.ViewHolder implements Holde
     private CircularImageView userImage;
     private RelativeLayout notificationBackground, notificationForeground;
 
-    private Property property;
+    private String propertyId;
 
     public NotificationHolder(@NonNull Activity activity, @NonNull View itemView) {
         super(itemView);
@@ -52,13 +52,29 @@ public class NotificationHolder extends RecyclerView.ViewHolder implements Holde
 
     private void addOnPropertyClickListener(@NonNull Activity activity, @NonNull View itemView) {
         itemView.setOnClickListener(view -> {
-            if (property == null) {
+            if (propertyId == null) {
                 Snackbar.make(((Container) activity).getPlaceSnackBar(), "The current property has been deleted.", Snackbar.LENGTH_LONG).show();
-            } else {
-                Intent propertyDetails = new Intent(itemView.getContext(), PropertyDetails.class);
-                propertyDetails.putExtra("property", property);
-                view.getContext().startActivity(propertyDetails);
             }
+            properties.child(propertyId)
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            Property property = snapshot.getValue(Property.class);
+                            if (property == null) {
+                                Snackbar.make(((Container) activity).getPlaceSnackBar(), "The current property has been deleted.", Snackbar.LENGTH_LONG).show();
+                            } else {
+                                Intent propertyDetails = new Intent(itemView.getContext(), PropertyDetails.class);
+                                propertyDetails.putExtra("property", property);
+                                view.getContext().startActivity(propertyDetails);
+                            }
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
         });
     }
 
@@ -66,26 +82,18 @@ public class NotificationHolder extends RecyclerView.ViewHolder implements Holde
     public void bind(@NonNull Context context, @NonNull Notification notification) {
         description.setText(notification.getDescription());
         date.setText(notification.getDate());
-
-        properties.child(notification.getPropertyId()).addListenerForSingleValueEvent(new ValueEventListener() {
-
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                property = snapshot.getValue(Property.class);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
+        this.propertyId = notification.getPropertyId();
         ImageUtils.syncAndLoadImagesProfile(context, notification.getUserId(), notification.getFirstName(), notification.getLastName(), userImage);
     }
 
     @Override
     public RelativeLayout getBackground() {
         return notificationBackground;
+    }
+
+    @Override
+    public RelativeLayout getRestoreBackground() {
+        return null;
     }
 
     @Override

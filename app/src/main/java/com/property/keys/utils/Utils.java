@@ -191,11 +191,20 @@ public class Utils {
     }
 
     public static void initSwipeProperty(RecyclerView view, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener listener) {
+        initSwipeProperty(view, listener, false);
+    }
+
+    public static void initSwipeProperty(RecyclerView view, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener listener, boolean enableRestore) {
         // adding item touch helper
         // only ItemTouchHelper.LEFT added to detect Right to Left swipe
         // if you want both Right -> Left and Left -> Right
         // add pass ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT as param
-        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, ItemTouchHelper.LEFT, listener);
+        int swipeDirs = ItemTouchHelper.LEFT;
+        if (enableRestore) {
+            swipeDirs = ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
+        }
+
+        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, swipeDirs, listener, enableRestore);
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(view);
     }
 

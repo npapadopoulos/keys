@@ -7,6 +7,23 @@
     android:layout_marginTop="10dp">
 
     <RelativeLayout
+        android:id="@+id/propertyRestoreBackground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/green_card_background"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/restoreIcon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true"
+            android:layout_marginStart="10dp"
+            android:src="@drawable/restore" />
+    </RelativeLayout>
+
+    <RelativeLayout
         android:id="@+id/propertyBackground"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -16,10 +33,10 @@
             android:id="@+id/deleteIcon"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
-            android:layout_marginRight="10dp"
-            android:src="@drawable/delete" />
+            android:layout_marginEnd="10dp"
+            android:src="@drawable/trash" />
     </RelativeLayout>
 
     <RelativeLayout

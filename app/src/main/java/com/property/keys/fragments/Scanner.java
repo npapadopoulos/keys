@@ -6,6 +6,8 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -30,6 +32,7 @@ import com.property.keys.entities.Action;
 import com.property.keys.entities.Key;
 import com.property.keys.entities.Property;
 import com.property.keys.entities.User;
+import com.property.keys.utils.ImageUtils;
 import com.property.keys.utils.NotificationUtils;
 import com.property.keys.utils.UserUtils;
 import com.property.keys.utils.Utils;
@@ -76,80 +79,93 @@ public class Scanner extends Fragment {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot keySnapshot) {
                         if (keySnapshot.exists()) {
+
                             Key key = keySnapshot.getValue(Key.class);
-                            requireActivity().runOnUiThread(() -> {
-                                Map<String, Object> updates = new HashMap<>();
-                                if (key.getCheckedInDate() == null) {
-                                    new MaterialAlertDialogBuilder(requireContext())
-                                            .setMessage("Are you sure you want to check in?")
-                                            .setPositiveButton("Yes", (dialogInterface, i) -> {
-                                                key.setCheckedInDate(DATE_TIME_FORMATTER.format(LocalDateTime.now()));
-                                                key.setCheckedOutDate(null);
-                                                key.setLastCheckedInUser(user.getFirstName() + " " + user.getLastName());
-                                                updates.put("users/" + user.getId() + "/keys/" + key.getId(), key);
-                                                updates.put("keys/" + key.getId(), key);
-                                                updates.put("properties/" + key.getPropertyId() + "/keys/" + key.getId(), key);
-                                                firebaseDatabase.getReference("/").updateChildren(updates);
-                                                Snackbar.make(binding.scannerView, "Key checked in successfully.", Snackbar.LENGTH_LONG).show();
-                                                firebaseDatabase.getReference("properties").child(key.getPropertyId())
-                                                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                                                            @Override
-                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                                Property property = snapshot.getValue(Property.class);
-                                                                NotificationUtils.create(requireActivity(), property, Action.CHECKED_IN);
-                                                                Intent propertyDetails = new Intent(requireContext(), PropertyDetails.class);
-                                                                propertyDetails.putExtra("property", property);
-                                                                requireContext().startActivity(propertyDetails);
-                                                            }
 
-                                                            @Override
-                                                            public void onCancelled(@NonNull DatabaseError error) {
+                            firebaseDatabase.getReference("properties").child(key.getPropertyId())
+                                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            if (snapshot.exists()) {
+                                                requireActivity().runOnUiThread(() -> {
+                                                    Map<String, Object> updates = new HashMap<>();
+                                                    Property property = snapshot.getValue(Property.class);
+                                                    View dialog = getLayoutInflater().inflate(R.layout.property_dialog, null);
 
-                                                            }
-                                                        });
+                                                    ImageView propertyImage = dialog.findViewById(R.id.propertyImage);
+                                                    ImageUtils.loadImage(requireContext(), property.getId(), propertyImage);
 
-                                            })
-                                            .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
-                                            .setNegativeButton("No", Utils::onClick)
-                                            .setCancelable(false)
-                                            .create().show();
-                                } else if (!key.getLastCheckedInUser().equalsIgnoreCase(user.getFirstName() + " " + user.getLastName())) {
-                                    Snackbar.make(binding.scannerView, "Key was checked in on " + key.getCheckedInDate() + " by another user. Contact " + key.getLastCheckedInUser() + " to check out the key.", Snackbar.LENGTH_LONG).show();
-                                } else {
-                                    new MaterialAlertDialogBuilder(requireContext())
-                                            .setMessage("Key was checked in on " + key.getCheckedInDate() + " by " + key.getLastCheckedInUser() + ". Are you sure you want to check out?")
-                                            .setPositiveButton("Yes", (dialogInterface, i) -> {
-                                                key.setCheckedInDate(null);
-                                                key.setCheckedOutDate(DATE_TIME_FORMATTER.format(LocalDateTime.now()));
-                                                key.setLastCheckOutDate(key.getCheckedOutDate());
-                                                updates.put("users/" + user.getId() + "/keys/" + key.getId(), key);
-                                                updates.put("keys/" + key.getId(), key);
-                                                updates.put("properties/" + key.getPropertyId() + "/keys/" + key.getId(), key);
-                                                firebaseDatabase.getReference("/").updateChildren(updates);
-                                                Snackbar.make(binding.scannerView, "Key checked out successfully.", Snackbar.LENGTH_LONG).show();
-                                                firebaseDatabase.getReference("properties").child(key.getPropertyId())
-                                                        .addListenerForSingleValueEvent(new ValueEventListener() {
-                                                            @Override
-                                                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                                                Property property = snapshot.getValue(Property.class);
-                                                                NotificationUtils.create(requireActivity(), property, Action.CHECKED_OUT);
-                                                                Intent propertyDetails = new Intent(requireContext(), PropertyDetails.class);
-                                                                propertyDetails.putExtra("property", property);
-                                                                requireContext().startActivity(propertyDetails);
-                                                            }
+                                                    TextView propertyName = dialog.findViewById(R.id.propertyName);
+                                                    propertyName.setText(property.getName());
 
-                                                            @Override
-                                                            public void onCancelled(@NonNull DatabaseError error) {
+                                                    TextView propertyAddress = dialog.findViewById(R.id.propertyAddress);
+                                                    propertyAddress.setText(property.getAddress());
 
-                                                            }
-                                                        });
-                                            })
-                                            .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
-                                            .setNegativeButton("No", Utils::onClick)
-                                            .setCancelable(false)
-                                            .create().show();
-                                }
-                            });
+                                                    TextView checkedInDate = dialog.findViewById(R.id.checkedInDate);
+                                                    TextView checkedInByUser = dialog.findViewById(R.id.checkedInByUser);
+
+                                                    TextView message = dialog.findViewById(R.id.message);
+                                                    if (key.getCheckedInDate() == null) {
+                                                        checkedInDate.setVisibility(View.GONE);
+                                                        checkedInByUser.setVisibility(View.GONE);
+                                                        MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(requireContext())
+                                                                .setPositiveButton("Yes", (dialogInterface, i) -> {
+                                                                    key.setCheckedInDate(DATE_TIME_FORMATTER.format(LocalDateTime.now()));
+                                                                    key.setCheckedOutDate(null);
+                                                                    key.setLastCheckedInUser(user.getFirstName() + " " + user.getLastName());
+                                                                    updates.put("users/" + user.getId() + "/keys/" + key.getId(), key);
+                                                                    updates.put("keys/" + key.getId(), key);
+                                                                    updates.put("properties/" + key.getPropertyId() + "/keys/" + key.getId(), key);
+                                                                    firebaseDatabase.getReference("/").updateChildren(updates);
+                                                                    Snackbar.make(binding.scannerView, "Key checked in successfully.", Snackbar.LENGTH_LONG).show();
+                                                                    NotificationUtils.create(requireActivity(), property, Action.CHECKED_IN);
+                                                                    Intent propertyDetails = new Intent(requireContext(), PropertyDetails.class);
+                                                                    propertyDetails.putExtra("property", property);
+                                                                    requireContext().startActivity(propertyDetails);
+
+                                                                })
+                                                                .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
+                                                                .setNegativeButton("No", Utils::onClick)
+                                                                .setCancelable(false);
+
+                                                        materialAlertDialogBuilder.setView(dialog);
+                                                        materialAlertDialogBuilder.create().show();
+                                                    } else if (!key.getLastCheckedInUser().equalsIgnoreCase(user.getFirstName() + " " + user.getLastName())) {
+                                                        Snackbar.make(binding.scannerView, "Key was checked in on " + key.getCheckedInDate() + " by another user. Contact " + key.getLastCheckedInUser() + " to check out the key.", Snackbar.LENGTH_LONG).show();
+                                                    } else {
+                                                        checkedInDate.setText("Checked in on " + key.getCheckedInDate() + ".");
+                                                        checkedInByUser.setText("Checked by " + key.getLastCheckedInUser() + ".");
+                                                        message.setText("Are you sure you want to check out?");
+                                                        MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(requireContext())
+                                                                .setPositiveButton("Yes", (dialogInterface, i) -> {
+                                                                    key.setCheckedInDate(null);
+                                                                    key.setCheckedOutDate(DATE_TIME_FORMATTER.format(LocalDateTime.now()));
+                                                                    key.setLastCheckOutDate(key.getCheckedOutDate());
+                                                                    updates.put("users/" + user.getId() + "/keys/" + key.getId(), key);
+                                                                    updates.put("keys/" + key.getId(), key);
+                                                                    updates.put("properties/" + key.getPropertyId() + "/keys/" + key.getId(), key);
+                                                                    firebaseDatabase.getReference("/").updateChildren(updates);
+                                                                    Snackbar.make(binding.scannerView, "Key checked out successfully.", Snackbar.LENGTH_LONG).show();
+                                                                    NotificationUtils.create(requireActivity(), property, Action.CHECKED_OUT);
+                                                                    Intent propertyDetails = new Intent(requireContext(), PropertyDetails.class);
+                                                                    propertyDetails.putExtra("property", property);
+                                                                    requireContext().startActivity(propertyDetails);
+                                                                })
+                                                                .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
+                                                                .setNegativeButton("No", Utils::onClick)
+                                                                .setCancelable(false);
+                                                        materialAlertDialogBuilder.setView(dialog);
+                                                        materialAlertDialogBuilder.create().show();
+                                                    }
+                                                });
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
                         } else {
                             Snackbar.make(binding.scannerView, "No key found.", Snackbar.LENGTH_LONG).show();
                         }

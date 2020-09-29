@@ -23,13 +23,17 @@ public class PropertyAdapter extends FirebaseRecyclerAdapter<Property, PropertyH
 
     @NonNull
     private User user;
-    private LinearLayout emptyPropertySearchResults;
+    private final boolean inTrash;
+    private LinearLayout background;
 
-    public PropertyAdapter(@NonNull FirebaseRecyclerOptions<Property> options, Activity activity, User user) {
+    public PropertyAdapter(@NonNull FirebaseRecyclerOptions<Property> options, Activity activity, User user,
+                           LinearLayout background,
+                           boolean inTrash) {
         super(options, true);
         this.activity = activity;
         this.user = user;
-        emptyPropertySearchResults = activity.findViewById(R.id.empty_property_search_results);
+        this.background = background;
+        this.inTrash = inTrash;
     }
 
     @Override
@@ -50,9 +54,9 @@ public class PropertyAdapter extends FirebaseRecyclerAdapter<Property, PropertyH
     @Override
     public void onDataChanged() {
         if (getItemCount() == 0) {
-            emptyPropertySearchResults.setVisibility(View.VISIBLE);
+            background.setVisibility(View.VISIBLE);
         } else {
-            emptyPropertySearchResults.setVisibility(View.INVISIBLE);
+            background.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -60,7 +64,7 @@ public class PropertyAdapter extends FirebaseRecyclerAdapter<Property, PropertyH
     @Override
     public PropertyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         return new PropertyHolder(activity, user, LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.property, parent, false));
+                .inflate(R.layout.property, parent, false), inTrash);
     }
 
     @NonNull
@@ -72,9 +76,9 @@ public class PropertyAdapter extends FirebaseRecyclerAdapter<Property, PropertyH
     @Override
     public void postFilterUpdate(int count) {
         if (count == 0) {
-            emptyPropertySearchResults.setVisibility(View.VISIBLE);
+            background.setVisibility(View.VISIBLE);
         } else {
-            emptyPropertySearchResults.setVisibility(View.INVISIBLE);
+            background.setVisibility(View.INVISIBLE);
         }
     }
 }

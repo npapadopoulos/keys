@@ -35,15 +35,27 @@ public class PropertyUtils {
     }
 
     public static void delete(Activity activity, Property property) {
-        new TaskExecutor().executeAsync(new PropertyDeleteTask(activity, property, false, false));
+        delete(activity, property, false);
+    }
+
+    public static void deleteAll(Activity activity) {
+        delete(activity, null, true);
+    }
+
+    public static void delete(Activity activity, Property property, boolean all) {
+        new TaskExecutor().executeAsync(new PropertyDeleteTask(activity, property, false, false, all));
     }
 
     public static void remove(Activity activity, Property property) {
-        new TaskExecutor().executeAsync(new PropertyDeleteTask(activity, property, true, false));
+        new TaskExecutor().executeAsync(new PropertyDeleteTask(activity, property, true, false, false));
     }
 
     public static void restore(Activity activity, Property property) {
-        new TaskExecutor().executeAsync(new PropertyDeleteTask(activity, property, false, true));
+        restore(activity, property, false);
+    }
+
+    public static void restore(Activity activity, Property property, boolean all) {
+        new TaskExecutor().executeAsync(new PropertyDeleteTask(activity, property, false, true, all));
     }
 
     public static void like(Activity activity, Property property, boolean liked) {

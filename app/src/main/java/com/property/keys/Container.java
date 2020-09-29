@@ -43,6 +43,7 @@ import com.property.keys.fragments.Notifications;
 import com.property.keys.fragments.Profile;
 import com.property.keys.fragments.Properties;
 import com.property.keys.fragments.Scanner;
+import com.property.keys.fragments.Trash;
 import com.property.keys.utils.ImageUtils;
 import com.property.keys.utils.NavigationUtils;
 import com.property.keys.utils.PropertyUtils;
@@ -262,11 +263,15 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
                 break;
             case R.id.navigationHistory:
                 tag = "history";
-                fragment = new History(binding.bottomNavigationMenu, binding.navigation, binding.toolbar);
+                fragment = new History(binding.bottomNavigationMenu, binding.toolbar);
                 break;
             case R.id.navigationNotifications:
                 tag = "notifications";
                 fragment = new Notifications(binding.bottomNavigationMenu, binding.navigation, binding.toolbar);
+                break;
+            case R.id.trash:
+                tag = "trash";
+                fragment = new Trash(binding.bottomNavigationMenu, binding.navigation, binding.toolbar);
                 break;
             case R.id.navigationLogout:
                 fragment = null;

@@ -15,6 +15,10 @@
             android:icon="@drawable/notification"
             android:title="@string/notifications" />
         <item
+            android:id="@+id/trash"
+            android:icon="@drawable/trash"
+            android:title="@string/trash" />
+        <item
             android:id="@+id/navigationLogout"
             android:icon="@drawable/logout"
             android:title="@string/logout" />

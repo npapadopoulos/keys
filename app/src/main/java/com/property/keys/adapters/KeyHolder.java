@@ -89,6 +89,11 @@ public class KeyHolder extends RecyclerView.ViewHolder implements Holder {
     }
 
     @Override
+    public RelativeLayout getRestoreBackground() {
+        return null;
+    }
+
+    @Override
     public RelativeLayout getForeground() {
         return keyForeground;
     }
