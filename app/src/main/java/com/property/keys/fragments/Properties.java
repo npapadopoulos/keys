@@ -378,7 +378,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
                         final Property property = adapter.getItem(viewHolder.getAdapterPosition());
                         PropertyUtils.remove(getActivity(), property);
                         AtomicBoolean restored = new AtomicBoolean(false);
-                        Snackbar undo = Snackbar.make(container.getPlaceSnackBar(), "Property deleted.", Snackbar.LENGTH_LONG)
+                        Snackbar undo = Snackbar.make(container.getPlaceSnackBar(), "Property moved to trash.", Snackbar.LENGTH_LONG)
                                 .setAction("Undo", v -> {
                                     PropertyUtils.restore(getActivity(), property);
                                     restored.set(true);
