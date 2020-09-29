@@ -169,7 +169,7 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
                         .setLifecycleOwner(this)
                         .build();
 
-        adapter = new NotificationAdapter(options, this.requireActivity());
+        adapter = new NotificationAdapter(options, this.requireActivity(), userId);
 
         // Scroll to bottom on new messages
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {

@@ -1,6 +1,8 @@
 package com.property.keys;
 
 import android.app.Activity;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -147,6 +149,8 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
         firstNameLabel.setText(user.getFirstName());
         lastNameLabel.setText(user.getLastName());
 
+        createNotificationChannel(user);
+
         binding.toolbar.setTitle("Dashboard");
         setSupportActionBar(binding.toolbar);
 
@@ -251,6 +255,20 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
 
                     }
                 });
+    }
+
+    private void createNotificationChannel(User user) {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "keys";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(user.getId(), name, importance);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 
     @Override
