@@ -142,10 +142,7 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
         binding = ActivityContainerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        NotificationManager systemService = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        if (systemService != null && systemService.getNotificationChannel("1") == null) {
-            startForegroundService(new Intent(this, NotificationService.class));
-        }
+        startForegroundService(new Intent(this, NotificationService.class));
 
         binding.navigation.setNavigationItemSelectedListener(this);
         View view = binding.navigation.getHeaderView(0);
