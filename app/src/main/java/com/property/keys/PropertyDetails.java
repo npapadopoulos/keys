@@ -49,8 +49,6 @@ import com.property.keys.utils.UserUtils;
 import com.property.keys.utils.Utils;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 import lombok.SneakyThrows;
 import timber.log.Timber;
@@ -102,12 +100,7 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
 
         Notification setReadNotification = getIntent().getParcelableExtra("setReadNotification");
         if (setReadNotification != null) {
-            setReadNotification.setUnread(false);
-
-            Map<String, Object> updates = new HashMap<>();
-            updates.put("/notifications/" + setReadNotification.getId(), setReadNotification);
-
-            firebaseDatabase.getReference("users").child(user.getId()).updateChildren(updates);
+            UserUtils.setReadNotifications(user.getId(), setReadNotification.getId());
         }
         property = getIntent().getParcelableExtra("property");
         binding.keyList.setHasFixedSize(false);

@@ -53,7 +53,7 @@ public class NotificationService extends Service {
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             snapshot.getChildren().forEach(child -> {
                                 Notification notification = child.getValue(Notification.class);
-                                if (notification != null && notification.getPropertyId() != null) {
+                                if (notification != null && notification.getPropertyId() != null && notification.getUnread()) {
                                     firebaseDatabase.getReference("properties").child(notification.getPropertyId())
                                             .addListenerForSingleValueEvent(new ValueEventListener() {
                                                 @Override

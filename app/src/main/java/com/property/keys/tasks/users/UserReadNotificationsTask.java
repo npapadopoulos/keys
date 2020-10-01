@@ -26,6 +26,7 @@ public class UserReadNotificationsTask extends AbstractAsyncTask {
     private static DatabaseReference userReference = FirebaseDatabase.getInstance().getReference("users");
 
     private String userId;
+    private String notificationId;
 
     @Override
     public void runInBackground() {
@@ -35,11 +36,14 @@ public class UserReadNotificationsTask extends AbstractAsyncTask {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot notifications) {
                         Map<String, Object> updates = new HashMap<>();
+
                         notifications.getChildren().forEach(snapshot -> {
                             Notification notification = snapshot.getValue(Notification.class);
                             if (notification != null) {
-                                notification.setUnread(false);
-                                updates.put("/" + userId + "/notifications/" + notification.getId(), notification);
+                                if (notificationId == null || notification.getId().equals(notificationId)) {
+                                    notification.setUnread(false);
+                                    updates.put("/" + userId + "/notifications/" + notification.getId(), notification);
+                                }
                             }
                         });
                         if (!updates.isEmpty()) {

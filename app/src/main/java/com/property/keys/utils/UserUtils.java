@@ -91,6 +91,15 @@ public class UserUtils {
         );
     }
 
+    public static void setReadNotifications(String userId, String notificationId) {
+        new TaskExecutor().executeAsync(
+                UserReadNotificationsTask.builder()
+                        .userId(userId)
+                        .notificationId(notificationId)
+                        .build()
+        );
+    }
+
     public static void deleteNotifications(String userId) {
         deleteNotification(userId, null, true);
     }

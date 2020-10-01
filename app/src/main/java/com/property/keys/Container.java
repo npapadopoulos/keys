@@ -142,6 +142,10 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
         binding = ActivityContainerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (notificationManager != null) {
+            notificationManager.cancel(1);
+        }
         startForegroundService(new Intent(this, NotificationService.class));
 
         binding.navigation.setNavigationItemSelectedListener(this);
