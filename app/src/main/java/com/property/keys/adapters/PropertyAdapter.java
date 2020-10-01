@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.property.keys.R;
 import com.property.keys.entities.Property;
 import com.property.keys.entities.User;
@@ -25,6 +26,7 @@ public class PropertyAdapter extends FirebaseRecyclerAdapter<Property, PropertyH
     private User user;
     private final boolean inTrash;
     private LinearLayout background;
+    private FloatingActionButton deleteProperties;
 
     public PropertyAdapter(@NonNull FirebaseRecyclerOptions<Property> options, Activity activity, User user,
                            LinearLayout background,
@@ -34,6 +36,7 @@ public class PropertyAdapter extends FirebaseRecyclerAdapter<Property, PropertyH
         this.user = user;
         this.background = background;
         this.inTrash = inTrash;
+        deleteProperties = activity.findViewById(R.id.deleteProperties);
     }
 
     @Override
@@ -55,8 +58,14 @@ public class PropertyAdapter extends FirebaseRecyclerAdapter<Property, PropertyH
     public void onDataChanged() {
         if (getItemCount() == 0) {
             background.setVisibility(View.VISIBLE);
+            if (deleteProperties != null) {
+                deleteProperties.setVisibility(View.GONE);
+            }
         } else {
             background.setVisibility(View.INVISIBLE);
+            if (deleteProperties != null) {
+                deleteProperties.setVisibility(View.VISIBLE);
+            }
         }
     }
 

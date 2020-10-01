@@ -12,8 +12,6 @@ import androidx.annotation.RequiresApi;
 
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.property.keys.R;
 import com.property.keys.entities.Notification;
 import com.property.keys.filters.FirebaseRecyclerAdapter;
@@ -23,20 +21,16 @@ import org.jetbrains.annotations.NotNull;
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class NotificationAdapter extends FirebaseRecyclerAdapter<Notification, NotificationHolder> {
 
-    private static final DatabaseReference properties = FirebaseDatabase.getInstance().getReference("properties");
-
     @NonNull
     private Activity activity;
     private FloatingActionButton deleteNotifications;
     private LinearLayout emptyNotifications;
-    private String userId;
 
-    public NotificationAdapter(@NonNull FirebaseRecyclerOptions<Notification> options, @NotNull Activity activity, String userId) {
+    public NotificationAdapter(@NonNull FirebaseRecyclerOptions<Notification> options, @NotNull Activity activity) {
         super(options, false);
         this.activity = activity;
         deleteNotifications = activity.findViewById(R.id.deleteNotifications);
         emptyNotifications = activity.findViewById(R.id.empty_notifications);
-        this.userId = userId;
 
     }
 

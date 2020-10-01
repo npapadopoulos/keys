@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.property.keys.R;
 import com.property.keys.entities.Key;
+import com.property.keys.entities.User;
 import com.property.keys.utils.ImageUtils;
 
 import java.util.Objects;
@@ -31,8 +32,9 @@ public class KeyHolder extends RecyclerView.ViewHolder implements Holder {
     private ImageView qrCodeImage;
     private TextView checkedInDetails, checkedInDate;
     private RelativeLayout keyBackground, keyForeground, keyDetails;
+    private User user;
 
-    public KeyHolder(@NonNull View itemView) {
+    public KeyHolder(@NonNull View itemView, User user) {
         super(itemView);
 
         qrCodeImage = itemView.findViewById(R.id.qrCodeImage);
@@ -42,6 +44,7 @@ public class KeyHolder extends RecyclerView.ViewHolder implements Holder {
         keyBackground = itemView.findViewById(R.id.keyBackground);
         keyForeground = itemView.findViewById(R.id.keyForeground);
         keyDetails = itemView.findViewById(R.id.keyDetails);
+        this.user = user;
     }
 
     private static void addTitle(Context context, Bitmap bitmap, String propertyName) {
@@ -58,6 +61,11 @@ public class KeyHolder extends RecyclerView.ViewHolder implements Holder {
 
     public void bind(@NonNull Context context, @NonNull Key key, String propertyName) {
         if (key.getCheckedInDate() != null) {
+
+            String userFullName = key.getLastCheckedInUser();
+            if (userFullName.equals(user.getFirstName() + " " + user.getLastName())) {
+                userFullName = "you";
+            }
             checkedInDate.setText(key.getCheckedInDate());
             checkedInDetails.setText(key.getLastCheckedInUser() + " has the key.");
             keyDetails.setBackground(ContextCompat.getDrawable(context, R.drawable.key_busy_background));

@@ -303,7 +303,7 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
                         .setLifecycleOwner(this)
                         .build();
 
-        adapter = new KeyAdapter(options, this, property.getName());
+        adapter = new KeyAdapter(options, this, property.getName(), user);
 
         // Scroll to bottom on new messages
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {

@@ -3,6 +3,7 @@ package com.property.keys.fragments;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -105,58 +106,67 @@ public class Scanner extends Fragment {
                                                     TextView checkedInByUser = dialog.findViewById(R.id.checkedInByUser);
 
                                                     TextView message = dialog.findViewById(R.id.message);
+                                                    MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(requireContext());
                                                     if (key.getCheckedInDate() == null) {
                                                         checkedInDate.setVisibility(View.GONE);
                                                         checkedInByUser.setVisibility(View.GONE);
-                                                        MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(requireContext())
-                                                                .setPositiveButton("Yes", (dialogInterface, i) -> {
-                                                                    key.setCheckedInDate(DATE_TIME_FORMATTER.format(LocalDateTime.now()));
-                                                                    key.setCheckedOutDate(null);
-                                                                    key.setLastCheckedInUser(user.getFirstName() + " " + user.getLastName());
-                                                                    updates.put("users/" + user.getId() + "/keys/" + key.getId(), key);
-                                                                    updates.put("keys/" + key.getId(), key);
-                                                                    updates.put("properties/" + key.getPropertyId() + "/keys/" + key.getId(), key);
-                                                                    firebaseDatabase.getReference("/").updateChildren(updates);
-                                                                    Snackbar.make(binding.scannerView, "Key checked in successfully.", Snackbar.LENGTH_LONG).show();
-                                                                    NotificationUtils.create(requireActivity(), property, Action.CHECKED_IN);
-                                                                    Intent propertyDetails = new Intent(requireContext(), PropertyDetails.class);
-                                                                    propertyDetails.putExtra("property", property);
-                                                                    requireContext().startActivity(propertyDetails);
+                                                        materialAlertDialogBuilder.setPositiveButton("Yes", (dialogInterface, i) -> {
+                                                            key.setCheckedInDate(DATE_TIME_FORMATTER.format(LocalDateTime.now()));
+                                                            key.setCheckedOutDate(null);
+                                                            key.setLastCheckedInUser(user.getFirstName() + " " + user.getLastName());
+                                                            updates.put("users/" + user.getId() + "/keys/" + key.getId(), key);
+                                                            updates.put("keys/" + key.getId(), key);
+                                                            updates.put("properties/" + key.getPropertyId() + "/keys/" + key.getId(), key);
+                                                            firebaseDatabase.getReference("/").updateChildren(updates);
+                                                            Snackbar.make(binding.scannerView, "Key checked in successfully.", Snackbar.LENGTH_LONG).show();
+                                                            NotificationUtils.create(requireActivity(), property, Action.CHECKED_IN);
+                                                            Intent propertyDetails = new Intent(requireContext(), PropertyDetails.class);
+                                                            propertyDetails.putExtra("property", property);
+                                                            requireContext().startActivity(propertyDetails);
 
-                                                                })
+                                                        })
                                                                 .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
                                                                 .setNegativeButton("No", Utils::onClick)
                                                                 .setCancelable(false);
-
-                                                        materialAlertDialogBuilder.setView(dialog);
-                                                        materialAlertDialogBuilder.create().show();
                                                     } else if (!key.getLastCheckedInUser().equalsIgnoreCase(user.getFirstName() + " " + user.getLastName())) {
-                                                        Snackbar.make(binding.scannerView, "Key was checked in on " + key.getCheckedInDate() + " by another user. Contact " + key.getLastCheckedInUser() + " to check out the key.", Snackbar.LENGTH_LONG).show();
-                                                    } else {
+                                                        message.setText("");
                                                         checkedInDate.setText("Checked in on " + key.getCheckedInDate() + ".");
                                                         checkedInByUser.setText("Checked by " + key.getLastCheckedInUser() + ".");
+                                                        materialAlertDialogBuilder.setNeutralButton("Ok", Utils::onClick)
+                                                                .setCancelable(false);
+                                                    } else {
+                                                        checkedInDate.setText("Checked in on " + key.getCheckedInDate() + ".");
+                                                        checkedInByUser.setText("Checked by you.");
                                                         message.setText("Are you sure you want to check out?");
-                                                        MaterialAlertDialogBuilder materialAlertDialogBuilder = new MaterialAlertDialogBuilder(requireContext())
-                                                                .setPositiveButton("Yes", (dialogInterface, i) -> {
-                                                                    key.setCheckedInDate(null);
-                                                                    key.setCheckedOutDate(DATE_TIME_FORMATTER.format(LocalDateTime.now()));
-                                                                    key.setLastCheckOutDate(key.getCheckedOutDate());
-                                                                    updates.put("users/" + user.getId() + "/keys/" + key.getId(), key);
-                                                                    updates.put("keys/" + key.getId(), key);
-                                                                    updates.put("properties/" + key.getPropertyId() + "/keys/" + key.getId(), key);
-                                                                    firebaseDatabase.getReference("/").updateChildren(updates);
-                                                                    Snackbar.make(binding.scannerView, "Key checked out successfully.", Snackbar.LENGTH_LONG).show();
-                                                                    NotificationUtils.create(requireActivity(), property, Action.CHECKED_OUT);
-                                                                    Intent propertyDetails = new Intent(requireContext(), PropertyDetails.class);
-                                                                    propertyDetails.putExtra("property", property);
-                                                                    requireContext().startActivity(propertyDetails);
-                                                                })
+                                                        materialAlertDialogBuilder.setPositiveButton("Yes", (dialogInterface, i) -> {
+                                                            key.setCheckedInDate(null);
+                                                            key.setCheckedOutDate(DATE_TIME_FORMATTER.format(LocalDateTime.now()));
+                                                            key.setLastCheckOutDate(key.getCheckedOutDate());
+                                                            updates.put("users/" + user.getId() + "/keys/" + key.getId(), key);
+                                                            updates.put("keys/" + key.getId(), key);
+                                                            updates.put("properties/" + key.getPropertyId() + "/keys/" + key.getId(), key);
+                                                            firebaseDatabase.getReference("/").updateChildren(updates);
+                                                            Snackbar.make(binding.scannerView, "Key checked out successfully.", Snackbar.LENGTH_LONG).show();
+                                                            NotificationUtils.create(requireActivity(), property, Action.CHECKED_OUT);
+                                                            Intent propertyDetails = new Intent(requireContext(), PropertyDetails.class);
+                                                            propertyDetails.putExtra("property", property);
+                                                            requireContext().startActivity(propertyDetails);
+                                                        })
                                                                 .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
                                                                 .setNegativeButton("No", Utils::onClick)
                                                                 .setCancelable(false);
-                                                        materialAlertDialogBuilder.setView(dialog);
-                                                        materialAlertDialogBuilder.create().show();
                                                     }
+
+                                                    materialAlertDialogBuilder.setOnKeyListener((d, keyCode, event) -> {
+                                                        if (keyCode == KeyEvent.KEYCODE_BACK) {
+                                                            d.dismiss();
+                                                            return true;
+                                                        }
+                                                        return false;
+                                                    });
+                                                    materialAlertDialogBuilder.setOnDismissListener(dialog1 -> codeScanner.startPreview());
+                                                    materialAlertDialogBuilder.setView(dialog);
+                                                    materialAlertDialogBuilder.create().show();
                                                 });
                                             }
                                         }
@@ -167,7 +177,10 @@ public class Scanner extends Fragment {
                                         }
                                     });
                         } else {
-                            Snackbar.make(binding.scannerView, "No key found.", Snackbar.LENGTH_LONG).show();
+                            new MaterialAlertDialogBuilder(requireContext())
+                                    .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
+                                    .setMessage("No key found.")
+                                    .setNeutralButton("Ok", Utils::onClick).create().show();
                         }
                     }
 

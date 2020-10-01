@@ -131,7 +131,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
         user = UserUtils.getLocalUser(requireContext());
 
         if (userQuery == null) {
-            userQuery = firebaseDatabase.getReference("users").child(user.getId()).child("properties");
+            userQuery = firebaseDatabase.getReference("users").child(user.getId()).child("properties").orderByChild("deleted").equalTo(false);
         }
 
         suggestions = user.getPropertySearchSuggestions().stream()
