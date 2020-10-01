@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
@@ -85,6 +86,13 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
                     .setBackground(ContextCompat.getDrawable(this, R.drawable.white_card_background))
                     .setMessage("Are you sure you want to log out?")
                     .setPositiveButton("Yes", (dialogInterface, i) -> UserUtils.signOut())
+                    .setOnKeyListener((d, keyCode, event) -> {
+                        if (keyCode == KeyEvent.KEYCODE_BACK) {
+                            d.dismiss();
+                            return true;
+                        }
+                        return false;
+                    })
                     .setNegativeButton("No", Utils::onClick).create().show();
         } else if (fragment.getTag() != null && fragment.getTag().equalsIgnoreCase(getPackageName() + "." + "properties")
                 && fragment.getView().findViewById(R.id.floatingSearchView).isFocused()) {

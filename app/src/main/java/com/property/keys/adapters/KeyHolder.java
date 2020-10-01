@@ -64,10 +64,13 @@ public class KeyHolder extends RecyclerView.ViewHolder implements Holder {
 
             String userFullName = key.getLastCheckedInUser();
             if (userFullName.equals(user.getFirstName() + " " + user.getLastName())) {
-                userFullName = "you";
+                userFullName = "you have";
+            } else {
+                userFullName = userFullName + " has";
             }
+
             checkedInDate.setText(key.getCheckedInDate());
-            checkedInDetails.setText(key.getLastCheckedInUser() + " has the key.");
+            checkedInDetails.setText(userFullName + " the key.");
             keyDetails.setBackground(ContextCompat.getDrawable(context, R.drawable.key_busy_background));
         } else {
             checkedInDate.setText("");

@@ -6,23 +6,20 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.SeekBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import com.github.mikephil.charting.animation.Easing;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.highlight.Highlight;
-import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
-import com.github.mikephil.charting.utils.ColorTemplate;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.utils.MPPointF;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
@@ -34,21 +31,17 @@ import com.google.firebase.database.ValueEventListener;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 import com.property.keys.R;
 import com.property.keys.databinding.FragmentDashboardBinding;
-import com.property.keys.entities.Action;
-import com.property.keys.entities.Notification;
+import com.property.keys.entities.Key;
 
-import java.time.DayOfWeek;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.property.keys.utils.Utils.DATE_TIME_FORMATTER;
 import static java.util.stream.Collectors.groupingBy;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
-public class Dashboard extends Fragment implements SeekBar.OnSeekBarChangeListener,
-        OnChartValueSelectedListener, ActivityCompat.OnRequestPermissionsResultCallback {
+public class Dashboard extends Fragment implements ActivityCompat.OnRequestPermissionsResultCallback {
     private static final String TAG = Dashboard.class.getSimpleName();
 
     private ChipNavigationBar bottomNavigationMenu;
@@ -56,10 +49,9 @@ public class Dashboard extends Fragment implements SeekBar.OnSeekBarChangeListen
     private MaterialToolbar toolbar;
 
     private static final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-    private static final Query notificationsQuery = firebaseDatabase.getReference("notifications");
-    private final Map<String, List<Notification>> notificationPerUserId = new HashMap<>();
-    private PieChart chart;
-    private SeekBar seekBarX;
+    private static final Query keysQuery = firebaseDatabase.getReference("keys");
+    private final Map<Boolean, List<Key>> keysPerStatus = new HashMap<>();
+    private PieChart pieChart;
 
     public Dashboard(ChipNavigationBar bottomNavigationMenu, NavigationView navigation, MaterialToolbar toolbar) {
         this.bottomNavigationMenu = bottomNavigationMenu;
@@ -77,21 +69,16 @@ public class Dashboard extends Fragment implements SeekBar.OnSeekBarChangeListen
         navigation.getCheckedItem().setChecked(true);
         toolbar.setTitle("Dashboard");
 
-
-        notificationsQuery.addValueEventListener(new ValueEventListener() {
+        keysQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                List<Notification> temp = new ArrayList<>();
-                dataSnapshot.getChildren().forEach(child -> {
-                    Notification notification = child.getValue(Notification.class);
-                    if (notification != null && (notification.getAction() == Action.CHECKED_IN || notification.getAction() == Action.CHECKED_OUT)) {
-                        temp.add(notification);
-                    }
-                });
+                List<Key> temp = new ArrayList<>();
+                dataSnapshot.getChildren().forEach(child -> temp.add(child.getValue(Key.class)));
 
-                notificationPerUserId.clear();
-                notificationPerUserId.putAll(temp.stream().collect(groupingBy(notification -> DayOfWeek.from(DATE_TIME_FORMATTER.parse(notification.getDate())).toString())));
-                setData(notificationPerUserId, 4);
+                keysPerStatus.clear();
+                keysPerStatus.putAll(temp.stream().collect(groupingBy(key -> key.getCheckedInDate() != null)));
+
+                setPieChartData(keysPerStatus);
             }
 
             @Override
@@ -100,111 +87,68 @@ public class Dashboard extends Fragment implements SeekBar.OnSeekBarChangeListen
             }
         });
 
-
-        seekBarX = binding.seekBar1;
-        chart = binding.chart;
-
-        seekBarX.setOnSeekBarChangeListener(this);
-
-        chart.setUsePercentValues(false);
-        chart.getDescription().setEnabled(false);
-        chart.setExtraOffsets(5, 10, 5, 5);
-        chart.setDragDecelerationFrictionCoef(0.95f);
-        chart.setTransparentCircleColor(Color.WHITE);
-        chart.setTransparentCircleAlpha(110);
-        chart.setTransparentCircleRadius(61f);
-        chart.setDrawCenterText(false);
-        chart.setRotationAngle(0);
-        // enable rotation of the chart by touch
-        chart.setRotationEnabled(true);
-        chart.setHighlightPerTapEnabled(true);
-        // add a selection listener
-        chart.setOnChartValueSelectedListener(this);
-
-        seekBarX.setProgress(4);
-
-        chart.animateY(1400, Easing.EaseInOutQuad);
-
-        Legend legend = chart.getLegend();
-        legend.setEnabled(false);
-
-        // entry label styling
-        chart.setEntryLabelColor(Color.BLACK);
-        chart.setEntryLabelTextSize(12f);
+        initPieChart(binding.pieChart);
 
         return binding.getRoot();
     }
 
-    private void setData(Map<String, List<Notification>> notificationPerUserId, int count) {
+    private void initPieChart(PieChart pieChart) {
+        this.pieChart = pieChart;
+
+        this.pieChart.setUsePercentValues(false);
+        this.pieChart.getDescription().setEnabled(false);
+        this.pieChart.setExtraOffsets(5, 10, 5, 5);
+        this.pieChart.setDragDecelerationFrictionCoef(0.95f);
+        this.pieChart.setTransparentCircleColor(Color.WHITE);
+        this.pieChart.setTransparentCircleAlpha(110);
+        this.pieChart.setTransparentCircleRadius(61f);
+        this.pieChart.setDrawCenterText(false);
+        this.pieChart.setRotationAngle(0);
+        // enable rotation of the barChart by touch
+        this.pieChart.setRotationEnabled(false);
+        this.pieChart.setHighlightPerTapEnabled(false);
+
+        this.pieChart.animateY(1400, Easing.EaseInOutQuad);
+
+        Legend legend = this.pieChart.getLegend();
+        legend.setEnabled(false);
+
+        // entry label styling
+        this.pieChart.setEntryLabelColor(Color.BLACK);
+        this.pieChart.setEntryLabelTextSize(15f);
+    }
+
+    private void setPieChartData(Map<Boolean, List<Key>> data) {
         ArrayList<PieEntry> entries = new ArrayList<>();
 
-        // NOTE: The order of the entries when being added to the entries array determines their position around the center of
-        // the chart.
-        int i = 0;
-        notificationPerUserId.forEach((dayOfWeek, notifications) -> {
-            if (i < count) {
-                entries.add(new PieEntry(notifications.size(), dayOfWeek));
-            }
-        });
+        data.forEach((key, values) -> entries.add(new PieEntry(values.size(), key ? "Busy" : "Available")));
 
         PieDataSet dataSet = new PieDataSet(entries, "");
         dataSet.setDrawIcons(false);
         dataSet.setSliceSpace(3f);
         dataSet.setIconsOffset(new MPPointF(0, 40));
         dataSet.setSelectionShift(5f);
+        dataSet.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getFormattedValue(float value) {
+                return String.valueOf((int) value);
+            }
+        });
 
         // add a lot of colors
         ArrayList<Integer> colors = new ArrayList<>();
-
-        for (int c : ColorTemplate.VORDIPLOM_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.JOYFUL_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.COLORFUL_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.LIBERTY_COLORS)
-            colors.add(c);
-
-        for (int c : ColorTemplate.PASTEL_COLORS)
-            colors.add(c);
-
-        colors.add(ColorTemplate.getHoloBlue());
+        colors.add(ContextCompat.getColor(requireContext(), R.color.green));
+        colors.add(ContextCompat.getColor(requireContext(), R.color.red_600));
 
         dataSet.setColors(colors);
 
-        PieData data = new PieData(dataSet);
-        data.setValueTextSize(11f);
-        data.setValueTextColor(Color.BLACK);
-        chart.setData(data);
+        PieData pieData = new PieData(dataSet);
+        pieData.setValueTextSize(15f);
+        pieData.setValueTextColor(Color.BLACK);
+        pieChart.setData(pieData);
 
         // undo all highlights
-        chart.highlightValues(null);
-
-        chart.invalidate();
-    }
-
-    @Override
-    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        setData(notificationPerUserId, seekBarX.getProgress());
-    }
-
-    @Override
-    public void onValueSelected(Entry e, Highlight h) {
-
-    }
-
-    @Override
-    public void onNothingSelected() {
-    }
-
-    @Override
-    public void onStartTrackingTouch(SeekBar seekBar) {
-    }
-
-    @Override
-    public void onStopTrackingTouch(SeekBar seekBar) {
+        pieChart.highlightValues(null);
+        pieChart.invalidate();
     }
 }

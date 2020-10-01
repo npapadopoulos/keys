@@ -26,14 +26,12 @@ import com.property.keys.entities.Property;
 import com.property.keys.utils.ImageUtils;
 import com.property.keys.utils.PropertyUtils;
 import com.property.keys.utils.StorageUtils;
-import com.property.keys.utils.UserUtils;
 import com.property.keys.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.HashMap;
 import java.util.UUID;
 import java.util.function.Consumer;
 
@@ -131,13 +129,10 @@ public class AddProperty extends AppCompatActivity {
         String nameValue = binding.name.getEditText().getText().toString();
         String addressValue = binding.address.getEditText().getText().toString();
 
-        HashMap<String, Object> favouredBy = new HashMap<>();
-        favouredBy.put(UserUtils.getLocalUser(this).getId(), true);
         Property property = Property.builder()
                 .id(pregeneratedPropertyId)
                 .name(nameValue)
                 .address(addressValue)
-                .favouredBy(favouredBy)
                 .build();
 
         Consumer<Intent> startActivity = intent -> {

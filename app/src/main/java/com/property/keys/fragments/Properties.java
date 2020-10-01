@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -409,6 +410,14 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
                                     restored.set(true);
                                 });
                         undo.show();
+                    })
+                    .setOnKeyListener((d, keyCode, event) -> {
+                        if (keyCode == KeyEvent.KEYCODE_BACK) {
+                            d.dismiss();
+                            adapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                            return true;
+                        }
+                        return false;
                     })
                     .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
                     .setNegativeButton("No", (dialogInterface, i) -> adapter.notifyItemChanged(viewHolder.getAdapterPosition()))

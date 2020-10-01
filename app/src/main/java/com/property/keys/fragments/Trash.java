@@ -2,6 +2,7 @@ package com.property.keys.fragments;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -105,6 +106,13 @@ public class Trash extends Fragment implements FirebaseAuth.AuthStateListener, R
                         binding.deleteProperties.hide();
                         Snackbar.make(this.container.getPlaceSnackBar(), "All properties deleted", Snackbar.LENGTH_SHORT).show();
                     })
+                    .setOnKeyListener((d, keyCode, event) -> {
+                        if (keyCode == KeyEvent.KEYCODE_BACK) {
+                            d.dismiss();
+                            return true;
+                        }
+                        return false;
+                    })
                     .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
                     .setNegativeButton("No", Utils::onClick)
                     .setCancelable(false)
@@ -189,6 +197,14 @@ public class Trash extends Fragment implements FirebaseAuth.AuthStateListener, R
                             PropertyUtils.delete(getActivity(), property);
                             Snackbar.make(container.getPlaceSnackBar(), "Property deleted.", Snackbar.LENGTH_LONG).show();
                         })
+                        .setOnKeyListener((d, keyCode, event) -> {
+                            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                                d.dismiss();
+                                adapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                                return true;
+                            }
+                            return false;
+                        })
                         .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
                         .setNegativeButton("No", (dialogInterface, i) -> adapter.notifyItemChanged(viewHolder.getAdapterPosition()))
                         .setCancelable(false)
@@ -200,6 +216,14 @@ public class Trash extends Fragment implements FirebaseAuth.AuthStateListener, R
                             final Property property = adapter.getItem(viewHolder.getAdapterPosition());
                             PropertyUtils.restore(getActivity(), property);
                             Snackbar.make(container.getPlaceSnackBar(), "Property restored.", Snackbar.LENGTH_LONG).show();
+                        })
+                        .setOnKeyListener((d, keyCode, event) -> {
+                            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                                d.dismiss();
+                                adapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                                return true;
+                            }
+                            return false;
                         })
                         .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
                         .setNegativeButton("No", (dialogInterface, i) -> adapter.notifyItemChanged(viewHolder.getAdapterPosition()))

@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.KeyEvent;
 import android.view.WindowManager;
 import android.widget.Toast;
 
@@ -70,6 +71,13 @@ public class ImagePicker extends AppCompatActivity {
                     listener.onChooseGallerySelected();
                     break;
             }
+        });
+        builder.setOnKeyListener((d, keyCode, event) -> {
+            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                d.dismiss();
+                return true;
+            }
+            return false;
         });
 
         // create and show the alert dialog

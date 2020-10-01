@@ -2,6 +2,7 @@ package com.property.keys.fragments;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -115,6 +116,13 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
                     .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
                     .setNegativeButton("No", Utils::onClick)
                     .setCancelable(false)
+                    .setOnKeyListener((d, keyCode, event) -> {
+                        if (keyCode == KeyEvent.KEYCODE_BACK) {
+                            d.dismiss();
+                            return true;
+                        }
+                        return false;
+                    })
                     .create().show();
         });
     }
@@ -131,6 +139,13 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
                     .setPositiveButton("Yes", (dialogInterface, i) -> {
                         UserUtils.deleteNotification(userId, adapter.getItem(viewHolder.getAdapterPosition()).getId());
                         Snackbar.make(container.getPlaceSnackBar(), "Notification deleted.", Snackbar.LENGTH_LONG).show();
+                    })
+                    .setOnKeyListener((d, keyCode, event) -> {
+                        if (keyCode == KeyEvent.KEYCODE_BACK) {
+                            d.dismiss();
+                            return true;
+                        }
+                        return false;
                     })
                     .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
                     .setNegativeButton("No", (dialogInterface, i) -> adapter.notifyItemChanged(viewHolder.getAdapterPosition()))

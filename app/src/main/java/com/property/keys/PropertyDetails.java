@@ -10,6 +10,7 @@ import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -226,6 +227,13 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
                 .setBackground(ContextCompat.getDrawable(this, R.drawable.white_card_background))
                 .setNegativeButton("No", Utils::onClick)
                 .setCancelable(false)
+                .setOnKeyListener((d, keyCode, event) -> {
+                    if (keyCode == KeyEvent.KEYCODE_BACK) {
+                        d.dismiss();
+                        return true;
+                    }
+                    return false;
+                })
                 .create().show();
     }
 
@@ -284,9 +292,14 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
         if (viewHolder instanceof KeyHolder) {
             new MaterialAlertDialogBuilder(viewHolder.itemView.getContext())
                     .setMessage("Are you sure?")
-                    .setPositiveButton("Yes", (dialogInterface, i) -> {
-//                        //FIXME UserUtils.deleteNotification(user.getId(), adapter.getItem(viewHolder.getAdapterPosition()).getId());
-                        Snackbar.make(binding.main, "Key deleted.", Snackbar.LENGTH_LONG).show();
+                    .setPositiveButton("Yes", (dialogInterface, i) -> Snackbar.make(binding.main, "Key deleted.", Snackbar.LENGTH_LONG).show())
+                    .setOnKeyListener((d, keyCode, event) -> {
+                        if (keyCode == KeyEvent.KEYCODE_BACK) {
+                            d.dismiss();
+                            adapter.notifyItemChanged(viewHolder.getAdapterPosition());
+                            return true;
+                        }
+                        return false;
                     })
                     .setBackground(ContextCompat.getDrawable(getApplicationContext(), R.drawable.white_card_background))
                     .setNegativeButton("No", (dialogInterface, i) -> adapter.notifyItemChanged(viewHolder.getAdapterPosition()))
@@ -296,7 +309,7 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
     }
 
     private void attachRecyclerViewAdapter() {
-        Query query = firebaseDatabase.getReference("properties").child(property.getId()).child("keys").orderByChild("id");
+        Query query = firebaseDatabase.getReference("properties").child(property.getId()).child("keys").orderByChild("checkedInDate");
         FirebaseRecyclerOptions<Key> options =
                 new FirebaseRecyclerOptions.Builder<Key>()
                         .setQuery(query, Key.class)

@@ -26,8 +26,8 @@ public class History extends Fragment {
                              Bundle savedInstanceState) {
         FragmentHistoryBinding binding = FragmentHistoryBinding.inflate(getLayoutInflater(), container, false);
 
-        bottomNavigationMenu.setItemSelected(bottomNavigationMenu.getSelectedItemId(), false);
         toolbar.setTitle("History");
+        bottomNavigationMenu.setItemSelected(bottomNavigationMenu.getSelectedItemId(), false);
 
         return binding.getRoot();
     }
