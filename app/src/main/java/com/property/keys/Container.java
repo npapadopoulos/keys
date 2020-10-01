@@ -142,12 +142,6 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
         binding = ActivityContainerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-        if (notificationManager != null) {
-            notificationManager.cancel(1);
-        }
-        startForegroundService(new Intent(this, NotificationService.class));
-
         binding.navigation.setNavigationItemSelectedListener(this);
         View view = binding.navigation.getHeaderView(0);
         ImageView navigationProfileImage = view.findViewById(R.id.navigationProfileImage);
@@ -155,10 +149,20 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
         TextView lastNameLabel = view.findViewById(R.id.lastName);
 
         User user = UserUtils.getLocalUser(getApplicationContext());
+
+        if (user != null) {
+            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+            if (notificationManager != null) {
+                notificationManager.cancelAll();
+            }
+            NotificationChannel notificationChannel = notificationManager.getNotificationChannel(user.getId());
+            if (notificationChannel == null)
+                startForegroundService(new Intent(this, NotificationService.class));
+        }
+
         firstNameLabel.setText(user.getFirstName());
         lastNameLabel.setText(user.getLastName());
 
-        createNotificationChannel(user);
         setSupportActionBar(binding.toolbar);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, R.string.open, R.string.close);
@@ -272,20 +276,6 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
 
                     }
                 });
-    }
-
-    private void createNotificationChannel(User user) {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            CharSequence name = "keys";
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(user.getId(), name, importance);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            NotificationManager notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
     }
 
     @Override

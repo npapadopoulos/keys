@@ -1,6 +1,7 @@
 package com.property.keys.notifications;
 
 import android.annotation.SuppressLint;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -46,7 +47,15 @@ public class NotificationService extends Service {
         super.onCreate();
 
         User localUser = UserUtils.getLocalUser(getBaseContext());
+
         if (localUser != null) {
+
+            @SuppressLint("ServiceCast")
+            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+            NotificationChannel notificationChannel = new NotificationChannel(localUser.getId(), "notifications", NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(notificationChannel);
+
             firebaseDatabase.getReference("users").child(localUser.getId()).child("notifications").orderByChild("unread").equalTo(true)
                     .addValueEventListener(new ValueEventListener() {
                         @Override
@@ -76,12 +85,8 @@ public class NotificationService extends Service {
                                                                 // Set the intent that will fire when the user taps the notification
                                                                 .setContentIntent(pendingIntent)
                                                                 .setAutoCancel(true);
-
-                                                        @SuppressLint("ServiceCast")
-                                                        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-
                                                         // notificationId is a unique int for each notification that you must define
-                                                        notificationManager.notify(1, builder.build());
+                                                        notificationManager.notify(notification.hashCode(), builder.build());
                                                     }
                                                 }
 

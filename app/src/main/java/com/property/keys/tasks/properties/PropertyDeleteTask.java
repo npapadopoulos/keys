@@ -42,22 +42,23 @@ public class PropertyDeleteTask extends AbstractAsyncTask {
         if (restore) {
             property.setDeleted(false);
             update(property, false);
+            NotificationUtils.create(activity, property, Action.RESTORED_FROM_TRASH_PROPERTY);
         } else if (temporary) {
             property.setDeleted(true);
             update(property, false);
+            NotificationUtils.create(activity, property, Action.MOVED_TO_TRASH_PROPERTY);
         } else if (all) {
             deleteAll();
+            //send notifications for each property
         } else {
             update(property, true);
+            NotificationUtils.create(activity, property, Action.DELETED_PROPERTY);
         }
     }
 
     private void update(Property property, boolean delete) {
         final Map<String, Object> updates = new HashMap<>();
         firebaseDatabase.getReference("properties").child(property.getId()).setValue(delete ? null : property);
-        if (delete) {
-            NotificationUtils.create(activity, property, Action.DELETED_PROPERTY);
-        }
         if (property.getFavouredBy() != null) {
             property.getFavouredBy().keySet().forEach(userId -> updates.put("/" + userId + "/properties/" + property.getId(), delete ? null : property));
             if (!updates.isEmpty()) {
@@ -77,7 +78,11 @@ public class PropertyDeleteTask extends AbstractAsyncTask {
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        snapshot.getChildren().forEach(child -> update(Objects.requireNonNull(child.getValue(Property.class)), true));
+                        snapshot.getChildren().forEach(child -> {
+                            Property property = Objects.requireNonNull(child.getValue(Property.class));
+                            update(property, true);
+                            NotificationUtils.create(activity, PropertyDeleteTask.this.property, Action.DELETED_PROPERTY);
+                        });
                     }
 
                     @Override

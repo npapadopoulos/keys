@@ -33,10 +33,10 @@ import timber.log.Timber;
 
 import static android.Manifest.permission.ACCESS_NETWORK_STATE;
 import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.FOREGROUND_SERVICE;
 import static android.Manifest.permission.INTERNET;
 import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
 import static android.Manifest.permission.READ_PHONE_STATE;
-import static android.Manifest.permission.RECEIVE_BOOT_COMPLETED;
 import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
@@ -231,7 +231,7 @@ public class Utils {
         String[] requiredPermissions = new String[]{CAMERA, INTERNET,
                 READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE,
                 ACCESS_NETWORK_STATE, READ_PHONE_STATE,
-                RECEIVE_BOOT_COMPLETED};
+                FOREGROUND_SERVICE};
         List<String> missingPermissions = new ArrayList<>();
         Stream.of(requiredPermissions).forEach(permission -> {
             if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {

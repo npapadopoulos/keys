@@ -63,6 +63,8 @@ public class NotificationHolder extends RecyclerView.ViewHolder implements Holde
                             Property property = snapshot.getValue(Property.class);
                             if (property == null) {
                                 Snackbar.make(((Container) activity).getPlaceSnackBar(), "The current property has been deleted.", Snackbar.LENGTH_LONG).show();
+                            } else if (property.isDeleted()) {
+                                Snackbar.make(((Container) activity).getPlaceSnackBar(), "The current property has moved to trash.", Snackbar.LENGTH_LONG).show();
                             } else {
                                 Intent propertyDetails = new Intent(itemView.getContext(), PropertyDetails.class);
                                 propertyDetails.putExtra("property", property);

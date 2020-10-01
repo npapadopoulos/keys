@@ -81,10 +81,36 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
     private MaterialToolbar toolbar;
     private User user;
 
+    private boolean showOnlyFavourites;
+
     public Properties(ChipNavigationBar bottomNavigationMenu, NavigationView navigation, MaterialToolbar toolbar) {
         this.bottomNavigationMenu = bottomNavigationMenu;
         this.navigation = navigation;
         this.toolbar = toolbar;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        switch (binding.filters.getCheckedChipId()) {
+            case R.id.favouriteFilter: {
+                binding.favouriteFilter.setClickable(false);
+                binding.allFilter.setClickable(true);
+                showOnlyFavourites = true;
+                attachRecyclerViewAdapter(userQuery, true, false);
+                break;
+            }
+            case R.id.allFilter:
+            default: {
+                binding.allFilter.setClickable(false);
+                binding.favouriteFilter.setClickable(true);
+                showOnlyFavourites = false;
+                attachRecyclerViewAdapter(propertiesQuery, true, false);
+                break;
+            }
+        }
+        search(lastQuery, showOnlyFavourites);
     }
 
     @Override
@@ -143,7 +169,6 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
         setupSearchBar();
 
         binding.filters.setOnCheckedChangeListener((group, checkedId) -> {
-            boolean showOnlyFavourites;
             switch (checkedId) {
                 case R.id.favouriteFilter: {
                     binding.favouriteFilter.setClickable(false);
