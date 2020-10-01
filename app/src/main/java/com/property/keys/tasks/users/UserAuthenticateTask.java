@@ -58,6 +58,7 @@ public class UserAuthenticateTask extends AbstractAsyncTask {
                                                 User user = snapshot.getValue(User.class);
                                                 Objects.requireNonNull(user).setRemember(remember);
                                                 Intent nextIntent = new Intent(context, Container.class);
+                                                nextIntent.putExtra("fragment", "dashboard");
                                                 nextIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                                 UserUtils.saveUser(user, password, context);
                                                 startActivity.accept(nextIntent);

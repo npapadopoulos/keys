@@ -72,6 +72,7 @@ public class Profile extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         binding = FragmentProfileBinding.inflate(inflater, container, false);
 
         bottomNavigationMenu.setItemSelected(R.id.bottom_navigation_profile, true);

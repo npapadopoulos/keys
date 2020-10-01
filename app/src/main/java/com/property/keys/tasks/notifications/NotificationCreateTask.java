@@ -66,7 +66,7 @@ public class NotificationCreateTask extends AbstractAsyncTask {
                             Map<String, Object> updates = new HashMap<>();
                             notification.setUnread(true);
                             usersToNotify.stream()
-//                                    .filter(id -> !notification.getUserId().equals(id))
+                                    .filter(id -> !notification.getUserId().equals(id))
                                     .forEach(userId -> updates.put("/" + userId + "/notifications/" + notification.getId(), notification));
 
                             if (!updates.isEmpty()) {

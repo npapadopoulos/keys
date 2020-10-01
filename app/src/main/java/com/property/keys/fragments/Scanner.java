@@ -50,7 +50,7 @@ public class Scanner extends Fragment {
 
     private final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
-    private CodeScanner mCodeScanner;
+    private CodeScanner codeScanner;
 
     private ChipNavigationBar bottomNavigationMenu;
     private NavigationView navigation;
@@ -72,8 +72,8 @@ public class Scanner extends Fragment {
 
         User user = UserUtils.getLocalUser(requireContext());
         CodeScannerView scannerView = binding.scannerView;
-        mCodeScanner = new CodeScanner(requireActivity(), scannerView);
-        mCodeScanner.setDecodeCallback(result -> firebaseDatabase.getReference("keys")
+        codeScanner = new CodeScanner(requireActivity(), scannerView);
+        codeScanner.setDecodeCallback(result -> firebaseDatabase.getReference("keys")
                 .child(result.getText())
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
@@ -176,19 +176,20 @@ public class Scanner extends Fragment {
 
                     }
                 }));
-        scannerView.setOnClickListener(view -> mCodeScanner.startPreview());
+        scannerView.setOnClickListener(view -> codeScanner.startPreview());
         return binding.getRoot();
     }
 
     @Override
     public void onResume() {
+//        Utils.checkForPermissions(getActivity());
         super.onResume();
-        mCodeScanner.startPreview();
+        codeScanner.startPreview();
     }
 
     @Override
     public void onPause() {
-        mCodeScanner.releaseResources();
+        codeScanner.releaseResources();
         super.onPause();
     }
 }

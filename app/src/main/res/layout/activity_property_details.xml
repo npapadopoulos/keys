@@ -48,14 +48,6 @@
                 app:navigationIcon="@drawable/ic_arrow_back_black_24dp"
                 app:popupTheme="@style/ThemeOverlay.AppCompat.Light">
 
-                <TextView
-                    android:id="@id/name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:text="@string/default_property_name"
-                    android:textAppearance="?attr/textAppearanceHeadline6"
-                    android:transitionName="propertyName" />
             </com.google.android.material.appbar.MaterialToolbar>
 
         </com.google.android.material.appbar.CollapsingToolbarLayout>
@@ -88,11 +80,23 @@
             android:background="@color/colorGrey"
             android:orientation="vertical">
 
+            <TextView
+                android:id="@id/name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="10dp"
+                android:text="@string/default_property_name"
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                android:transitionName="propertyName" />
+
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="35dp"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="15dp"
                 android:layout_marginEnd="10dp"
                 android:orientation="horizontal">
 

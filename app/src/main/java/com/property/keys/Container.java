@@ -38,6 +38,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.property.keys.databinding.ActivityContainerBinding;
+import com.property.keys.entities.Notification;
+import com.property.keys.entities.Property;
 import com.property.keys.entities.User;
 import com.property.keys.fragments.Dashboard;
 import com.property.keys.fragments.History;
@@ -46,6 +48,7 @@ import com.property.keys.fragments.Profile;
 import com.property.keys.fragments.Properties;
 import com.property.keys.fragments.Scanner;
 import com.property.keys.fragments.Trash;
+import com.property.keys.notifications.NotificationService;
 import com.property.keys.utils.ImageUtils;
 import com.property.keys.utils.NavigationUtils;
 import com.property.keys.utils.PropertyUtils;
@@ -139,6 +142,11 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
         binding = ActivityContainerBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        NotificationManager systemService = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+        if (systemService != null && systemService.getNotificationChannel("1") == null) {
+            startForegroundService(new Intent(this, NotificationService.class));
+        }
+
         binding.navigation.setNavigationItemSelectedListener(this);
         View view = binding.navigation.getHeaderView(0);
         ImageView navigationProfileImage = view.findViewById(R.id.navigationProfileImage);
@@ -150,8 +158,6 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
         lastNameLabel.setText(user.getLastName());
 
         createNotificationChannel(user);
-
-        binding.toolbar.setTitle("Dashboard");
         setSupportActionBar(binding.toolbar);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, binding.drawerLayout, binding.toolbar, R.string.open, R.string.close);
@@ -168,7 +174,6 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
         imageChangedFilter = new IntentFilter();
         imageChangedFilter.addAction(getPackageName() + ".PROFILE_IMAGE_UPDATED");
 
-
         navigationProfileImage.setOnClickListener(v -> openProfileFragment());
         firstNameLabel.setOnClickListener(v -> openProfileFragment());
         lastNameLabel.setOnClickListener(v -> openProfileFragment());
@@ -180,7 +185,18 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
         String selectedMenu = getIntent().getStringExtra("selected");
         if (selectedMenu != null && selectedMenu.equalsIgnoreCase("Properties")) {
             binding.bottomNavigationMenu.setItemSelected(R.id.bottom_navigation_properties, true);
+
+            Property property = getIntent().getParcelableExtra("property");
+            if (property != null) {
+                Intent propertyDetails = new Intent(Container.this, PropertyDetails.class);
+                propertyDetails.putExtra("property", property);
+
+                Notification notification = getIntent().getParcelableExtra("setReadNotification");
+                propertyDetails.putExtra("setReadNotification", notification);
+                startActivity(propertyDetails);
+            }
         } else {
+            binding.toolbar.setTitle("Dashboard");
             binding.bottomNavigationMenu.setItemSelected(R.id.bottom_navigation_dashboard, true);
         }
     }

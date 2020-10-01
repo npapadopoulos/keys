@@ -31,7 +31,6 @@ import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
@@ -39,6 +38,7 @@ import com.property.keys.adapters.KeyAdapter;
 import com.property.keys.adapters.KeyHolder;
 import com.property.keys.databinding.ActivityPropertyDetailsBinding;
 import com.property.keys.entities.Key;
+import com.property.keys.entities.Notification;
 import com.property.keys.entities.Property;
 import com.property.keys.entities.User;
 import com.property.keys.helpers.RecyclerItemTouchHelper;
@@ -49,6 +49,8 @@ import com.property.keys.utils.UserUtils;
 import com.property.keys.utils.Utils;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import lombok.SneakyThrows;
 import timber.log.Timber;
@@ -60,7 +62,7 @@ import static com.property.keys.utils.Utils.updateFavourite;
 public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.AuthStateListener, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
     private static final String TAG = Container.class.getSimpleName();
 
-    private final DatabaseReference propertiesDatabaseReference = FirebaseDatabase.getInstance().getReference("properties");
+    private final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
     private ActivityPropertyDetailsBinding binding;
     private KeyAdapter adapter;
@@ -70,8 +72,8 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
 
     @Override
     public void onBackPressed() {
-        finish();
         super.onBackPressed();
+        finish();
     }
 
     @Override
@@ -83,10 +85,12 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
         FirebaseAuth.getInstance().addAuthStateListener(this);
     }
 
+
     @SneakyThrows
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         binding = ActivityPropertyDetailsBinding.inflate(getLayoutInflater());
 
@@ -94,11 +98,20 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
         initToolbar();
         setContentView(binding.getRoot());
 
-        Context context = this;
+        user = UserUtils.getLocalUser(this);
 
+        Notification setReadNotification = getIntent().getParcelableExtra("setReadNotification");
+        if (setReadNotification != null) {
+            setReadNotification.setUnread(false);
+
+            Map<String, Object> updates = new HashMap<>();
+            updates.put("/notifications/" + setReadNotification.getId(), setReadNotification);
+
+            firebaseDatabase.getReference("users").child(user.getId()).updateChildren(updates);
+        }
         property = getIntent().getParcelableExtra("property");
         binding.keyList.setHasFixedSize(false);
-        propertiesDatabaseReference.child(property.getId())
+        firebaseDatabase.getReference("properties").child(property.getId())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -135,7 +148,6 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
         binding.address.setText(property.getAddress());
         binding.propertyImage.setOnClickListener(this::updateImage);
 
-        user = UserUtils.getLocalUser(this);
         ImageUtils.syncAndloadImagesProperty(this, property.getId(), binding.propertyImage, true);
         updateFavourite(this, binding.setFavourite, property.getFavouredBy().get(user.getId()) != null);
         addOnSetFavouriteClickListener();
@@ -170,7 +182,8 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
 
     @SneakyThrows
     private void initToolbar() {
-        generateTitleTextColor(ImageUtils.getBitmapImage(this, property.getId()));
+        //title moved below property image image
+//        generateTitleTextColor(ImageUtils.getBitmapImage(this, property.getId()));
         MaterialToolbar propertyDetailsToolbar = binding.propertyDetailsToolbar;
         setSupportActionBar(propertyDetailsToolbar);
         // Set the toolbar background and text colors
@@ -245,6 +258,7 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
 
     @Override
     public void onResume() {
+//        Utils.checkForPermissions(this);
         super.onResume();
 //        binding.mapquestMapView.onResume();
     }
@@ -289,7 +303,7 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
     }
 
     private void attachRecyclerViewAdapter() {
-        Query query = propertiesDatabaseReference.child(property.getId()).child("keys").orderByChild("id");
+        Query query = firebaseDatabase.getReference("properties").child(property.getId()).child("keys").orderByChild("id");
         FirebaseRecyclerOptions<Key> options =
                 new FirebaseRecyclerOptions.Builder<Key>()
                         .setQuery(query, Key.class)

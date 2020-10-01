@@ -13,6 +13,8 @@ import android.view.animation.AnimationUtils;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.property.keys.databinding.ActivityMainBinding;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
@@ -30,14 +32,22 @@ public class MainActivity extends AppCompatActivity {
 
         binding.logo.setAnimation(AnimationUtils.loadAnimation(this, R.anim.simple));
 
-        new Handler().postDelayed(() -> {
-            Intent signIn = new Intent(MainActivity.this, SignIn.class);
+        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        if (currentUser != null) {
+            Intent nextIntent = new Intent(MainActivity.this, Container.class);
+            nextIntent.putExtras(getIntent());
+            startActivity(nextIntent);
+        } else {
+            new Handler().postDelayed(() -> {
+                Intent signIn = new Intent(MainActivity.this, SignIn.class);
+                signIn.putExtras(getIntent());
 
-            Pair[] pairs = new Pair[1];
-            pairs[0] = new Pair<View, String>(binding.logo, "logo");
+                Pair[] pairs = new Pair[1];
+                pairs[0] = new Pair<View, String>(binding.logo, "logo");
 
-            Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, pairs).toBundle();
-            startActivity(signIn, bundle);
-        }, SPLASH_SCREEN);
+                Bundle bundle = ActivityOptions.makeSceneTransitionAnimation(MainActivity.this, pairs).toBundle();
+                startActivity(signIn, bundle);
+            }, SPLASH_SCREEN);
+        }
     }
 }

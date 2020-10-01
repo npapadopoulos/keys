@@ -58,6 +58,12 @@ public class AddProperty extends AppCompatActivity {
     }
 
     @Override
+    protected void onResume() {
+//        Utils.checkForPermissions(this);
+        super.onResume();
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);

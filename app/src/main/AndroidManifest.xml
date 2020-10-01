@@ -8,6 +8,8 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- TODO handle no internet connectivity, firsth thing app should not be crushed and then if possible to work offline -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <uses-feature android:name="android.hardware.camera" />
 
     <application
@@ -66,7 +68,9 @@
         <activity
             android:name="com.yalantis.ucrop.UCropActivity"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" /> <!-- cache directory file provider paths -->
+            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar" />
+
+        <!-- cache directory file provider paths -->
         <provider
             android:name="androidx.core.content.FileProvider"
             android:authorities="${applicationId}.provider"
@@ -76,6 +80,14 @@
                 android:name="android.support.FILE_PROVIDER_PATHS"
                 android:resource="@xml/file_paths" />
         </provider>
-    </application>
 
+        <service
+            android:name="com.property.keys.notifications.NotificationService"
+            android:exported="false" />
+        <receiver android:name="com.property.keys.notifications.BootReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+    </application>
 </manifest>

@@ -2,14 +2,17 @@ package com.property.keys.utils;
 
 import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
+import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.common.util.CollectionUtils;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
 import com.property.keys.R;
@@ -20,10 +23,21 @@ import com.property.keys.helpers.RecyclerItemTouchHelper;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Stream;
 
 import lombok.Getter;
 import timber.log.Timber;
+
+import static android.Manifest.permission.ACCESS_NETWORK_STATE;
+import static android.Manifest.permission.CAMERA;
+import static android.Manifest.permission.INTERNET;
+import static android.Manifest.permission.READ_EXTERNAL_STORAGE;
+import static android.Manifest.permission.READ_PHONE_STATE;
+import static android.Manifest.permission.RECEIVE_BOOT_COMPLETED;
+import static android.Manifest.permission.WRITE_EXTERNAL_STORAGE;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class Utils {
@@ -210,5 +224,24 @@ public class Utils {
 
     public static void onClick(DialogInterface dialogInterface, int i) {
         //does nothing, used in some alert dialogs when user presses "No"
+    }
+
+
+    public static void checkForPermissions(Activity activity) {
+        String[] requiredPermissions = new String[]{CAMERA, INTERNET,
+                READ_EXTERNAL_STORAGE, WRITE_EXTERNAL_STORAGE,
+                ACCESS_NETWORK_STATE, READ_PHONE_STATE,
+                RECEIVE_BOOT_COMPLETED};
+        List<String> missingPermissions = new ArrayList<>();
+        Stream.of(requiredPermissions).forEach(permission -> {
+            if (ContextCompat.checkSelfPermission(activity, permission) != PackageManager.PERMISSION_GRANTED) {
+                if (!ActivityCompat.shouldShowRequestPermissionRationale(activity, permission)) {
+                    missingPermissions.add(permission);
+                }
+            }
+        });
+        if (!CollectionUtils.isEmpty(missingPermissions)) {
+            activity.requestPermissions(missingPermissions.toArray(new String[0]), PackageManager.PERMISSION_GRANTED);
+        }
     }
 }
