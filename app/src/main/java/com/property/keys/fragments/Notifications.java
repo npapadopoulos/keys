@@ -105,26 +105,24 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
     }
 
     private void addOnClearListener() {
-        binding.deleteNotifications.setOnClickListener(view -> {
-            new MaterialAlertDialogBuilder(requireActivity())
-                    .setMessage("Are you sure you want to remove all notifications?")
-                    .setPositiveButton("Yes", (dialogInterface, i) -> {
-                        UserUtils.deleteNotifications(userId);
-                        binding.deleteNotifications.hide();
-                        Snackbar.make(this.container.getPlaceSnackBar(), "All notifications deleted", Snackbar.LENGTH_SHORT).show();
-                    })
-                    .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
-                    .setNegativeButton("No", Utils::onClick)
-                    .setCancelable(false)
-                    .setOnKeyListener((d, keyCode, event) -> {
-                        if (keyCode == KeyEvent.KEYCODE_BACK) {
-                            d.dismiss();
-                            return true;
-                        }
-                        return false;
-                    })
-                    .create().show();
-        });
+        binding.deleteNotifications.setOnClickListener(view -> new MaterialAlertDialogBuilder(requireActivity())
+                .setMessage("Are you sure you want to remove all notifications?")
+                .setPositiveButton("Yes", (dialogInterface, i) -> {
+                    UserUtils.deleteNotifications(userId);
+                    binding.deleteNotifications.hide();
+                    Snackbar.make(this.container.getPlaceSnackBar(), "All notifications deleted", Snackbar.LENGTH_SHORT).show();
+                })
+                .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
+                .setNegativeButton("No", Utils::onClick)
+                .setCancelable(false)
+                .setOnKeyListener((d, keyCode, event) -> {
+                    if (keyCode == KeyEvent.KEYCODE_BACK) {
+                        d.dismiss();
+                        return true;
+                    }
+                    return false;
+                })
+                .create().show());
     }
 
     private void setReadNotifications() {

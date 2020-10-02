@@ -98,26 +98,24 @@ public class Trash extends Fragment implements FirebaseAuth.AuthStateListener, R
     }
 
     private void addOnClearListener() {
-        binding.deleteProperties.setOnClickListener(view -> {
-            new MaterialAlertDialogBuilder(requireActivity())
-                    .setMessage("Are you sure you want to delete all properties?")
-                    .setPositiveButton("Yes", (dialogInterface, i) -> {
-                        PropertyUtils.deleteAll(getActivity());
-                        binding.deleteProperties.hide();
-                        Snackbar.make(this.container.getPlaceSnackBar(), "All properties deleted", Snackbar.LENGTH_SHORT).show();
-                    })
-                    .setOnKeyListener((d, keyCode, event) -> {
-                        if (keyCode == KeyEvent.KEYCODE_BACK) {
-                            d.dismiss();
-                            return true;
-                        }
-                        return false;
-                    })
-                    .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
-                    .setNegativeButton("No", Utils::onClick)
-                    .setCancelable(false)
-                    .create().show();
-        });
+        binding.deleteProperties.setOnClickListener(view -> new MaterialAlertDialogBuilder(requireActivity())
+                .setMessage("Are you sure you want to delete all properties?")
+                .setPositiveButton("Yes", (dialogInterface, i) -> {
+                    PropertyUtils.deleteAll(getActivity());
+                    binding.deleteProperties.hide();
+                    Snackbar.make(this.container.getPlaceSnackBar(), "All properties deleted", Snackbar.LENGTH_SHORT).show();
+                })
+                .setOnKeyListener((d, keyCode, event) -> {
+                    if (keyCode == KeyEvent.KEYCODE_BACK) {
+                        d.dismiss();
+                        return true;
+                    }
+                    return false;
+                })
+                .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
+                .setNegativeButton("No", Utils::onClick)
+                .setCancelable(false)
+                .create().show());
     }
 
     private void addOnScrollListener() {

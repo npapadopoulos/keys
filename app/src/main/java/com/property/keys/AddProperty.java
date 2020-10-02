@@ -45,7 +45,7 @@ public class AddProperty extends AppCompatActivity {
     private static final String TAG = AddProperty.class.getSimpleName();
 
     private ActivityAddPropertyBinding binding;
-    private String pregeneratedPropertyId = UUID.randomUUID().toString();
+    private String generatedPropertyId = UUID.randomUUID().toString();
 
     @Override
     protected void onStart() {
@@ -114,7 +114,7 @@ public class AddProperty extends AppCompatActivity {
             return;
         }
 
-        File file = (File) ImageUtils.loadImage(this, pregeneratedPropertyId, binding.propertyImage);
+        File file = (File) ImageUtils.loadImage(this, generatedPropertyId, binding.propertyImage);
         if (file == null || !file.exists()) {
             binding.progressBar.setVisibility(View.GONE);
             binding.submit.setEnabled(true);
@@ -130,7 +130,7 @@ public class AddProperty extends AppCompatActivity {
         String addressValue = binding.address.getEditText().getText().toString();
 
         Property property = Property.builder()
-                .id(pregeneratedPropertyId)
+                .id(generatedPropertyId)
                 .name(nameValue)
                 .address(addressValue)
                 .build();
@@ -139,9 +139,9 @@ public class AddProperty extends AppCompatActivity {
             try {
                 byte[] data = Files.readAllBytes(Paths.get(file.getPath()).toAbsolutePath());
                 Bitmap image = BitmapFactory.decodeByteArray(data, 0, data.length);
-                StorageUtils.uploadImage(pregeneratedPropertyId, "property", image);
+                StorageUtils.uploadImage(generatedPropertyId, "property", image);
             } catch (IOException e) {
-                Timber.tag(TAG).e(e, "Couldn't upload property image for " + pregeneratedPropertyId + " to remote storage.");
+                Timber.tag(TAG).e(e, "Couldn't upload property image for " + generatedPropertyId + " to remote storage.");
             }
             startActivity(intent);
             finish();
@@ -165,8 +165,8 @@ public class AddProperty extends AppCompatActivity {
                 try {
                     Bitmap image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getParcelableExtra("path"));
                     ImageUtils.clearCache(getApplicationContext());
-                    ImageUtils.saveImage(getApplicationContext(), image, pregeneratedPropertyId);
-                    ImageUtils.loadImage(this, pregeneratedPropertyId, binding.propertyImage);
+                    ImageUtils.saveImage(getApplicationContext(), image, generatedPropertyId);
+                    ImageUtils.loadImage(this, generatedPropertyId, binding.propertyImage);
                 } catch (IOException e) {
                     Timber.tag(TAG).e(e);
                 }
@@ -176,6 +176,6 @@ public class AddProperty extends AppCompatActivity {
     }
 
     private void updateImage(View v) {
-        ImageUtils.updateImage(this, null, pregeneratedPropertyId, true);
+        ImageUtils.updateImage(this, null, generatedPropertyId, true);
     }
 }
