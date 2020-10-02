@@ -81,7 +81,7 @@ public class PropertyDeleteTask extends AbstractAsyncTask {
                         snapshot.getChildren().forEach(child -> {
                             Property property = Objects.requireNonNull(child.getValue(Property.class));
                             update(property, true);
-                            NotificationUtils.create(activity, PropertyDeleteTask.this.property, Action.DELETED_PROPERTY);
+                            NotificationUtils.create(activity, property, Action.DELETED_PROPERTY);
                         });
                     }
 

@@ -161,6 +161,6 @@ public class Profile extends Fragment {
     }
 
     private void updateImage(View v) {
-        ImageUtils.updateImage(this.getActivity(), this, user.getId());
+        ImageUtils.updateImage(this.getActivity(), this, user.getId(), false);
     }
 }

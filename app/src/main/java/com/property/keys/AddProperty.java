@@ -168,7 +168,7 @@ public class AddProperty extends AppCompatActivity {
                     ImageUtils.saveImage(getApplicationContext(), image, pregeneratedPropertyId);
                     ImageUtils.loadImage(this, pregeneratedPropertyId, binding.propertyImage);
                 } catch (IOException e) {
-                    Timber.tag(TAG).e(e, e.getMessage());
+                    Timber.tag(TAG).e(e);
                 }
             }
         }
@@ -176,6 +176,6 @@ public class AddProperty extends AppCompatActivity {
     }
 
     private void updateImage(View v) {
-        ImageUtils.updateImage(this, null, pregeneratedPropertyId);
+        ImageUtils.updateImage(this, null, pregeneratedPropertyId, true);
     }
 }

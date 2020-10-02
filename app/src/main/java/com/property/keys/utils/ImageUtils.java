@@ -217,11 +217,11 @@ public class ImageUtils {
         return null;
     }
 
-    public static void updateImage(Activity parent, String id) {
-        updateImage(parent, null, id);
+    public static void updateImage(Activity parent, String id, boolean forProperty) {
+        updateImage(parent, null, id, forProperty);
     }
 
-    public static void updateImage(Activity parent, Fragment fragment, String id) {
+    public static void updateImage(Activity parent, Fragment fragment, String id, boolean forProperty) {
         Dexter.withContext(fragment != null ? fragment.getActivity() : parent)
                 .withPermissions(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 .withListener(new MultiplePermissionsListener() {
@@ -229,7 +229,7 @@ public class ImageUtils {
                     public void onPermissionsChecked(MultiplePermissionsReport report) {
                         Activity activity = fragment == null ? parent : fragment.getActivity();
                         if (report.areAllPermissionsGranted()) {
-                            showImagePickerOptions(activity, fragment, id);
+                            showImagePickerOptions(activity, fragment, id, forProperty);
                         } else {
                             showSettingsDialog(activity);
                         }
@@ -246,7 +246,7 @@ public class ImageUtils {
                 }).check();
     }
 
-    private static void showImagePickerOptions(Activity activity, Fragment fragment, String id) {
+    private static void showImagePickerOptions(Activity activity, Fragment fragment, String id, boolean forProperty) {
         ImagePicker.showImagePickerOptions(activity, new ImagePicker.PickerOptionListener() {
             @Override
             public void onTakeCameraSelected() {
@@ -257,7 +257,7 @@ public class ImageUtils {
             public void onChooseGallerySelected() {
                 launchGalleryIntent(activity, fragment, id);
             }
-        });
+        }, forProperty);
     }
 
     private static void launchCameraIntent(Activity activity, Fragment fragment, String id) {
@@ -328,9 +328,8 @@ public class ImageUtils {
 
 
     @NotNull
-    public static Bitmap generateDefaultProfileImage(Context context, ImageView imageView, String firstName, String lastName) {
+    public static Bitmap generateDefaultProfileImage(Context context, ImageView imageView, String initials) {
         Bitmap bitmap = Bitmap.createBitmap(imageView.getWidth(), imageView.getHeight(), Bitmap.Config.ARGB_8888);
-        String initials = String.valueOf(Character.toUpperCase(firstName.charAt(0))) + Character.toUpperCase(lastName.charAt(0));
 
         Canvas canvas = new Canvas(bitmap);
         Paint paint = new Paint();

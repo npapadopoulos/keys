@@ -1,8 +1,6 @@
 package com.property.keys;
 
 import android.app.Activity;
-import android.app.NotificationChannel;
-import android.app.NotificationManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -49,7 +47,6 @@ import com.property.keys.fragments.Profile;
 import com.property.keys.fragments.Properties;
 import com.property.keys.fragments.Scanner;
 import com.property.keys.fragments.Trash;
-import com.property.keys.notifications.NotificationService;
 import com.property.keys.utils.ImageUtils;
 import com.property.keys.utils.NavigationUtils;
 import com.property.keys.utils.PropertyUtils;
@@ -158,15 +155,15 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
 
         User user = UserUtils.getLocalUser(getApplicationContext());
 
-        if (user != null) {
-            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            if (notificationManager != null) {
-                notificationManager.cancelAll();
-            }
-            NotificationChannel notificationChannel = notificationManager.getNotificationChannel(user.getId());
-            if (notificationChannel == null)
-                startForegroundService(new Intent(this, NotificationService.class));
-        }
+//        if (user != null) {
+//            NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+//            if (notificationManager != null) {
+//                notificationManager.cancelAll();
+//            }
+//            NotificationChannel notificationChannel = notificationManager.getNotificationChannel(user.getId());
+//            if (notificationChannel == null)
+//                startForegroundService(new Intent(this, NotificationService.class));
+//        }
 
         firstNameLabel.setText(user.getFirstName());
         lastNameLabel.setText(user.getLastName());

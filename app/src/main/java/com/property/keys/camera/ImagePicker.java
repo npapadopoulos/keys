@@ -54,11 +54,11 @@ public class ImagePicker extends AppCompatActivity {
 
     private String id;
 
-    public static void showImagePickerOptions(Activity activity, PickerOptionListener listener) {
+    public static void showImagePickerOptions(Activity activity, PickerOptionListener listener, boolean forProperty) {
         // setup the alert builder
         MaterialAlertDialogBuilder builder = new MaterialAlertDialogBuilder(activity);
         builder.setBackground(ContextCompat.getDrawable(activity, R.drawable.white_card_background));
-        builder.setTitle(activity.getString(R.string.lbl_set_profile_photo));
+        builder.setTitle(activity.getString(forProperty ? R.string.lbl_set_property_photo : R.string.lbl_set_profile_photo));
 
         // add a list
         String[] options = {activity.getString(R.string.lbl_take_camera_picture), activity.getString(R.string.lbl_choose_from_gallery)};
@@ -197,9 +197,9 @@ public class ImagePicker extends AppCompatActivity {
 
         UCrop.Options options = new UCrop.Options();
         options.setCompressionQuality(IMAGE_COMPRESSION);
-//        options.setToolbarColor(ContextCompat.getColor(this, R.color.colorPrimary));
-//        options.setStatusBarColor(ContextCompat.getColor(this, R.color.colorBlack));
-//        options.setActiveControlsWidgetColor(ContextCompat.getColor(this, R.color.colorSecondary));
+        options.setToolbarColor(ContextCompat.getColor(this, R.color.secondaryColor));
+        options.setStatusBarColor(ContextCompat.getColor(this, R.color.dark_gray));
+        options.setActiveControlsWidgetColor(ContextCompat.getColor(this, R.color.primaryColor));
 
         if (lockAspectRatio)
             options.withAspectRatio(ASPECT_RATIO_X, ASPECT_RATIO_Y);

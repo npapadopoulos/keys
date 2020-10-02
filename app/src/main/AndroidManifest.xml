@@ -81,8 +81,8 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <service
-            android:name="com.property.keys.notifications.NotificationService"
-            android:exported="false" />
+        <!--        <service-->
+        <!--            android:name="com.property.keys.notifications.NotificationService"-->
+        <!--            android:exported="false" />-->
     </application>
 </manifest>

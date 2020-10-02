@@ -29,6 +29,7 @@ public class PropertyUpdateTask extends AbstractAsyncTask {
 
     private final Activity activity;
     private final Property property;
+    private final String keyId;
     private final Consumer<Task<Void>> onUpdateFailed;
     private final Action action;
 
@@ -41,13 +42,20 @@ public class PropertyUpdateTask extends AbstractAsyncTask {
     public void runInBackground() {
         final Map<String, Object> updates = new HashMap<>();
         User localUser = UserUtils.getLocalUser(activity);
-        if (action == Action.DISLIKED_PROPERTY) {
-            property.getFavouredBy().remove(localUser.getId());
-            updates.put("users/" + localUser.getId() + "/properties/" + property.getId(), null);
+        if (action == Action.DELETED_KEY && keyId != null) {
+            property.getKeys().remove(keyId);
+            updates.put("users/" + localUser.getId() + "/properties/" + property.getId(), property);
+            updates.put("properties/" + property.getId() + "/keys/" + keyId, null);
+            updates.put("keys/" + keyId, null);
         } else {
-            property.getFavouredBy().put(localUser.getId(), true);
+            if (action == Action.DISLIKED_PROPERTY) {
+                property.getFavouredBy().remove(localUser.getId());
+                updates.put("users/" + localUser.getId() + "/properties/" + property.getId(), null);
+            } else {
+                property.getFavouredBy().put(localUser.getId(), true);
+            }
+            updates.put("properties/" + property.getId() + "/favouredBy", property.getFavouredBy());
         }
-        updates.put("properties/" + property.getId() + "/favouredBy", property.getFavouredBy());
         if (!updates.isEmpty()) {
             firebaseDatabase.getReference("/").updateChildren(updates)
                     .addOnCompleteListener(task -> {

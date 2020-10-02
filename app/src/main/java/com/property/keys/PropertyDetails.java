@@ -150,6 +150,8 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
         initLayoutManager();
         addOnScrollListener();
 
+        Utils.initSwipeProperty(binding.keyList, this);
+
         binding.addNewKey.setOnClickListener(this::addNewKey);
     }
 
@@ -217,7 +219,7 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
     }
 
     private void updateImage(View v) {
-        ImageUtils.updateImage(this, property.getId());
+        ImageUtils.updateImage(this, property.getId(), true);
     }
 
     private void addNewKey(View v) {
@@ -292,7 +294,10 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
         if (viewHolder instanceof KeyHolder) {
             new MaterialAlertDialogBuilder(viewHolder.itemView.getContext())
                     .setMessage("Are you sure?")
-                    .setPositiveButton("Yes", (dialogInterface, i) -> Snackbar.make(binding.main, "Key deleted.", Snackbar.LENGTH_LONG).show())
+                    .setPositiveButton("Yes", (dialogInterface, i) -> {
+                        PropertyUtils.deleteKey(PropertyDetails.this, property, adapter.getItem(viewHolder.getAdapterPosition()).getId());
+                        Snackbar.make(binding.main, "Key deleted.", Snackbar.LENGTH_LONG).show();
+                    })
                     .setOnKeyListener((d, keyCode, event) -> {
                         if (keyCode == KeyEvent.KEYCODE_BACK) {
                             d.dismiss();

@@ -21,6 +21,7 @@
     <string name="edit">Edit</string>
     <string name="toast_image_intent_null">Image picker option is missing!</string>
     <string name="lbl_set_profile_photo">Set profile image</string>
+    <string name="lbl_set_property_photo">Set property image</string>
     <string name="lbl_take_camera_picture">Take a picture</string>
     <string name="lbl_choose_from_gallery">Choose from gallery</string>
     <string name="history">History</string>
@@ -35,7 +36,6 @@
     <string name="having_trouble_get_help">Having Trouble? Get Help</string>
     <string name="scan">Scan</string>
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="qr_code_scanner">QR Code Scanner</string>
     <string name="busy">Busy</string>
     <string name="default_property_address">Parmenionos 3 (Opposite Kings Avenue Mall Philippou Court shop 1–2 Paphos, 8045, Cyprus</string>

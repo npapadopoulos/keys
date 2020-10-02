@@ -67,10 +67,11 @@ public class StorageUtils {
                 Bitmap generated;
                 switch (type) {
                     case PROFILE: {
-                        File existing = getImage(context, "default");
+                        String initials = String.valueOf(Character.toUpperCase(firstName.charAt(0))) + Character.toUpperCase(lastName.charAt(0));
+                        File existing = getImage(context, "default-for-" + initials);
                         if (existing == null) {
-                            generated = generateDefaultProfileImage(context, imageView, firstName, lastName);
-                            saveAndLoadImage(context, "default", loader, null, generated);
+                            generated = generateDefaultProfileImage(context, imageView, initials);
+                            saveAndLoadImage(context, "default-for-" + initials, loader, null, generated);
                         } else {
                             loadImage(context, existing, imageView);
                         }

@@ -135,10 +135,18 @@ public class Dashboard extends Fragment implements ActivityCompat.OnRequestPermi
             }
         });
 
+//        dataSet.setYValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
+//        dataSet.setValueLinePart1OffsetPercentage(10.f);
+//        dataSet.setValueLinePart1Length(0.43f);
+//        dataSet.setValueLinePart2Length(.1f);
+//        dataSet.setValueTextColor(Color.BLACK);
+//        dataSet.setXValuePosition(PieDataSet.ValuePosition.OUTSIDE_SLICE);
+//        pieChart.setEntryLabelColor(ContextCompat.getColor(requireContext(), R.color.primaryColor));
+
         // add a lot of colors
         ArrayList<Integer> colors = new ArrayList<>();
-        colors.add(ContextCompat.getColor(requireContext(), R.color.green));
         colors.add(ContextCompat.getColor(requireContext(), R.color.red_600));
+        colors.add(ContextCompat.getColor(requireContext(), R.color.green));
 
         dataSet.setColors(colors);
 

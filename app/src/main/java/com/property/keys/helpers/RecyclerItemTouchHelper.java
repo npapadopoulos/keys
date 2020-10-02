@@ -14,7 +14,7 @@ import com.property.keys.adapters.Holder;
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class RecyclerItemTouchHelper extends ItemTouchHelper.SimpleCallback {
     private RecyclerItemTouchHelperListener listener;
-    private boolean enableRestore = false;
+    private boolean enableRestore;
 
     public RecyclerItemTouchHelper(int dragDirs, int swipeDirs, RecyclerItemTouchHelperListener listener, boolean enableRestore) {
         super(dragDirs, swipeDirs);

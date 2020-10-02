@@ -64,7 +64,7 @@ public class KeyHolder extends RecyclerView.ViewHolder implements Holder {
 
             String userFullName = key.getLastCheckedInUser();
             if (userFullName.equals(user.getFirstName() + " " + user.getLastName())) {
-                userFullName = "you have";
+                userFullName = "You have";
             } else {
                 userFullName = userFullName + " has";
             }
