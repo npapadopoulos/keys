@@ -24,6 +24,20 @@
         <item name="android:background">@color/colorTransparent</item>
     </style>
 
+    <style name="ToolbarDialog" parent="@style/Theme.AppCompat.Light">
+        <item name="colorPrimaryDark">@color/primaryDarkColor</item>
+        <item name="actionMenuTextColor">@color/white_50</item>
+    </style>
+
+    <style name="ToolbarDialogAnimation">
+        <item name="android:windowEnterAnimation">
+            @anim/dialog_slide_up
+        </item>
+        <item name="android:windowExitAnimation">
+            @anim/dialog_slide_down
+        </item>
+    </style>
+
     <style name="Widget.CardContent" parent="android:Widget">
         <item name="android:paddingLeft">16dp</item>
         <item name="android:paddingRight">16dp</item>

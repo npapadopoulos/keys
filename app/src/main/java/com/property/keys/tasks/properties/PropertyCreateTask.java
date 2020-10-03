@@ -4,23 +4,17 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Build;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.property.keys.Container;
 import com.property.keys.entities.Action;
 import com.property.keys.entities.Property;
 import com.property.keys.tasks.AbstractAsyncTask;
 import com.property.keys.utils.NotificationUtils;
 
-import java.util.Map;
-import java.util.Set;
 import java.util.function.Consumer;
 
 import lombok.AllArgsConstructor;
@@ -45,21 +39,7 @@ public class PropertyCreateTask extends AbstractAsyncTask {
                 .addOnCompleteListener(activity, task -> {
                     if (task.isSuccessful()) {
                         try {
-                            FirebaseDatabase.getInstance().getReference("users")
-                                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                                        @Override
-                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            Set<String> usersToNotify = ((Map<String, Object>) snapshot.getValue()).keySet();
-                                            if (!usersToNotify.isEmpty()) {
-                                                NotificationUtils.create(activity, property.getId(), property.getName(), usersToNotify, Action.ADDED_PROPERTY);
-                                            }
-                                        }
-
-                                        @Override
-                                        public void onCancelled(@NonNull DatabaseError error) {
-                                        }
-                                    });
-
+                            NotificationUtils.create(activity, property.getId(), property.getName(), Action.ADDED_PROPERTY);
                             Intent next = new Intent(activity, Container.class);
                             next.putExtra("selected", "Properties");
                             startActivity.accept(next);

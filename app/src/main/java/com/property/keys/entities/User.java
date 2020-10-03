@@ -40,9 +40,9 @@ public class User implements Parcelable {
     private String email;
     private String phoneNumber;
     private String password;
+    private Role role = Role.BASIC;
     private boolean remember;
     private Map<String, Notification> notifications = new HashMap<>();
-    private Map<String, Property> properties = new HashMap<>();
     private List<String> propertySearchSuggestions = new ArrayList<>();
 
     protected User(Parcel in) {
@@ -52,9 +52,9 @@ public class User implements Parcelable {
         email = in.readString();
         phoneNumber = in.readString();
         password = in.readString();
+        role = Role.valueOf(in.readString());
         remember = in.readBoolean();
         notifications = in.readHashMap(String.class.getClassLoader());
-        properties = in.readHashMap(String.class.getClassLoader());
         propertySearchSuggestions = in.readArrayList(String.class.getClassLoader());
     }
 
@@ -71,9 +71,9 @@ public class User implements Parcelable {
         parcel.writeString(email);
         parcel.writeString(phoneNumber);
         parcel.writeString(password);
+        parcel.writeString(role.name());
         parcel.writeBoolean(remember);
         parcel.writeMap(notifications == null ? new HashMap<>() : notifications);
-        parcel.writeMap(properties == null ? new HashMap<>() : properties);
         parcel.writeList(propertySearchSuggestions == null ? new ArrayList<>() : propertySearchSuggestions);
     }
 }

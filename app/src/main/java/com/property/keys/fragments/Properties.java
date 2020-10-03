@@ -1,6 +1,5 @@
 package com.property.keys.fragments;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -67,7 +66,6 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
     @NonNull
     protected static final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     protected static final Query propertiesQuery = firebaseDatabase.getReference("properties").orderByChild("deleted").equalTo(false);
-    protected static Query userQuery = null;
 
     private FragmentPropertiesBinding binding;
 
@@ -82,8 +80,6 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
     private MaterialToolbar toolbar;
     private User user;
 
-    private boolean showOnlyFavourites;
-
     public Properties(ChipNavigationBar bottomNavigationMenu, NavigationView navigation, MaterialToolbar toolbar) {
         this.bottomNavigationMenu = bottomNavigationMenu;
         this.navigation = navigation;
@@ -93,25 +89,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
     @Override
     public void onResume() {
         super.onResume();
-
-        switch (binding.filters.getCheckedChipId()) {
-            case R.id.favouriteFilter: {
-                binding.favouriteFilter.setClickable(false);
-                binding.allFilter.setClickable(true);
-                showOnlyFavourites = true;
-                attachRecyclerViewAdapter(userQuery, true, false);
-                break;
-            }
-            case R.id.allFilter:
-            default: {
-                binding.allFilter.setClickable(false);
-                binding.favouriteFilter.setClickable(true);
-                showOnlyFavourites = false;
-                attachRecyclerViewAdapter(propertiesQuery, true, false);
-                break;
-            }
-        }
-        search(lastQuery, showOnlyFavourites);
+        search(lastQuery);
     }
 
     @Override
@@ -131,10 +109,6 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
 
         user = UserUtils.getLocalUser(requireContext());
 
-        if (userQuery == null) {
-            userQuery = firebaseDatabase.getReference("users").child(user.getId()).child("properties").orderByChild("deleted").equalTo(false);
-        }
-
         suggestions = user.getPropertySearchSuggestions().stream()
                 .map(suggestion -> new PropertySuggestion(suggestion, true))
                 .distinct()
@@ -144,7 +118,10 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
         binding.propertyList.setItemAnimator(new DefaultItemAnimator());
         binding.propertyList.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
-        binding.addNewProperty.setOnClickListener(view -> view.getContext().startActivity(new Intent(getContext(), AddProperty.class)));
+        binding.addNewProperty.setOnClickListener(view -> {
+            AddProperty dialog = AddProperty.newInstance();
+            dialog.show(requireActivity().getSupportFragmentManager(), "tag");
+        });
 
         binding.propertyList.addOnScrollListener(new OnScrollListener() {
             @Override
@@ -168,27 +145,6 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
 
         Utils.initSwipeProperty(binding.propertyList, this);
         setupSearchBar();
-
-        binding.filters.setOnCheckedChangeListener((group, checkedId) -> {
-            switch (checkedId) {
-                case R.id.favouriteFilter: {
-                    binding.favouriteFilter.setClickable(false);
-                    binding.allFilter.setClickable(true);
-                    showOnlyFavourites = true;
-                    attachRecyclerViewAdapter(userQuery, true, false);
-                    break;
-                }
-                case R.id.allFilter:
-                default: {
-                    binding.allFilter.setClickable(false);
-                    binding.favouriteFilter.setClickable(true);
-                    showOnlyFavourites = false;
-                    attachRecyclerViewAdapter(propertiesQuery, true, false);
-                    break;
-                }
-            }
-            search(lastQuery, showOnlyFavourites);
-        });
 
         //TODO
         // Enabling Offline Capabilities on Android
@@ -322,11 +278,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
     }
 
     private void search(String query) {
-        search(query, binding.filters.getCheckedChipId() == R.id.favouriteFilter);
-    }
-
-    private void search(String query, boolean showOnlyFavourites) {
-        getFilter().showOnlyFavourites(showOnlyFavourites).filter(query);
+        getFilter().filter(query);
     }
 
     private void updateSuggestions() {
@@ -378,7 +330,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
         if (adapter != null && updateOptions) {
             adapter.updateOptions(options);
         } else {
-            adapter = new PropertyAdapter(options, this.getActivity(), user, binding.emptyPropertySearchResults, false);
+            adapter = new PropertyAdapter(options, this.requireActivity(), binding.emptyPropertySearchResults, false);
             // Scroll to bottom on new properties
             adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                 @Override

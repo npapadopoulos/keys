@@ -2,7 +2,7 @@
 <resources>
     <color name="secondaryColor">@color/colorGrey</color> <!--Color secondary variant-->
     <color name="primaryColor">#4458DB</color>
-    <color name="primaryDarkColor">#4458DB</color>
+    <color name="primaryDarkColor">#1B25A4</color>
 
     <color name="pink">#FF4081</color>
     <color name="primaryTextColor">#212121</color>

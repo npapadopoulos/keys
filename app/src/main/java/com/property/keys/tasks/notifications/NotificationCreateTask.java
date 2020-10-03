@@ -3,10 +3,14 @@ package com.property.keys.tasks.notifications;
 import android.app.Activity;
 import android.os.Build;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.property.keys.entities.Action;
 import com.property.keys.entities.Notification;
 import com.property.keys.entities.User;
@@ -16,7 +20,6 @@ import com.property.keys.utils.UserUtils;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.UUID;
 
 import lombok.AllArgsConstructor;
@@ -37,7 +40,6 @@ public class NotificationCreateTask extends AbstractAsyncTask {
 
     private final String propertyId;
     private final String description;
-    private final Set<String> usersToNotify;
     private final Action action;
 
     /**
@@ -61,18 +63,28 @@ public class NotificationCreateTask extends AbstractAsyncTask {
         notifications.child(notification.getId()).setValue(notification)
                 .addOnCompleteListener(activity, task -> {
                     if (task.isSuccessful()) {
-                        Timber.tag(TAG).i("Created notification '" + notification.getDescription() + "'.");
-                        if (usersToNotify != null) {
-                            Map<String, Object> updates = new HashMap<>();
-                            notification.setUnread(true);
-                            usersToNotify.stream()
-                                    .filter(id -> !notification.getUserId().equals(id))
-                                    .forEach(userId -> updates.put("/" + userId + "/notifications/" + notification.getId(), notification));
-
-                            if (!updates.isEmpty()) {
-                                firebaseDatabase.getReference("users").updateChildren(updates);
+                        firebaseDatabase.getReference("users").addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                Map<String, Object> updates = new HashMap<>();
+                                snapshot.getChildren().forEach(userSnapshot -> {
+                                    User user = userSnapshot.getValue(User.class);
+                                    Timber.tag(TAG).i("Created notification '" + notification.getDescription() + "'.");
+                                    notification.setUnread(true);
+                                    if (!notification.getUserId().equals(user.getId())) {
+                                        updates.put("/" + user.getId() + "/notifications/" + notification.getId(), notification);
+                                    }
+                                });
+                                if (!updates.isEmpty()) {
+                                    firebaseDatabase.getReference("users").updateChildren(updates);
+                                }
                             }
-                        }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
                     } else {
                         Timber.tag(TAG).i("Failed to create notification '" + notification.getDescription() + "'.");
                     }

@@ -45,4 +45,10 @@
             ?attr/colorControlHighlight
         </item>
     </style>
+
+    <style name="FullscreenDialogTheme" parent="Base.Theme.MaterialThemeBuilder">
+        <item name="android:statusBarColor">@color/primaryDarkColor</item>
+        <item name="android:windowIsFloating">false</item>
+        <item name="android:windowBackground">@color/transparent</item>
+    </style>
 </resources>

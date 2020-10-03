@@ -3,7 +3,6 @@ package com.property.keys.utils;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
-import android.content.res.ColorStateList;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
@@ -13,11 +12,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.common.util.CollectionUtils;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.textfield.TextInputLayout;
-import com.property.keys.R;
-import com.property.keys.entities.Property;
-import com.property.keys.entities.User;
 import com.property.keys.helpers.RecyclerItemTouchHelper;
 
 import java.security.MessageDigest;
@@ -188,20 +183,6 @@ public class Utils {
             result.append(String.format("%02x", b));
         }
         return result.toString();
-    }
-
-    public static void updateFavourite(Activity activity, FloatingActionButton view, Property property, User user) {
-        boolean alreadyLiked = property.getFavouredBy().get(user.getId()) != null;
-        PropertyUtils.like(activity, property, !alreadyLiked);
-        updateFavourite(activity, view, !alreadyLiked);
-    }
-
-    public static void updateFavourite(Activity activity, FloatingActionButton view, boolean liked) {
-        if (liked) {
-            view.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(activity, R.color.pink)));
-        } else {
-            view.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(activity, R.color.primaryColor)));
-        }
     }
 
     public static void initSwipeProperty(RecyclerView view, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener listener) {

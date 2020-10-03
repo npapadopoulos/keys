@@ -161,10 +161,6 @@ public class Trash extends Fragment implements FirebaseAuth.AuthStateListener, R
     }
 
     private void attachRecyclerViewAdapter(Query query, boolean filter) {
-        attachRecyclerViewAdapter(query, false, filter);
-    }
-
-    private void attachRecyclerViewAdapter(Query query, boolean updateOptions, boolean filter) {
         FirebaseRecyclerOptions<Property> options =
                 new FirebaseRecyclerOptions.Builder<Property>()
                         .setQuery(query, Property.class)
@@ -172,7 +168,7 @@ public class Trash extends Fragment implements FirebaseAuth.AuthStateListener, R
                         .build();
 
         if (adapter == null) {
-            adapter = new PropertyAdapter(options, this.requireActivity(), user, binding.emptyTrash, true);
+            adapter = new PropertyAdapter(options, this.requireActivity(), binding.emptyTrash, true);
             // Scroll to bottom on new properties
             adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                 @Override

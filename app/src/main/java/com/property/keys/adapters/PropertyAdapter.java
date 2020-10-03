@@ -14,7 +14,6 @@ import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.property.keys.R;
 import com.property.keys.entities.Property;
-import com.property.keys.entities.User;
 import com.property.keys.filters.FirebaseRecyclerAdapter;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
@@ -23,17 +22,15 @@ public class PropertyAdapter extends FirebaseRecyclerAdapter<Property, PropertyH
     private Activity activity;
 
     @NonNull
-    private User user;
     private final boolean inTrash;
     private LinearLayout background;
     private FloatingActionButton deleteProperties;
 
-    public PropertyAdapter(@NonNull FirebaseRecyclerOptions<Property> options, Activity activity, User user,
+    public PropertyAdapter(@NonNull FirebaseRecyclerOptions<Property> options, Activity activity,
                            LinearLayout background,
                            boolean inTrash) {
         super(options, true);
         this.activity = activity;
-        this.user = user;
         this.background = background;
         this.inTrash = inTrash;
         deleteProperties = activity.findViewById(R.id.deleteProperties);
@@ -45,13 +42,8 @@ public class PropertyAdapter extends FirebaseRecyclerAdapter<Property, PropertyH
     }
 
     @Override
-    protected boolean filterCondition(Property property, String pattern, boolean showOnlyFavourites) {
-        boolean filtered = property.getName().toLowerCase().contains(pattern) || property.getAddress().toLowerCase().contains(pattern);
-        if (showOnlyFavourites) {
-            return filtered && property.getFavouredBy().get(user.getId()) != null;
-        }
-
-        return filtered;
+    protected boolean filterCondition(Property property, String pattern) {
+        return property.getName().toLowerCase().contains(pattern) || property.getAddress().toLowerCase().contains(pattern);
     }
 
     @Override
@@ -72,7 +64,7 @@ public class PropertyAdapter extends FirebaseRecyclerAdapter<Property, PropertyH
     @NonNull
     @Override
     public PropertyHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new PropertyHolder(activity, user, LayoutInflater.from(parent.getContext())
+        return new PropertyHolder(activity, LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.property, parent, false), inTrash);
     }
 

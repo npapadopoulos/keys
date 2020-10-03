@@ -46,7 +46,7 @@
     <string name="help">Having Trouble? Get Help</string>
     <string name="update">Update</string>
     <string name="loading">Loading…</string>
-    <string name="add_new_property">Add new property</string>
+    <string name="add_property">Add Property</string>
     <string name="name">Name</string>
     <string name="address" translatable="true">Address</string>
     <string name="add_key">Add Key</string>
@@ -55,9 +55,6 @@
     <string name="filter">Filter</string>
     <string name="haven_t_received_the_code_click_here_to_resend">Haven’t received the code? Click here to resend</string>
     <string name="delete">Delete</string>
-    <string name="favourite">Favourite</string>
-    <string name="all">All</string>
-    <string name="favourites">Favourites</string>
     <string name="available">Available</string>
     <string name="add_new_key">ADD NEW KEY</string>
     <string name="remember">Remember</string>
@@ -72,4 +69,7 @@
     <string name="no_property_found">No property found</string>
     <string name="trash_is_empty">Trash is empty</string>
     <string name="trash">Trash</string>
+    <string name="long_rent">Long Rent</string>
+    <string name="short_rent">Short Rent</string>
+    <string name="sales">Sales</string>
 </resources>

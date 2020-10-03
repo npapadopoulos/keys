@@ -57,8 +57,8 @@
 
                 <ImageView
                     android:id="@+id/propertyImage"
-                    android:layout_width="100dp"
-                    android:layout_height="110dp"
+                    android:layout_width="110dp"
+                    android:layout_height="120dp"
                     android:layout_margin="10dp"
                     android:scaleType="centerInside"
                     android:transitionName="propertyImage"
@@ -68,22 +68,22 @@
                     android:id="@+id/name"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginStart="130dp"
+                    android:layout_marginStart="10dp"
                     android:layout_marginTop="10dp"
+                    android:layout_toEndOf="@id/propertyImage"
                     android:maxLines="1"
                     android:text="@string/default_property_name"
                     android:textAppearance="?attr/textAppearanceHeadline6"
                     android:transitionName="propertyName" />
 
                 <ImageView
+                    android:id="@+id/place"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginStart="130dp"
-                    android:layout_marginTop="45dp"
+                    android:layout_below="@id/name"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_toEndOf="@id/propertyImage"
                     android:src="@drawable/place"
                     android:transitionName="propertyPlace" />
 
@@ -91,11 +91,12 @@
                     android:id="@+id/address"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginStart="160dp"
-                    android:layout_marginTop="45dp"
-                    android:maxLines="1"
+                    android:layout_below="@id/name"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_toEndOf="@id/place"
+                    android:maxLines="2"
                     android:text="@string/default_property_address"
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:textSize="14sp"
@@ -104,10 +105,10 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:layout_centerHorizontal="true"
-                    android:layout_marginStart="120dp"
-                    android:layout_marginTop="65dp"
+                    android:layout_below="@id/place"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_toEndOf="@id/propertyImage"
                     android:orientation="horizontal"
                     android:padding="10dp">
 
@@ -120,6 +121,7 @@
                             android:id="@+id/availableSumImage"
                             android:layout_width="25dp"
                             android:layout_height="25dp"
+                            android:layout_marginTop="12dp"
                             android:src="@drawable/keys_available"
                             android:transitionName="propertyKeyAvailableSumImage" />
 
@@ -128,15 +130,17 @@
                             android:layout_width="25dp"
                             android:layout_height="25dp"
                             android:layout_marginStart="5dp"
+                            android:layout_marginTop="12dp"
                             android:layout_toEndOf="@id/availableSumImage"
-                            android:transitionName="propertyKeyAvailableSum"
                             android:text="0"
-                            android:textSize="22sp" />
+                            android:textSize="22sp"
+                            android:transitionName="propertyKeyAvailableSum" />
 
                         <ImageView
                             android:id="@+id/busySumImage"
                             android:layout_width="25dp"
                             android:layout_height="25dp"
+                            android:layout_marginTop="12dp"
                             android:layout_toEndOf="@id/availableSum"
                             android:src="@drawable/keys_busy"
                             android:transitionName="propertyKeyBusySumImage" />
@@ -144,29 +148,23 @@
                         <TextView
                             android:id="@+id/busySum"
                             android:layout_width="25dp"
-                            android:transitionName="propertyKeyBusySum"
                             android:layout_height="25dp"
                             android:layout_marginStart="5dp"
+                            android:layout_marginTop="12dp"
                             android:layout_toEndOf="@id/busySumImage"
                             android:text="0"
-                            android:textSize="22sp" />
-                    </RelativeLayout>
+                            android:textSize="22sp"
+                            android:transitionName="propertyKeyBusySum" />
 
-                    <RelativeLayout
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center">
-
-                        <com.google.android.material.floatingactionbutton.FloatingActionButton
-                            android:id="@+id/setFavourite"
-                            style="@style/FloatingActionBar"
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/type"
+                            style="@style/Widget.MaterialComponents.Chip.Filter"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:layout_alignParentEnd="true"
-                            android:src="@drawable/favourite_selected"
-                            android:transitionName="favourite"
-                            app:fabSize="mini"
-                            app:layout_anchorGravity="bottom|right|end" />
+                            android:layout_toEndOf="@id/busySum"
+                            android:checkable="false"
+                            android:clickable="false"
+                            android:text="@string/short_rent" />
                     </RelativeLayout>
                 </LinearLayout>
 

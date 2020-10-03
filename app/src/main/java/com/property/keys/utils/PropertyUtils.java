@@ -58,10 +58,6 @@ public class PropertyUtils {
         new TaskExecutor().executeAsync(new PropertyDeleteTask(activity, property, false, true, all));
     }
 
-    public static void like(Activity activity, Property property, boolean liked) {
-        new TaskExecutor().executeAsync(new PropertyUpdateTask(activity, property, null, null, liked ? Action.LIKED_PROPERTY : Action.DISLIKED_PROPERTY));
-    }
-
     public static void deleteKey(Activity activity, Property property, String keyId) {
         new TaskExecutor().executeAsync(new PropertyUpdateTask(activity, property, keyId, null, Action.DELETED_KEY));
     }

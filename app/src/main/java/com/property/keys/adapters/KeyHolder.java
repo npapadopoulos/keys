@@ -81,7 +81,7 @@ public class KeyHolder extends RecyclerView.ViewHolder implements Holder {
             Bitmap bitmap = BitmapFactory.decodeFile(image.getPath());
             Bitmap copiedBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
 
-            addTitle(context, copiedBitmap, propertyName);
+            addTitle(context, copiedBitmap, propertyName); //TODO configurable -> Settings Menu
 
             Uri imageUri = FileProvider.getUriForFile(context, context.getPackageName() + ".provider", Objects.requireNonNull(ImageUtils.saveImage(context, copiedBitmap, "code-title")));
 

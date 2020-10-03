@@ -54,19 +54,6 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/setFavourite"
-        style="@style/FloatingActionBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_marginEnd="20dp"
-        android:src="@drawable/favourite_selected"
-        android:transitionName="favourite"
-        app:layout_anchor="@id/propertyDetailsToolbarLayout"
-        app:layout_anchorGravity="bottom|end" />
-
-
     <androidx.core.widget.NestedScrollView
         android:id="@+id/content"
         android:layout_width="match_parent"
@@ -115,6 +102,18 @@
                     android:textAppearance="?attr/textAppearanceBody2"
                     android:transitionName="propertyAddress" />
             </LinearLayout>
+
+            <com.google.android.material.chip.Chip
+                android:id="@+id/type"
+                style="@style/Widget.MaterialComponents.Chip.Filter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="10dp"
+                android:checkable="false"
+                android:clickable="false"
+                android:text="@string/short_rent"
+                android:textAppearance="?attr/textAppearanceBody2" />
 
             <!--            <com.mapquest.mapping.maps.MapView-->
             <!--                android:id="@+id/mapquestMapView"-->

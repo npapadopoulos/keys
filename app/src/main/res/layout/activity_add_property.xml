@@ -1,93 +1,74 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/addPropertyDialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorGrey"
-    android:fitsSystemWindows="true"
-    android:focusable="true"
-    android:focusableInTouchMode="true"
-    tools:context=".PropertyDetails">
+    android:orientation="vertical">
 
-    <LinearLayout
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:elevation="0dp">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/addPropertyToolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/primaryColor"
+            android:theme="@style/ToolbarDialog"
+            app:menu="@menu/add_property_menu"
+            app:navigationIcon="@drawable/ic_baseline_close_24"
+            app:title="@string/add_property"
+            app:titleTextColor="@color/white_50" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:fillViewport="true">
 
-
-        <!--        <com.google.android.material.appbar.MaterialToolbar-->
-        <!--            android:id="@+id/addPropertyToolbar"-->
-        <!--            style="@style/Toolbar"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="?attr/actionBarSize"-->
-        <!--            android:background="@color/colorGrey"-->
-        <!--            android:transitionName="toolbar"-->
-        <!--            app:navigationIcon="@drawable/ic_arrow_back_black_24dp"-->
-        <!--            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />-->
-
-        <com.google.android.material.appbar.AppBarLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:elevation="0dp">
-
-            <com.google.android.material.appbar.MaterialToolbar
-                android:id="@+id/addPropertyToolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:background="@color/colorGrey"
-                app:navigationIcon="@drawable/ic_arrow_back_black_24dp" />
-        </com.google.android.material.appbar.AppBarLayout>
-
-        <LinearLayout
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:background="@color/colorGrey"
+            android:orientation="vertical">
 
-            <com.google.android.material.textview.MaterialTextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="20dp"
-                android:text="@string/add_new_property"
-                android:textSize="11pt"
-                android:textStyle="bold" />
-
-            <RelativeLayout
-                android:layout_width="130dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="10dp">
-
-                <ImageView
-                    android:id="@+id/propertyImage"
-                    android:layout_width="100dp"
-                    android:layout_height="110dp"
-                    android:layout_margin="10dp"
-                    android:scaleType="centerInside"
-                    app:srcCompat="@drawable/background" />
-
-                <com.mikhaellopez.circularimageview.CircularImageView
-                    android:id="@+id/addImage"
-                    android:layout_width="45dp"
-                    android:layout_height="45dp"
-                    android:layout_alignBottom="@id/propertyImage"
-                    android:layout_alignParentEnd="true"
-                    android:src="@drawable/camera"
-                    app:civ_border_color="@color/primaryColor"
-                    app:civ_border_width="1dp"
-                    app:civ_circle_color="@color/colorGrey"
-                    app:civ_shadow="true"
-                    app:civ_shadow_color="@color/black_900"
-                    app:civ_shadow_radius="2dp" />
-            </RelativeLayout>
-
-            <com.google.android.material.card.MaterialCardView
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <RelativeLayout
+                    android:layout_width="130dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp">
+
+                    <ImageView
+                        android:id="@+id/propertyImage"
+                        android:layout_width="100dp"
+                        android:layout_height="110dp"
+                        android:layout_margin="10dp"
+                        android:scaleType="centerInside"
+                        app:srcCompat="@drawable/background" />
+
+                    <com.mikhaellopez.circularimageview.CircularImageView
+                        android:id="@+id/addImage"
+                        android:layout_width="45dp"
+                        android:layout_height="45dp"
+                        android:layout_alignBottom="@id/propertyImage"
+                        android:layout_alignParentEnd="true"
+                        android:src="@drawable/camera"
+                        app:civ_border_color="@color/primaryColor"
+                        app:civ_border_width="1dp"
+                        app:civ_circle_color="@color/colorGrey"
+                        app:civ_shadow="true"
+                        app:civ_shadow_color="@color/black_900"
+                        app:civ_shadow_radius="2dp" />
+                </RelativeLayout>
 
                 <LinearLayout
                     style="@style/Widget.CardContent"
@@ -125,71 +106,46 @@
                             android:layout_height="65dp"
                             android:maxLines="2"
                             android:textAppearance="?attr/textAppearanceBody2"
-
                             android:transitionName="propertyAddress" />
-
 
                     </com.google.android.material.textfield.TextInputLayout>
 
+                    <com.google.android.material.chip.ChipGroup
+                        android:id="@+id/types"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        app:checkedChip="@id/shortTermRent"
+                        app:selectionRequired="true"
+                        app:singleSelection="true">
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/shortTermRent"
+                            style="@style/Widget.MaterialComponents.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/short_rent" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/longTermRent"
+                            style="@style/Widget.MaterialComponents.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/long_rent" />
+
+                        <com.google.android.material.chip.Chip
+                            android:id="@+id/sales"
+                            style="@style/Widget.MaterialComponents.Chip.Filter"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/sales" />
+
+                    </com.google.android.material.chip.ChipGroup>
+
                 </LinearLayout>
 
-            </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
-            <!--            <com.google.android.material.textfield.TextInputLayout-->
-            <!--                android:id="@id/name"-->
-            <!--                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:layout_marginBottom="10dp"-->
-            <!--                android:hint="@string/name">-->
+    </androidx.core.widget.NestedScrollView>
 
-            <!--                <com.google.android.material.textfield.TextInputEditText-->
-            <!--                    android:layout_width="match_parent"-->
-            <!--                    android:layout_height="wrap_content"-->
-            <!--                    android:drawablePadding="10dp"-->
-            <!--                    android:text=" " />-->
-
-
-            <!--            </com.google.android.material.textfield.TextInputLayout>-->
-
-            <!--            <com.google.android.material.textfield.TextInputLayout-->
-            <!--                android:id="@id/address"-->
-            <!--                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"-->
-            <!--                android:layout_width="match_parent"-->
-            <!--                android:layout_height="wrap_content"-->
-            <!--                android:layout_marginBottom="10dp"-->
-            <!--                android:hint="@string/address">-->
-
-            <!--                <com.google.android.material.textfield.TextInputEditText-->
-            <!--                    android:layout_width="match_parent"-->
-            <!--                    android:layout_height="wrap_content"-->
-            <!--                    android:drawablePadding="10dp"-->
-            <!--                    android:text=" " />-->
-
-
-            <!--            </com.google.android.material.textfield.TextInputLayout>-->
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/submit"
-                style="@style/Widget.MaterialComponents.Button.Icon"
-                android:layout_width="250dp"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="20dp"
-
-                android:text="@string/submit"
-                android:textAllCaps="false"
-                app:cornerRadius="5dp"
-                app:icon="@drawable/right_arrow"
-                app:iconGravity="end"
-                app:iconPadding="-20dp" />
-
-            <ProgressBar
-                android:id="@+id/progressBar"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center" />
-        </LinearLayout>
-    </LinearLayout>
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</LinearLayout>

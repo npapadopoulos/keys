@@ -22,7 +22,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            shrinkResources true
+//            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -48,6 +48,7 @@ dependencies {
     implementation 'com.google.zxing:javase:3.3.2'
 
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
+    compile 'com.github.Yalantis:SearchFilter:v1.0.4'
 
     implementation 'com.firebaseui:firebase-ui-database:6.3.0'
     implementation 'com.ismaeldivita.chipnavigation:chip-navigation-bar:1.3.2'

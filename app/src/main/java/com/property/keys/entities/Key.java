@@ -5,8 +5,6 @@ import android.os.Parcelable;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
-import java.util.Map;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -36,7 +34,6 @@ public class Key implements Parcelable {
             return new Key[size];
         }
     };
-    private Map<String, Object> favouredBy;
 
     protected Key(Parcel in) {
         id = in.readString();

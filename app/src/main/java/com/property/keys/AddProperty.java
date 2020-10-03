@@ -8,18 +8,20 @@ import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.DialogFragment;
 
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.chip.Chip;
 import com.google.android.material.snackbar.Snackbar;
 import com.property.keys.databinding.ActivityAddPropertyBinding;
 import com.property.keys.entities.Property;
@@ -40,97 +42,89 @@ import timber.log.Timber;
 import static com.property.keys.utils.ImageUtils.REQUEST_IMAGE;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
-public class AddProperty extends AppCompatActivity {
+public class AddProperty extends DialogFragment {
 
     private static final String TAG = AddProperty.class.getSimpleName();
 
     private ActivityAddPropertyBinding binding;
     private String generatedPropertyId = UUID.randomUUID().toString();
 
+    private MenuItem submit;
+
+    public static AddProperty newInstance() {
+        return new AddProperty();
+    }
+
     @Override
-    protected void onStart() {
+    public void onStart() {
         super.onStart();
         Utils.reset(binding.name, binding.address);
-        binding.progressBar.setVisibility(View.GONE);
-        binding.submit.setEnabled(true);
     }
 
     @Override
-    protected void onResume() {
-//        Utils.checkForPermissions(this);
-        super.onResume();
-    }
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN, WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN);
+        setStyle(DialogFragment.STYLE_NORMAL, R.style.FullscreenDialogTheme);
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         binding = ActivityAddPropertyBinding.inflate(getLayoutInflater());
+        submit = binding.addPropertyToolbar.getMenu().getItem(0);
 
-        initToolbar();
-        setContentView(binding.getRoot());
-
-        updateStatusBarOptions();
         addOnButtonsClickListeners();
+
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        requireDialog().getWindow().setWindowAnimations(R.style.ToolbarDialogAnimation);
     }
 
     private void addOnButtonsClickListeners() {
-        binding.submit.setOnClickListener(view -> {
-            InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            in.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        binding.addPropertyToolbar.getMenu().getItem(0).setOnMenuItemClickListener(view -> {
 
-            binding.progressBar.setVisibility(View.VISIBLE);
-            binding.submit.setEnabled(false);
+            InputMethodManager in = (InputMethodManager) requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+            in.hideSoftInputFromWindow(binding.getRoot().getWindowToken(), 0);
 
+            submit.setEnabled(false);
             createProperty();
+            return true;
         });
 
+        binding.addPropertyToolbar.setNavigationOnClickListener(v -> dismiss());
         binding.addImage.setOnClickListener(this::updateImage);
         binding.propertyImage.setOnClickListener(this::updateImage);
     }
 
-    private void initToolbar() {
-        MaterialToolbar propertyToolbar = binding.addPropertyToolbar;
-        setSupportActionBar(propertyToolbar);
-
-        propertyToolbar.setNavigationOnClickListener(view -> finish());
-
-        getSupportActionBar().setTitle("");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-    }
-
-    private void updateStatusBarOptions() {
-        Window window = this.getWindow();
-        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-        window.setStatusBarColor(ContextCompat.getColor(this, R.color.colorGrey));
-    }
-
     private void createProperty() {
         if (!Utils.validateText(binding.name, 20) | !Utils.validateText(binding.address)) {
-            binding.progressBar.setVisibility(View.GONE);
-            binding.submit.setEnabled(true);
+            submit.setEnabled(true);
             return;
         }
 
-        File file = (File) ImageUtils.loadImage(this, generatedPropertyId, binding.propertyImage);
+        File file = (File) ImageUtils.loadImage(requireContext(), generatedPropertyId, binding.propertyImage);
         if (file == null || !file.exists()) {
-            binding.progressBar.setVisibility(View.GONE);
-            binding.submit.setEnabled(true);
-
-            Snackbar snackbar = Snackbar.make(binding.main, "Property Image is not added.", Snackbar.LENGTH_SHORT);
-            snackbar.getView().setBackgroundColor(ContextCompat.getColor(this, R.color.red_600));
-            snackbar.setActionTextColor(ContextCompat.getColor(this, R.color.black_900));
+            Snackbar snackbar = Snackbar.make(binding.addPropertyDialog, "Property Image is not added.", Snackbar.LENGTH_SHORT);
+            snackbar.getView().setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red_600));
+            snackbar.setTextColor(ContextCompat.getColor(requireContext(), R.color.black_900));
             snackbar.show();
+
+            submit.setEnabled(true);
             return;
         }
 
         String nameValue = binding.name.getEditText().getText().toString();
         String addressValue = binding.address.getEditText().getText().toString();
 
+        Chip chip = binding.types.findViewById(binding.types.getCheckedChipId());
+
         Property property = Property.builder()
                 .id(generatedPropertyId)
+                .type(chip.getText().toString())
                 .name(nameValue)
                 .address(addressValue)
                 .build();
@@ -144,29 +138,28 @@ public class AddProperty extends AppCompatActivity {
                 Timber.tag(TAG).e(e, "Couldn't upload property image for " + generatedPropertyId + " to remote storage.");
             }
             startActivity(intent);
-            finish();
+            dismiss();
         };
 
         Consumer<Task<Void>> onCreationFailed = (Task<Void> task) -> {
             Timber.tag(TAG).i(task.getException(), "Property creation for " + nameValue + " failed.");
-            Snackbar.make(binding.main, "Property creation for " + nameValue + " failed.", Snackbar.LENGTH_SHORT).show();
+            Snackbar.make(binding.addPropertyDialog, "Property creation for " + nameValue + " failed.", Snackbar.LENGTH_SHORT).show();
 
-            binding.progressBar.setVisibility(View.GONE);
-            binding.submit.setEnabled(true);
+            submit.setEnabled(true);
         };
 
-        PropertyUtils.create(this, property, startActivity, onCreationFailed);
+        PropertyUtils.create(getActivity(), property, startActivity, onCreationFailed);
     }
 
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         if (requestCode == REQUEST_IMAGE) {
             if (resultCode == Activity.RESULT_OK) {
                 try {
-                    Bitmap image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getParcelableExtra("path"));
-                    ImageUtils.clearCache(getApplicationContext());
-                    ImageUtils.saveImage(getApplicationContext(), image, generatedPropertyId);
-                    ImageUtils.loadImage(this, generatedPropertyId, binding.propertyImage);
+                    Bitmap image = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), data.getParcelableExtra("path"));
+                    ImageUtils.clearCache(requireContext());
+                    ImageUtils.saveImage(requireContext(), image, generatedPropertyId);
+                    ImageUtils.loadImage(requireContext(), generatedPropertyId, binding.propertyImage);
                 } catch (IOException e) {
                     Timber.tag(TAG).e(e);
                 }
@@ -176,6 +169,6 @@ public class AddProperty extends AppCompatActivity {
     }
 
     private void updateImage(View v) {
-        ImageUtils.updateImage(this, null, generatedPropertyId, true);
+        ImageUtils.updateImage(getActivity(), this, generatedPropertyId, true);
     }
 }

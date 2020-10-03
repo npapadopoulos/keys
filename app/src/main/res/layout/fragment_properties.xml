@@ -28,32 +28,26 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-    <com.google.android.material.chip.ChipGroup
-        android:id="@+id/filters"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="60dp"
-        app:singleSelection="true">
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/allFilter"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="@string/all"
-            android:textAlignment="center" />
+    <!--    <FrameLayout-->
+    <!--        android:layout_width="match_parent"-->
+    <!--        android:layout_height="match_parent"-->
+    <!--        android:background="#E4E6E3"-->
+    <!--        app:layout_behavior="@string/appbar_scrolling_view_behavior">-->
 
-        <com.google.android.material.chip.Chip
-            android:id="@+id/favouriteFilter"
-            style="@style/Widget.MaterialComponents.Chip.Choice"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:text="@string/favourites"
-            android:textAlignment="center" />
+    <!--        <android.support.v7.widget.RecyclerView-->
+    <!--            android:id="@+id/list"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content"-->
+    <!--            android:layout_marginTop="@dimen/container_height"-->
+    <!--            tools:listitem="@layout/item_list" />-->
 
-    </com.google.android.material.chip.ChipGroup>
+    <!--        <com.yalantis.filter.widget.Filter-->
+    <!--            android:id="@+id/filter"-->
+    <!--            android:layout_width="match_parent"-->
+    <!--            android:layout_height="wrap_content" />-->
+
+    <!--    </FrameLayout>-->
 
     <LinearLayout
         android:id="@+id/empty_property_search_results"
@@ -83,7 +77,6 @@
         android:id="@+id/propertyList"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="45dp"
         android:layout_marginBottom="?attr/actionBarSize"
         android:clipToPadding="false"
         app:layout_behavior="@string/appbar_scrolling_view_behavior"
@@ -96,7 +89,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="50dp"
-        android:contentDescription="@string/add_new_property"
+        android:contentDescription="@string/add_property"
         android:src="@drawable/plus"
         android:transitionName="addNew" />
 

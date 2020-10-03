@@ -59,12 +59,6 @@ public class PropertyDeleteTask extends AbstractAsyncTask {
     private void update(Property property, boolean delete) {
         final Map<String, Object> updates = new HashMap<>();
         firebaseDatabase.getReference("properties").child(property.getId()).setValue(delete ? null : property);
-        if (property.getFavouredBy() != null) {
-            property.getFavouredBy().keySet().forEach(userId -> updates.put("/" + userId + "/properties/" + property.getId(), delete ? null : property));
-            if (!updates.isEmpty()) {
-                firebaseDatabase.getReference("users").updateChildren(updates);
-            }
-        }
         if (property.getKeys() != null && delete) {
             property.getKeys().keySet().forEach(keyId -> updates.put("/" + keyId + "/", null));
             if (!updates.isEmpty()) {

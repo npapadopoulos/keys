@@ -55,7 +55,6 @@ import lombok.SneakyThrows;
 import timber.log.Timber;
 
 import static com.property.keys.utils.ImageUtils.REQUEST_IMAGE;
-import static com.property.keys.utils.Utils.updateFavourite;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.AuthStateListener, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
@@ -114,7 +113,6 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
                             binding.availableSum.setText(String.valueOf(property.getKeys().values().stream().filter(k -> k.getCheckedInDate() == null).count()));
                             binding.busySum.setText(String.valueOf(property.getKeys().values().stream().filter(k -> k.getCheckedInDate() != null).count()));
                         } else {
-                            binding.setFavourite.setClickable(false);
                             binding.addNewKey.setClickable(false);
                             binding.propertyImage.setClickable(false);
                             ActivityManager am = (ActivityManager) getApplicationContext().getSystemService(Context.ACTIVITY_SERVICE);
@@ -140,11 +138,10 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
 
         binding.name.setText(property.getName());
         binding.address.setText(property.getAddress());
+        binding.type.setText(property.getType());
         binding.propertyImage.setOnClickListener(this::updateImage);
 
         ImageUtils.syncAndloadImagesProperty(this, property.getId(), binding.propertyImage, true);
-        updateFavourite(this, binding.setFavourite, property.getFavouredBy().get(user.getId()) != null);
-        addOnSetFavouriteClickListener();
 
 //        PropertyUtils.createMap(this, savedInstanceState, binding.mapquestMapView, property);
         initLayoutManager();
@@ -170,10 +167,6 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
                 binding.addNewKey.show();
             }
         });
-    }
-
-    private void addOnSetFavouriteClickListener() {
-        binding.setFavourite.setOnClickListener(view -> updateFavourite(this, binding.setFavourite, property, user));
     }
 
     @SneakyThrows

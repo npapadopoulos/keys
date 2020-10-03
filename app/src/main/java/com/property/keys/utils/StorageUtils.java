@@ -78,7 +78,7 @@ public class StorageUtils {
                         break;
                     }
                     case KEY: {
-                        generated = QRCodeUtils.generateCode(context, id);
+                        generated = KeyCodeUtils.generateCode(id, false); //TODO configurable -> Settings Menu
                         saveAndLoadImage(context, "code", loader, onComplete, generated);
                         break;
                     }

@@ -11,8 +11,6 @@ import com.property.keys.entities.User;
 import com.property.keys.tasks.TaskExecutor;
 import com.property.keys.tasks.notifications.NotificationCreateTask;
 
-import java.util.Set;
-
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class NotificationUtils {
 
@@ -23,10 +21,10 @@ public class NotificationUtils {
     }
 
     public static void create(Activity activity, Property property, Action action) {
-        create(activity, property.getId(), property.getName(), property.getFavouredBy().keySet(), action);
+        create(activity, property.getId(), property.getName(), action);
     }
 
-    public static void create(Activity activity, String propertyId, String propertyName, Set<String> usersToNotify, Action action) {
+    public static void create(Activity activity, String propertyId, String propertyName, Action action) {
         User currentUser = UserUtils.getLocalUser(activity.getApplicationContext());
         String description;
         switch (action) {
@@ -48,14 +46,6 @@ public class NotificationUtils {
             }
             case UPDATED_PROPERTY: {
                 description = currentUser.getFirstName() + " updated property '" + propertyName + "'.";
-                break;
-            }
-            case LIKED_PROPERTY: {
-                description = currentUser.getFirstName() + " is now following property '" + propertyName + "'.";
-                break;
-            }
-            case DISLIKED_PROPERTY: {
-                description = currentUser.getFirstName() + " stopped following property '" + propertyName + "'.";
                 break;
             }
             case ADDED_KEY: {
@@ -83,7 +73,6 @@ public class NotificationUtils {
                         .activity(activity)
                         .description(description)
                         .propertyId(propertyId)
-                        .usersToNotify(usersToNotify)
                         .action(action)
                         .build());
     }

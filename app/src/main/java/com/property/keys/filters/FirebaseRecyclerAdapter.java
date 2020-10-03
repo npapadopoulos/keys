@@ -209,10 +209,9 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
     /**
      * filter condition for Filter
      *
-     * @param model   model T
-     * @param pattern filter pattern with Lower Case
+     * @param model model T
      */
-    protected boolean filterCondition(T model, String pattern, boolean showOnlyFavourite) {
+    protected boolean filterCondition(T model, String pattern) {
         return true;
     }
 
@@ -230,13 +229,6 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
      */
     public class SearchFilter extends Filter {
 
-        private boolean showOnlyFavourites;
-
-        public Filter showOnlyFavourites(boolean showOnlyFavourites) {
-            this.showOnlyFavourites = showOnlyFavourites;
-            return this;
-        }
-
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             final FilterResults results = new FilterResults();
@@ -247,7 +239,7 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
                 Map<String, T> filteredList = new HashMap<>();
                 final String filterPattern = constraint.toString().toLowerCase().trim();
                 for (T t : backupList.values()) {
-                    if (filterCondition(t, filterPattern, showOnlyFavourites)) {
+                    if (filterCondition(t, filterPattern)) {
                         filteredList.put(getId(t), t);
                     }
                 }
