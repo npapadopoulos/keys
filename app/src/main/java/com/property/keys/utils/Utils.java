@@ -185,22 +185,24 @@ public class Utils {
         return result.toString();
     }
 
-    public static void initSwipeProperty(RecyclerView view, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener listener) {
-        initSwipeProperty(view, listener, false);
+    public static void initSwipeProperty(RecyclerView view, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener listener, boolean isAdmin) {
+        initSwipeProperty(view, listener, false, isAdmin);
     }
 
-    public static void initSwipeProperty(RecyclerView view, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener listener, boolean enableRestore) {
+    public static void initSwipeProperty(RecyclerView view, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener listener, boolean enableRestore, boolean isAdmin) {
         // adding item touch helper
         // only ItemTouchHelper.LEFT added to detect Right to Left swipe
         // if you want both Right -> Left and Left -> Right
         // add pass ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT as param
-        int swipeDirs = ItemTouchHelper.LEFT;
-        if (enableRestore) {
-            swipeDirs = ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
-        }
+        if (isAdmin) {
+            int swipeDirs = ItemTouchHelper.LEFT;
+            if (enableRestore) {
+                swipeDirs = ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT;
+            }
 
-        ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, swipeDirs, listener, enableRestore);
-        new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(view);
+            ItemTouchHelper.SimpleCallback itemTouchHelperCallback = new RecyclerItemTouchHelper(0, swipeDirs, listener, enableRestore);
+            new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(view);
+        }
     }
 
     public static void onClick(DialogInterface dialogInterface, int i) {

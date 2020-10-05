@@ -1,8 +1,10 @@
 package com.property.keys.filters;
 
 import android.os.Build;
+import android.view.View;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -12,20 +14,18 @@ import androidx.lifecycle.OnLifecycleEvent;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.common.ChangeEventType;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.firebase.ui.database.ObservableSnapshotArray;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 import timber.log.Timber;
 
-import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toList;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHolder>
@@ -33,22 +33,39 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
     private static final String TAG = "FirebaseRecyclerAdapter";
 
     private final boolean isFilterable;
-    private ObservableSnapshotArray<T> mSnapshots;
+    private ObservableSnapshotArray<T> snapshots;
     private FirebaseRecyclerOptions<T> mOptions;
     private Filter filter;
-    private Map<String, T> list, backupList;
+    private List<T> list, backupList;
+    private Class<T> clazz;
+    private ProgressBar progressBar;
 
     /**
      * Initialize a {@link RecyclerView.Adapter} that listens to a Firebase query. See
      * {@link FirebaseRecyclerOptions} for configuration options.
      */
-    public FirebaseRecyclerAdapter(@NonNull FirebaseRecyclerOptions<T> options, boolean isFilterable) {
-        mOptions = options;
-        mSnapshots = options.getSnapshots();
-        list = mSnapshots.stream().collect(Collectors.toMap(this::getId, identity()));
-        backupList = new HashMap<>(list);
+    public FirebaseRecyclerAdapter(@NonNull FirebaseRecyclerOptions<T> options, boolean isFilterable, Class<T> clazz, ProgressBar progressBar) {
+        this(options, isFilterable, clazz, progressBar, null);
+    }
 
+    /**
+     * Initialize a {@link RecyclerView.Adapter} that listens to a Firebase query. See
+     * {@link FirebaseRecyclerOptions} for configuration options.
+     */
+    public FirebaseRecyclerAdapter(@NonNull FirebaseRecyclerOptions<T> options, boolean isFilterable, Class<T> clazz, ProgressBar progressBar,
+                                   String currentUserId) {
+        mOptions = options;
+        snapshots = options.getSnapshots();
+        if (currentUserId != null) {
+            list = snapshots.stream().filter(item -> !getId(item).equals(currentUserId)).collect(toList());
+        } else {
+            list = new ArrayList<>(options.getSnapshots());
+        }
+        backupList = new ArrayList<>(list);
+
+        this.progressBar = progressBar;
         this.isFilterable = isFilterable;
+        this.clazz = clazz;
 
         if (mOptions.getOwner() != null) {
             mOptions.getOwner().getLifecycle().addObserver(this);
@@ -58,15 +75,19 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
     @Override
     @OnLifecycleEvent(Lifecycle.Event.ON_START)
     public void startListening() {
-        if (!mSnapshots.isListening(this)) {
-            mSnapshots.addChangeEventListener(this);
+        if (list.size() > 0) list.clear();
+        if (backupList.size() > 0) backupList.clear();
+        if (!snapshots.isListening(this)) {
+            snapshots.addChangeEventListener(this);
         }
     }
 
     @Override
     @OnLifecycleEvent(Lifecycle.Event.ON_STOP)
     public void stopListening() {
-        mSnapshots.removeChangeEventListener(this);
+        snapshots.removeChangeEventListener(this);
+        list.clear();
+        backupList.clear();
         notifyDataSetChanged();
     }
 
@@ -75,37 +96,33 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
         source.getLifecycle().removeObserver(this);
     }
 
+
     @Override
-    public void onChildChanged(@NonNull ChangeEventType type,
-                               @NonNull DataSnapshot snapshot,
+    public void onChildChanged(ChangeEventType type,
+                               DataSnapshot snapshot,
                                int newIndex,
                                int oldIndex) {
-        T model = null;
-        if (type != ChangeEventType.REMOVED && mSnapshots != null && !mSnapshots.isEmpty()) {
-            model = mSnapshots.get(newIndex);
-        }
-        onChildUpdate(model, type, newIndex, oldIndex, snapshot.getKey());
+        onChildUpdate(snapshot.getValue(clazz), type, newIndex, oldIndex);
     }
 
     protected void onChildUpdate(T model, ChangeEventType type,
                                  int newIndex,
-                                 int oldIndex,
-                                 String key) {
+                                 int oldIndex) {
         switch (type) {
             case ADDED:
-                update(key, model);
+                addItem(model);
                 notifyItemInserted(newIndex);
                 break;
             case CHANGED:
-                update(key, model);
+                addItem(model, newIndex);
                 notifyItemChanged(newIndex);
                 break;
             case REMOVED:
-                remove(key);
+                removeItem(newIndex);
                 notifyItemRemoved(newIndex);
                 break;
             case MOVED:
-                update(key, model);
+                moveItem(model, newIndex, oldIndex);
                 notifyItemMoved(oldIndex, newIndex);
                 break;
             default:
@@ -113,21 +130,46 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
         }
     }
 
-    private void update(String key, T t) {
-        list.put(key, t);
+    private void moveItem(T t, int newIndex, int oldIndex) {
+        list.remove(oldIndex);
+        list.add(newIndex, t);
         if (isFilterable) {
-            backupList.put(key, t);
+            backupList.remove(oldIndex);
+            backupList.add(newIndex, t);
         }
     }
 
-    private void remove(String key) {
-        list.remove(key);
+    private void removeItem(int newIndex) {
+        if (list.size() != backupList.size() && !backupList.isEmpty()) {
+            list.remove(backupList.get(newIndex));
+        } else {
+            list.remove(newIndex);
+        }
         if (isFilterable)
-            backupList.remove(key);
+            backupList.remove(newIndex);
     }
+
+    private void addItem(T t, int newIndex) {
+        list.remove(newIndex);
+        list.add(newIndex, t);
+        if (isFilterable) {
+            backupList.remove(newIndex);
+            backupList.add(newIndex, t);
+        }
+    }
+
+    private void addItem(T t) {
+        list.add(t);
+        if (isFilterable)
+            backupList.add(t);
+    }
+
 
     @Override
     public void onDataChanged() {
+        if (progressBar != null) {
+            progressBar.setVisibility(View.GONE);
+        }
     }
 
     @Override
@@ -142,28 +184,24 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
     @NonNull
     @Override
     public ObservableSnapshotArray<T> getSnapshots() {
-        return mSnapshots;
+        return snapshots;
     }
 
     @NonNull
     @Override
     public T getItem(int position) {
-        String key = mSnapshots.getSnapshot(position).getKey();
-        if (!list.containsKey(key)) {
-            return getItem(++position);
-        }
-        return Objects.requireNonNull(list.get(key));
+        return list.get(position);
     }
 
     @NonNull
     @Override
     public DatabaseReference getRef(int position) {
-        return mSnapshots.getSnapshot(position).getRef();
+        return snapshots.getSnapshot(position).getRef();
     }
 
     @Override
     public int getItemCount() {
-        return mSnapshots.isListening(this) ? list.size() : 0;
+        return snapshots.isListening(this) ? list.size() : 0;
     }
 
     /**
@@ -172,20 +210,20 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
      */
     public void updateOptions(@NonNull FirebaseRecyclerOptions<T> options) {
         // Tear down old options
-        boolean wasListening = mSnapshots.isListening(this);
+        boolean wasListening = snapshots.isListening(this);
         if (mOptions.getOwner() != null) {
             mOptions.getOwner().getLifecycle().removeObserver(this);
         }
-        mSnapshots.clear();
+        snapshots.clear();
         list.clear();
         backupList.clear();
         stopListening();
 
         // Set up new options
         mOptions = options;
-        mSnapshots = options.getSnapshots();
-        list = mSnapshots.stream().collect(Collectors.toMap(this::getId, identity()));
-        backupList = new HashMap<>(list);
+        snapshots = options.getSnapshots();
+        list = new ArrayList<>(options.getSnapshots());
+        backupList = new ArrayList<>(list);
 
         if (options.getOwner() != null) {
             options.getOwner().getLifecycle().addObserver(this);
@@ -209,9 +247,20 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
     /**
      * filter condition for Filter
      *
-     * @param model model T
+     * @param model   model T
+     * @param pattern
      */
     protected boolean filterCondition(T model, String pattern) {
+        return true;
+    }
+
+    /**
+     * filter condition for Filter
+     *
+     * @param model             model T
+     * @param applyExtraFilters
+     */
+    protected boolean filterCondition(T model, List<String> applyExtraFilters) {
         return true;
     }
 
@@ -228,19 +277,36 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
      * Note that the search query doesn't apply on firebase directly.
      */
     public class SearchFilter extends Filter {
+        private List<String> applyExtraFilters;
+
+        public Filter applyExtraFilters(List<String> applyExtraFilters) {
+            this.applyExtraFilters = applyExtraFilters;
+            return this;
+        }
 
         @Override
         protected FilterResults performFiltering(CharSequence constraint) {
             final FilterResults results = new FilterResults();
             if (constraint == null || constraint.length() == 0) {
-                results.values = backupList;
-                results.count = backupList.size();
+                if (applyExtraFilters.isEmpty()) {
+                    results.values = backupList;
+                    results.count = backupList.size();
+                } else {
+                    List<T> filteredList = new ArrayList<>();
+                    for (T t : backupList) {
+                        if (filterCondition(t, applyExtraFilters)) {
+                            filteredList.add(t);
+                        }
+                    }
+                    results.values = filteredList;
+                    results.count = filteredList.size();
+                }
             } else {
-                Map<String, T> filteredList = new HashMap<>();
+                List<T> filteredList = new ArrayList<>();
                 final String filterPattern = constraint.toString().toLowerCase().trim();
-                for (T t : backupList.values()) {
-                    if (filterCondition(t, filterPattern)) {
-                        filteredList.put(getId(t), t);
+                for (T t : backupList) {
+                    if (filterCondition(t, filterPattern) && filterCondition(t, applyExtraFilters)) {
+                        filteredList.add(t);
                     }
                 }
                 results.values = filteredList;
@@ -253,7 +319,7 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
         @Override
         protected void publishResults(CharSequence charSequence, FilterResults results) {
             list.clear();
-            list.putAll((Map<? extends String, ? extends T>) results.values);
+            list.addAll((Collection<? extends T>) results.values);
 
             postFilterUpdate(list.size());
             notifyDataSetChanged();

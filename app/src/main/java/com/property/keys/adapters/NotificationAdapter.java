@@ -10,11 +10,11 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.property.keys.R;
 import com.property.keys.entities.Notification;
 import com.property.keys.filters.FirebaseRecyclerAdapter;
+import com.property.keys.filters.FirebaseRecyclerOptions;
 
 import org.jetbrains.annotations.NotNull;
 
@@ -27,7 +27,7 @@ public class NotificationAdapter extends FirebaseRecyclerAdapter<Notification, N
     private LinearLayout emptyNotifications;
 
     public NotificationAdapter(@NonNull FirebaseRecyclerOptions<Notification> options, @NotNull Activity activity) {
-        super(options, false);
+        super(options, false, Notification.class, activity.findViewById(R.id.progressBar));
         this.activity = activity;
         deleteNotifications = activity.findViewById(R.id.deleteNotifications);
         emptyNotifications = activity.findViewById(R.id.empty_notifications);
@@ -55,6 +55,7 @@ public class NotificationAdapter extends FirebaseRecyclerAdapter<Notification, N
             emptyNotifications.setVisibility(View.INVISIBLE);
             deleteNotifications.setVisibility(View.VISIBLE);
         }
+        super.onDataChanged();
     }
 
     @NonNull

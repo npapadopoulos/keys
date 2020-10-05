@@ -10,11 +10,14 @@ import android.widget.LinearLayout;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.property.keys.R;
 import com.property.keys.entities.Property;
 import com.property.keys.filters.FirebaseRecyclerAdapter;
+import com.property.keys.filters.FirebaseRecyclerOptions;
+
+import java.util.List;
+
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class PropertyAdapter extends FirebaseRecyclerAdapter<Property, PropertyHolder> {
@@ -23,17 +26,19 @@ public class PropertyAdapter extends FirebaseRecyclerAdapter<Property, PropertyH
 
     @NonNull
     private final boolean inTrash;
+    private final boolean isAdmin;
     private LinearLayout background;
     private FloatingActionButton deleteProperties;
 
     public PropertyAdapter(@NonNull FirebaseRecyclerOptions<Property> options, Activity activity,
                            LinearLayout background,
-                           boolean inTrash) {
-        super(options, true);
+                           boolean inTrash, boolean isAdmin) {
+        super(options, true, Property.class, activity.findViewById(R.id.progressBar));
         this.activity = activity;
         this.background = background;
         this.inTrash = inTrash;
         deleteProperties = activity.findViewById(R.id.deleteProperties);
+        this.isAdmin = isAdmin;
     }
 
     @Override
@@ -43,22 +48,31 @@ public class PropertyAdapter extends FirebaseRecyclerAdapter<Property, PropertyH
 
     @Override
     protected boolean filterCondition(Property property, String pattern) {
-        return property.getName().toLowerCase().contains(pattern) || property.getAddress().toLowerCase().contains(pattern);
+        return property.getName().toLowerCase().contains(pattern)
+                || property.getAddress().toLowerCase().contains(pattern);
+    }
+
+    @Override
+    protected boolean filterCondition(Property property, List<String> applyExtraFilters) {
+        return applyExtraFilters.isEmpty() || applyExtraFilters.contains(property.getType());
     }
 
     @Override
     public void onDataChanged() {
-        if (getItemCount() == 0) {
-            background.setVisibility(View.VISIBLE);
-            if (deleteProperties != null) {
-                deleteProperties.setVisibility(View.GONE);
-            }
-        } else {
-            background.setVisibility(View.INVISIBLE);
-            if (deleteProperties != null) {
-                deleteProperties.setVisibility(View.VISIBLE);
+        if (isAdmin) {
+            if (getItemCount() == 0) {
+                background.setVisibility(View.VISIBLE);
+                if (deleteProperties != null) {
+                    deleteProperties.setVisibility(View.GONE);
+                }
+            } else {
+                background.setVisibility(View.INVISIBLE);
+                if (deleteProperties != null) {
+                    deleteProperties.setVisibility(View.VISIBLE);
+                }
             }
         }
+        super.onDataChanged();
     }
 
     @NonNull
@@ -76,10 +90,12 @@ public class PropertyAdapter extends FirebaseRecyclerAdapter<Property, PropertyH
 
     @Override
     public void postFilterUpdate(int count) {
-        if (count == 0) {
-            background.setVisibility(View.VISIBLE);
-        } else {
-            background.setVisibility(View.INVISIBLE);
+        if (isAdmin) {
+            if (count == 0) {
+                background.setVisibility(View.VISIBLE);
+            } else {
+                background.setVisibility(View.INVISIBLE);
+            }
         }
     }
 }

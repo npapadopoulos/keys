@@ -8,11 +8,11 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.property.keys.R;
 import com.property.keys.entities.Key;
 import com.property.keys.entities.User;
 import com.property.keys.filters.FirebaseRecyclerAdapter;
+import com.property.keys.filters.FirebaseRecyclerOptions;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class KeyAdapter extends FirebaseRecyclerAdapter<Key, KeyHolder> {
@@ -22,7 +22,7 @@ public class KeyAdapter extends FirebaseRecyclerAdapter<Key, KeyHolder> {
     private User user;
 
     public KeyAdapter(@NonNull FirebaseRecyclerOptions<Key> options, Activity activity, String propertyName, User user) {
-        super(options, false);
+        super(options, false, Key.class, activity.findViewById(R.id.progressBar));
         this.activity = activity;
         this.propertyName = propertyName;
         this.user = user;

@@ -28,27 +28,6 @@
 
     </com.google.android.material.appbar.AppBarLayout>
 
-
-    <!--    <FrameLayout-->
-    <!--        android:layout_width="match_parent"-->
-    <!--        android:layout_height="match_parent"-->
-    <!--        android:background="#E4E6E3"-->
-    <!--        app:layout_behavior="@string/appbar_scrolling_view_behavior">-->
-
-    <!--        <android.support.v7.widget.RecyclerView-->
-    <!--            android:id="@+id/list"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="wrap_content"-->
-    <!--            android:layout_marginTop="@dimen/container_height"-->
-    <!--            tools:listitem="@layout/item_list" />-->
-
-    <!--        <com.yalantis.filter.widget.Filter-->
-    <!--            android:id="@+id/filter"-->
-    <!--            android:layout_width="match_parent"-->
-    <!--            android:layout_height="wrap_content" />-->
-
-    <!--    </FrameLayout>-->
-
     <LinearLayout
         android:id="@+id/empty_property_search_results"
         android:layout_width="match_parent"
@@ -89,6 +68,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="50dp"
+        android:visibility="invisible"
         android:contentDescription="@string/add_property"
         android:src="@drawable/plus"
         android:transitionName="addNew" />
@@ -102,6 +82,7 @@
         app:floatingSearch_dimBackground="false"
         app:floatingSearch_dismissOnOutsideTouch="true"
         app:floatingSearch_leftActionMode="showHamburger"
+        app:floatingSearch_menu="@menu/search_menu"
         app:floatingSearch_searchHint="Search..."
         app:floatingSearch_showSearchKey="true"
         app:floatingSearch_suggestionsListAnimDuration="250" />

@@ -7,6 +7,11 @@
             android:icon="@drawable/dashboard"
             android:title="@string/dashboard" />
         <item
+            android:id="@+id/navigationUsers"
+            android:icon="@drawable/user"
+            android:title="@string/users"
+            android:visible="false" />
+        <item
             android:id="@+id/navigationHistory"
             android:icon="@drawable/history"
             android:title="@string/history" />

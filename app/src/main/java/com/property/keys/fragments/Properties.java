@@ -1,11 +1,17 @@
 package com.property.keys.fragments;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.LayerDrawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -23,7 +29,6 @@ import androidx.recyclerview.widget.RecyclerView.OnScrollListener;
 import com.arlib.floatingsearchview.FloatingSearchView;
 import com.arlib.floatingsearchview.suggestions.model.SearchSuggestion;
 import com.arlib.floatingsearchview.util.Util;
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -33,15 +38,17 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
-import com.property.keys.AddProperty;
 import com.property.keys.Container;
 import com.property.keys.R;
 import com.property.keys.adapters.PropertyAdapter;
 import com.property.keys.adapters.PropertyHolder;
 import com.property.keys.databinding.FragmentPropertiesBinding;
 import com.property.keys.entities.Property;
+import com.property.keys.entities.Role;
 import com.property.keys.entities.User;
 import com.property.keys.filters.FirebaseRecyclerAdapter;
+import com.property.keys.filters.FirebaseRecyclerOptions;
+import com.property.keys.helpers.BadgeDrawable;
 import com.property.keys.helpers.PropertySuggestion;
 import com.property.keys.helpers.RecyclerItemTouchHelper;
 import com.property.keys.utils.PropertyUtils;
@@ -51,11 +58,14 @@ import com.property.keys.utils.Utils;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
+import lombok.Setter;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toList;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
@@ -67,6 +77,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
     protected static final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
     protected static final Query propertiesQuery = firebaseDatabase.getReference("properties").orderByChild("deleted").equalTo(false);
 
+    private final int DIALOG_REQUEST_CODE = 200;
     private FragmentPropertiesBinding binding;
 
     @Getter
@@ -79,6 +90,10 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
     private NavigationView navigation;
     private MaterialToolbar toolbar;
     private User user;
+    private boolean isAdmin;
+
+    @Setter
+    private List<String> types;
 
     public Properties(ChipNavigationBar bottomNavigationMenu, NavigationView navigation, MaterialToolbar toolbar) {
         this.bottomNavigationMenu = bottomNavigationMenu;
@@ -108,6 +123,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
         toolbar.setVisibility(View.GONE);
 
         user = UserUtils.getLocalUser(requireContext());
+        isAdmin = user.getRole() == Role.ADMIN;
 
         suggestions = user.getPropertySearchSuggestions().stream()
                 .map(suggestion -> new PropertySuggestion(suggestion, true))
@@ -118,32 +134,40 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
         binding.propertyList.setItemAnimator(new DefaultItemAnimator());
         binding.propertyList.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
-        binding.addNewProperty.setOnClickListener(view -> {
-            AddProperty dialog = AddProperty.newInstance();
-            dialog.show(requireActivity().getSupportFragmentManager(), "tag");
-        });
+        if (isAdmin) {
+            binding.addNewProperty.setOnClickListener(view -> {
+                AddProperty addProperty = AddProperty.newInstance();
+                addProperty.show(requireActivity().getSupportFragmentManager(), "addProperty");
+            });
 
-        binding.propertyList.addOnScrollListener(new OnScrollListener() {
-            @Override
-            public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
-                super.onScrollStateChanged(recyclerView, newState);
-            }
-
-            @Override
-            public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
-                super.onScrolled(recyclerView, dx, dy);
-                if (dy > 0) {
-                    binding.addNewProperty.hide();
-                } else {
-                    binding.addNewProperty.show();
+            binding.propertyList.addOnScrollListener(new OnScrollListener() {
+                @Override
+                public void onScrollStateChanged(@NonNull RecyclerView recyclerView, int newState) {
+                    super.onScrollStateChanged(recyclerView, newState);
                 }
-            }
-        });
+
+                @Override
+                public void onScrolled(@NonNull RecyclerView recyclerView, int dx, int dy) {
+                    super.onScrolled(recyclerView, dx, dy);
+                    if (dy > 0) {
+                        binding.addNewProperty.hide();
+                    } else {
+                        binding.addNewProperty.show();
+                    }
+                }
+            });
+        }
 
         binding.searchBar.addOnOffsetChangedListener(this);
         binding.floatingSearchView.attachNavigationDrawerToMenuButton(this.container.getDrawerLayout());
 
-        Utils.initSwipeProperty(binding.propertyList, this);
+        binding.floatingSearchView.setOnMenuItemClickListener(item -> {
+            FilterProperties filters = FilterProperties.newInstance(types);
+            filters.setTargetFragment(this, DIALOG_REQUEST_CODE);
+            filters.show(requireActivity().getSupportFragmentManager(), "filters");
+        });
+
+        Utils.initSwipeProperty(binding.propertyList, this, isAdmin);
         setupSearchBar();
 
         //TODO
@@ -158,7 +182,6 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
         // Work with Lists of Data on Android
         // Filtering, Sorting, Ordering
         // https://firebase.google.com/docs/database/android/lists-of-data
-
 
         return binding.getRoot();
     }
@@ -278,7 +301,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
     }
 
     private void search(String query) {
-        getFilter().filter(query);
+        getFilter().applyExtraFilters(types == null ? emptyList() : types).filter(query);
     }
 
     private void updateSuggestions() {
@@ -327,10 +350,11 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
                         .setLifecycleOwner(this)
                         .build();
 
+        getActivity().findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
         if (adapter != null && updateOptions) {
             adapter.updateOptions(options);
         } else {
-            adapter = new PropertyAdapter(options, this.requireActivity(), binding.emptyPropertySearchResults, false);
+            adapter = new PropertyAdapter(options, this.requireActivity(), binding.emptyPropertySearchResults, false, isAdmin);
             // Scroll to bottom on new properties
             adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                 @Override
@@ -381,5 +405,43 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
         binding.floatingSearchView.setTranslationY(verticalOffset);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == DIALOG_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+                if (data.getExtras().containsKey("filters")) {
+                    ArrayList<String> result = data.getExtras().getStringArrayList("filters");
+                    types = result == null || result.isEmpty() ? emptyList() : result;
+                    createCartBadge(types.size());
+                    search();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onPrepareOptionsMenu(@NonNull Menu menu) {
+        createCartBadge(0);
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    private void createCartBadge(int paramInt) {
+        MenuItem filter = binding.floatingSearchView.getCurrentMenuItems().get(0);
+        LayerDrawable localLayerDrawable = (LayerDrawable) filter.getIcon();
+        Drawable filtersBadgeDrawable = localLayerDrawable
+                .findDrawableByLayerId(R.id.filter_badge);
+        BadgeDrawable badgeDrawable;
+        if (((filtersBadgeDrawable instanceof BadgeDrawable)) && (paramInt < 10)) {
+            badgeDrawable = (BadgeDrawable) filtersBadgeDrawable;
+        } else {
+            badgeDrawable = new BadgeDrawable(requireContext());
+        }
+        badgeDrawable.setCount(paramInt);
+        localLayerDrawable.mutate();
+        localLayerDrawable.setDrawableByLayerId(R.id.filter_badge, badgeDrawable);
+        filter.setIcon(localLayerDrawable);
     }
 }

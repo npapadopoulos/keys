@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
@@ -30,6 +29,9 @@ import com.property.keys.adapters.NotificationAdapter;
 import com.property.keys.adapters.NotificationHolder;
 import com.property.keys.databinding.FragmentNotificationsBinding;
 import com.property.keys.entities.Notification;
+import com.property.keys.entities.Role;
+import com.property.keys.entities.User;
+import com.property.keys.filters.FirebaseRecyclerOptions;
 import com.property.keys.helpers.RecyclerItemTouchHelper;
 import com.property.keys.utils.UserUtils;
 import com.property.keys.utils.Utils;
@@ -67,10 +69,11 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
         this.toolbar.setTitle("Notifications");
         this.container = (Container) getActivity();
 
-        userId = UserUtils.getLocalUser(requireContext()).getId();
+        User user = UserUtils.getLocalUser(requireContext());
+        userId = user.getId();
 
         initLayoutManager();
-        Utils.initSwipeProperty(binding.notificationsList, this);
+        Utils.initSwipeProperty(binding.notificationsList, this, user.getRole() == Role.ADMIN);
         setReadNotifications();
         addOnClearListener();
         addOnScrollListener();
@@ -182,6 +185,7 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
                         .setLifecycleOwner(this)
                         .build();
 
+        getActivity().findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
         adapter = new NotificationAdapter(options, this.requireActivity());
 
         // Scroll to bottom on new messages

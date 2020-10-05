@@ -25,7 +25,6 @@ import androidx.palette.graphics.Palette;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
@@ -41,7 +40,9 @@ import com.property.keys.databinding.ActivityPropertyDetailsBinding;
 import com.property.keys.entities.Key;
 import com.property.keys.entities.Notification;
 import com.property.keys.entities.Property;
+import com.property.keys.entities.Role;
 import com.property.keys.entities.User;
+import com.property.keys.filters.FirebaseRecyclerOptions;
 import com.property.keys.helpers.RecyclerItemTouchHelper;
 import com.property.keys.utils.ImageUtils;
 import com.property.keys.utils.PropertyUtils;
@@ -139,17 +140,20 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
         binding.name.setText(property.getName());
         binding.address.setText(property.getAddress());
         binding.type.setText(property.getType());
-        binding.propertyImage.setOnClickListener(this::updateImage);
 
         ImageUtils.syncAndloadImagesProperty(this, property.getId(), binding.propertyImage, true);
 
 //        PropertyUtils.createMap(this, savedInstanceState, binding.mapquestMapView, property);
         initLayoutManager();
-        addOnScrollListener();
 
-        Utils.initSwipeProperty(binding.keyList, this);
+        boolean isAdmin = user.getRole() == Role.ADMIN;
+        if (isAdmin) {
+            binding.propertyImage.setOnClickListener(this::updateImage);
+            addOnScrollListener();
+            binding.addNewKey.setOnClickListener(this::addNewKey);
+        }
 
-        binding.addNewKey.setOnClickListener(this::addNewKey);
+        Utils.initSwipeProperty(binding.keyList, this, isAdmin);
     }
 
     private void initLayoutManager() {
@@ -314,6 +318,7 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
                         .setLifecycleOwner(this)
                         .build();
 
+        findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
         adapter = new KeyAdapter(options, this, property.getName(), user);
 
         // Scroll to bottom on new messages

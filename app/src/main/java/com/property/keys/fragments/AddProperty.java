@@ -1,4 +1,4 @@
-package com.property.keys;
+package com.property.keys.fragments;
 
 import android.app.Activity;
 import android.content.Context;
@@ -23,7 +23,8 @@ import androidx.fragment.app.DialogFragment;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.snackbar.Snackbar;
-import com.property.keys.databinding.ActivityAddPropertyBinding;
+import com.property.keys.R;
+import com.property.keys.databinding.FragmentAddPropertyBinding;
 import com.property.keys.entities.Property;
 import com.property.keys.utils.ImageUtils;
 import com.property.keys.utils.PropertyUtils;
@@ -46,7 +47,7 @@ public class AddProperty extends DialogFragment {
 
     private static final String TAG = AddProperty.class.getSimpleName();
 
-    private ActivityAddPropertyBinding binding;
+    private FragmentAddPropertyBinding binding;
     private String generatedPropertyId = UUID.randomUUID().toString();
 
     private MenuItem submit;
@@ -70,7 +71,7 @@ public class AddProperty extends DialogFragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = ActivityAddPropertyBinding.inflate(getLayoutInflater());
+        binding = FragmentAddPropertyBinding.inflate(getLayoutInflater());
         submit = binding.addPropertyToolbar.getMenu().getItem(0);
 
         addOnButtonsClickListeners();

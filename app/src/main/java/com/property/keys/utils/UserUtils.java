@@ -12,6 +12,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
+import com.property.keys.entities.Role;
 import com.property.keys.entities.User;
 import com.property.keys.tasks.TaskExecutor;
 import com.property.keys.tasks.users.UserAuthenticateTask;
@@ -20,6 +21,7 @@ import com.property.keys.tasks.users.UserDeleteNotificationsTask;
 import com.property.keys.tasks.users.UserPropertySearchSuggestionsUpdateTask;
 import com.property.keys.tasks.users.UserReadNotificationsTask;
 import com.property.keys.tasks.users.UserResetPasswordTask;
+import com.property.keys.tasks.users.UserUpdateRoleTask;
 import com.property.keys.tasks.users.UserUpdateTask;
 
 import java.util.ArrayList;
@@ -79,6 +81,15 @@ public class UserUtils {
                         .user(user)
                         .onUpdateFailed(onUpdateFailed)
                         .onUpdateSucceeded(onUpdateSucceeded)
+                        .build()
+        );
+    }
+
+    public static void updateRole(String userId, boolean isAdmin) {
+        new TaskExecutor().executeAsync(
+                UserUpdateRoleTask.builder()
+                        .userId(userId)
+                        .isAdmin(isAdmin)
                         .build()
         );
     }
@@ -157,6 +168,7 @@ public class UserUtils {
                 .phoneNumber(sharedPreferences.getString("phoneNumber", ""))
                 .password(sharedPreferences.getString("password", ""))
                 .remember(sharedPreferences.getBoolean("remember", false))
+                .role(Role.valueOf(sharedPreferences.getString("role", Role.BASIC.toString())))
                 .propertySearchSuggestions(new ArrayList<>(sharedPreferences.getStringSet("propertySearchSuggestions", emptySet())))
                 .build();
     }
@@ -180,6 +192,7 @@ public class UserUtils {
         editor.putString("lastName", user.getLastName());
         editor.putString("email", user.getEmail());
         editor.putString("phoneNumber", user.getPhoneNumber());
+        editor.putString("role", user.getRole().toString());
         editor.putStringSet("propertySearchSuggestions", new HashSet<>(user.getPropertySearchSuggestions()));
         if (user.isRemember() && password != null) {
             editor.putString("password", password);

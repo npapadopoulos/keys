@@ -68,10 +68,13 @@ public class Dashboard extends Fragment implements ActivityCompat.OnRequestPermi
         navigation.setCheckedItem(R.id.navigationDashboard);
         navigation.getCheckedItem().setChecked(true);
         toolbar.setTitle("Dashboard");
+        toolbar.setEnabled(true);
+        toolbar.setVisibility(View.VISIBLE);
 
         keysQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                getActivity().findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
                 List<Key> temp = new ArrayList<>();
                 dataSnapshot.getChildren().forEach(child -> temp.add(child.getValue(Key.class)));
 
@@ -79,6 +82,7 @@ public class Dashboard extends Fragment implements ActivityCompat.OnRequestPermi
                 keysPerStatus.putAll(temp.stream().collect(groupingBy(key -> key.getCheckedInDate() != null)));
 
                 setPieChartData(keysPerStatus);
+                getActivity().findViewById(R.id.progressBar).setVisibility(View.GONE);
             }
 
             @Override

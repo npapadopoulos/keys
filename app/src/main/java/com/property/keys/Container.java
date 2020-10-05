@@ -47,6 +47,7 @@ import com.property.keys.fragments.Profile;
 import com.property.keys.fragments.Properties;
 import com.property.keys.fragments.Scanner;
 import com.property.keys.fragments.Trash;
+import com.property.keys.fragments.Users;
 import com.property.keys.utils.ImageUtils;
 import com.property.keys.utils.NavigationUtils;
 import com.property.keys.utils.PropertyUtils;
@@ -149,6 +150,7 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
 
         binding.navigation.setNavigationItemSelectedListener(this);
         View view = binding.navigation.getHeaderView(0);
+
         ImageView navigationProfileImage = view.findViewById(R.id.navigationProfileImage);
         TextView firstNameLabel = view.findViewById(R.id.firstName);
         TextView lastNameLabel = view.findViewById(R.id.lastName);
@@ -174,7 +176,7 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
         binding.drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationUtils.initNavigation(binding.navigation);
+        NavigationUtils.initNavigation(binding.navigation, user.getRole());
         ImageUtils.syncAndLoadImagesProfile(this, user, navigationProfileImage);
 
         onImageChangedBroadcastReceiver = new OnImageChangedBroadcastReceiver();
@@ -290,6 +292,10 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
             case R.id.navigationDashboard:
                 tag = "dashboard";
                 fragment = new Dashboard(binding.bottomNavigationMenu, binding.navigation, binding.toolbar);
+                break;
+            case R.id.navigationUsers:
+                tag = "users";
+                fragment = new Users(binding.bottomNavigationMenu, binding.toolbar);
                 break;
             case R.id.navigationHistory:
                 tag = "history";

@@ -4,6 +4,7 @@
     <style name="Theme.MyApp" parent="Base.Theme.MyApp" />
     <!--Base custom theme which will be shared between both light and dark theme variants-->
     <style name="Base.Theme.MyApp" parent="Base.Theme.MaterialThemeBuilder">
+        <item name="fontFamily">@font/roboto</item>
         <!--Material color attributes (light theme) -->
         <!--colorPrimary colors map to components and elements, such as app bars and buttons. -->
         <!--colorSecondary colors are most often used as accents on components, such as FABs and -->

@@ -9,21 +9,21 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.navigation.NavigationView;
 import com.property.keys.R;
+import com.property.keys.entities.Role;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class NavigationUtils {
     private static final String TAG = "NavigationUtils";
 
-    private static final float END_SCALE = 0.7f;
-
     private NavigationUtils() {
         throw new AssertionError("No instance for you!");
     }
 
-    public static void initNavigation(NavigationView view) {
-
+    public static void initNavigation(NavigationView view, Role role) {
         view.bringToFront();
         view.setCheckedItem(R.id.navigationDashboard);
+
+        view.getMenu().findItem(R.id.navigationUsers).setVisible(role == Role.ADMIN);
     }
 
     @Deprecated

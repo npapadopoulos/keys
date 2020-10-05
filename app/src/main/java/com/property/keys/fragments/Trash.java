@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
@@ -33,7 +32,9 @@ import com.property.keys.adapters.PropertyAdapter;
 import com.property.keys.adapters.PropertyHolder;
 import com.property.keys.databinding.FragmentTrashBinding;
 import com.property.keys.entities.Property;
+import com.property.keys.entities.Role;
 import com.property.keys.entities.User;
+import com.property.keys.filters.FirebaseRecyclerOptions;
 import com.property.keys.helpers.RecyclerItemTouchHelper;
 import com.property.keys.utils.PropertyUtils;
 import com.property.keys.utils.UserUtils;
@@ -57,7 +58,7 @@ public class Trash extends Fragment implements FirebaseAuth.AuthStateListener, R
     private ChipNavigationBar bottomNavigationMenu;
     private NavigationView navigation;
     private MaterialToolbar toolbar;
-    private User user;
+    private boolean isAdmin;
 
     public Trash(ChipNavigationBar bottomNavigationMenu, NavigationView navigation, MaterialToolbar toolbar) {
         this.bottomNavigationMenu = bottomNavigationMenu;
@@ -83,16 +84,18 @@ public class Trash extends Fragment implements FirebaseAuth.AuthStateListener, R
         toolbar.setEnabled(true);
         toolbar.setVisibility(View.VISIBLE);
 
-        user = UserUtils.getLocalUser(requireContext());
-
         binding.deletedPropertyList.setLayoutManager(linearLayoutManager);
         binding.deletedPropertyList.setItemAnimator(new DefaultItemAnimator());
         binding.deletedPropertyList.addItemDecoration(new DividerItemDecoration(requireContext(), DividerItemDecoration.VERTICAL));
 
-        Utils.initSwipeProperty(binding.deletedPropertyList, this, true);
+        User user = UserUtils.getLocalUser(requireContext());
+        isAdmin = user.getRole() == Role.ADMIN;
+        Utils.initSwipeProperty(binding.deletedPropertyList, this, true, isAdmin);
 
-        addOnClearListener();
-        addOnScrollListener();
+        if (isAdmin) {
+            addOnClearListener();
+            addOnScrollListener();
+        }
 
         return binding.getRoot();
     }
@@ -167,8 +170,9 @@ public class Trash extends Fragment implements FirebaseAuth.AuthStateListener, R
                         .setLifecycleOwner(this)
                         .build();
 
+        getActivity().findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
         if (adapter == null) {
-            adapter = new PropertyAdapter(options, this.requireActivity(), binding.emptyTrash, true);
+            adapter = new PropertyAdapter(options, this.requireActivity(), binding.emptyTrash, true, isAdmin);
             // Scroll to bottom on new properties
             adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {
                 @Override
