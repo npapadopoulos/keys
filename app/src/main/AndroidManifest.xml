@@ -29,9 +29,6 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity
-            android:name=".fragments.AddProperty"
-            android:screenOrientation="portrait" />
-        <activity
             android:name=".PropertyDetails"
             android:parentActivityName=".Container"
             android:screenOrientation="portrait" />

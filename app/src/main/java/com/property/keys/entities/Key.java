@@ -19,9 +19,13 @@ public class Key implements Parcelable {
     private String id;
     private String propertyId;
     private String checkedInDate;
+    private String checkinReason;
     private String checkedOutDate;
+    private String estimatedCheckinDate;
     private String lastCheckOutDate;
     private String lastCheckedInUser;
+    private String location;
+    private String purpose;
 
     public static final Parcelable.Creator<Key> CREATOR = new Parcelable.Creator<Key>() {
         @Override
@@ -39,9 +43,13 @@ public class Key implements Parcelable {
         id = in.readString();
         propertyId = in.readString();
         checkedInDate = in.readString();
+        checkinReason = in.readString();
         checkedOutDate = in.readString();
+        estimatedCheckinDate = in.readString();
         lastCheckOutDate = in.readString();
         lastCheckedInUser = in.readString();
+        location = in.readString();
+        purpose = in.readString();
     }
 
     @Override
@@ -54,8 +62,12 @@ public class Key implements Parcelable {
         parcel.writeString(id);
         parcel.writeString(propertyId);
         parcel.writeString(checkedInDate);
+        parcel.writeString(checkinReason);
         parcel.writeString(checkedOutDate);
+        parcel.writeString(estimatedCheckinDate);
         parcel.writeString(lastCheckOutDate);
         parcel.writeString(lastCheckedInUser);
+        parcel.writeString(location);
+        parcel.writeString(purpose);
     }
 }

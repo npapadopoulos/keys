@@ -102,12 +102,6 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        search(lastQuery);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentPropertiesBinding.inflate(getLayoutInflater(), container, false);
@@ -320,7 +314,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
     @Override
     public void onStart() {
         super.onStart();
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null && adapter == null) {
             attachRecyclerViewAdapter(propertiesQuery, true);
         }
         FirebaseAuth.getInstance().addAuthStateListener(this);

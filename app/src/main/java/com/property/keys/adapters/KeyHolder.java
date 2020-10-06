@@ -30,7 +30,7 @@ import java.util.Objects;
 public class KeyHolder extends RecyclerView.ViewHolder implements Holder {
 
     private ImageView qrCodeImage;
-    private TextView checkedInDetails, checkedInDate;
+    private TextView checkedInDetails, checkedInDate, location, purpose;
     private RelativeLayout keyBackground, keyForeground, keyDetails;
     private User user;
 
@@ -38,11 +38,12 @@ public class KeyHolder extends RecyclerView.ViewHolder implements Holder {
         super(itemView);
 
         qrCodeImage = itemView.findViewById(R.id.qrCodeImage);
+        location = itemView.findViewById(R.id.location);
+        purpose = itemView.findViewById(R.id.purpose);
         checkedInDate = itemView.findViewById(R.id.checkedInDate);
         checkedInDetails = itemView.findViewById(R.id.checkedInDetails);
         keyForeground = itemView.findViewById(R.id.keyForeground);
         keyBackground = itemView.findViewById(R.id.keyBackground);
-        keyForeground = itemView.findViewById(R.id.keyForeground);
         keyDetails = itemView.findViewById(R.id.keyDetails);
         this.user = user;
     }
@@ -60,17 +61,19 @@ public class KeyHolder extends RecyclerView.ViewHolder implements Holder {
     }
 
     public void bind(@NonNull Context context, @NonNull Key key, String propertyName) {
+        location.setText(key.getLocation());
+        purpose.setText(key.getPurpose());
         if (key.getCheckedInDate() != null) {
 
             String userFullName = key.getLastCheckedInUser();
             if (userFullName.equals(user.getFirstName() + " " + user.getLastName())) {
-                userFullName = "You have";
+                userFullName = "You took";
             } else {
-                userFullName = userFullName + " has";
+                userFullName = userFullName + " took";
             }
 
             checkedInDate.setText(key.getCheckedInDate());
-            checkedInDetails.setText(userFullName + " the key.");
+            checkedInDetails.setText(userFullName + " the key for " + key.getCheckinReason() + ".");
             keyDetails.setBackground(ContextCompat.getDrawable(context, R.drawable.key_busy_background));
         } else {
             checkedInDate.setText("");

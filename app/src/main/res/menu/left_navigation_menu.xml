@@ -8,7 +8,7 @@
             android:title="@string/dashboard" />
         <item
             android:id="@+id/navigationUsers"
-            android:icon="@drawable/user"
+            android:icon="@drawable/profile"
             android:title="@string/users"
             android:visible="false" />
         <item

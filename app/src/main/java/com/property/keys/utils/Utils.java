@@ -57,14 +57,22 @@ public class Utils {
     }
 
     public static Boolean validateText(TextInputLayout textInputLayout, int max) {
+        return validateText(textInputLayout, 1, max);
+    }
+
+    public static Boolean validateText(TextInputLayout textInputLayout, int min, int max) {
         String value = textInputLayout.getEditText().getText().toString().trim();
         if (value.isEmpty()) {
             Timber.tag(TAG).v("Cannot be empty: '" + value + "'");
             textInputLayout.setError("cannot be empty");
             return false;
+        } else if (value.length() < min) {
+            Timber.tag(TAG).v("Cannot be less than " + min + " characters length: '" + value + "'.");
+            textInputLayout.setError("cannot be less than " + min + " characters length: '" + value + "'.");
+            return false;
         } else if (value.length() > max && max != -1) {
             Timber.tag(TAG).v("Cannot exceed " + max + " characters length: '" + value + "'.");
-            textInputLayout.setError("Cannot exceed " + max + " characters length.");
+            textInputLayout.setError("cannot exceed " + max + " characters length.");
             return false;
         } else {
             reset(textInputLayout);

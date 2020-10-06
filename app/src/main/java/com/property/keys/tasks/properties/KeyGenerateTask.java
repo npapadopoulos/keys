@@ -28,12 +28,17 @@ public class KeyGenerateTask extends AbstractAsyncTask {
 
     private final Activity activity;
     private final Property property;
+    private final String location;
+    private final String purpose;
 
     @Override
     public void runInBackground() {
+        //TODO populate all fields
         Key key = Key.builder()
                 .id(UUID.randomUUID().toString())
                 .propertyId(property.getId())
+                .location(location)
+                .purpose(purpose)
                 .build();
 
         firebaseDatabase.getReference("keys").child(key.getId()).setValue(key)

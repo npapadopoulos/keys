@@ -39,6 +39,7 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
     private List<T> list, backupList;
     private Class<T> clazz;
     private ProgressBar progressBar;
+    private boolean filtered = false;
 
     /**
      * Initialize a {@link RecyclerView.Adapter} that listens to a Firebase query. See
@@ -190,7 +191,7 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
     @NonNull
     @Override
     public T getItem(int position) {
-        return list.get(position);
+        return filtered ? list.get(position) : snapshots.get(position);
     }
 
     @NonNull
@@ -201,7 +202,7 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
 
     @Override
     public int getItemCount() {
-        return snapshots.isListening(this) ? list.size() : 0;
+        return filtered ? list.size() : snapshots.size();
     }
 
     /**
@@ -269,6 +270,7 @@ public abstract class FirebaseRecyclerAdapter<T, VH extends RecyclerView.ViewHol
         if (filter == null) {
             filter = new SearchFilter();
         }
+        filtered = true;
         return filter;
     }
 

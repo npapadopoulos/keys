@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/keyDialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="@string/location"
+        android:textAppearance="?attr/textAppearanceHeadline6"
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/location"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:checkedButton="@+id/office">
+
+        <RadioButton
+            android:id="@+id/office"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/office"
+            app:useMaterialThemeColors="true" />
+
+        <RadioButton
+            android:id="@+id/keybox"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/keybox"
+            app:useMaterialThemeColors="true" />
+    </RadioGroup>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="20dp"
+        android:text="@string/purpose"
+        android:textAppearance="?attr/textAppearanceHeadline6"
+        android:textStyle="bold" />
+
+    <RadioGroup
+        android:id="@+id/purpose"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginBottom="20dp"
+        android:checkedButton="@+id/building">
+
+        <RadioButton
+            android:id="@+id/building"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/building"
+            app:useMaterialThemeColors="true" />
+
+        <RadioButton
+            android:id="@+id/apartment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/apartment"
+            app:useMaterialThemeColors="true" />
+
+        <RadioButton
+            android:id="@+id/postbox"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/postbox"
+            app:useMaterialThemeColors="true" />
+
+        <RadioButton
+            android:id="@+id/meter"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/meter_cabinet"
+            app:useMaterialThemeColors="true" />
+    </RadioGroup>
+</LinearLayout>

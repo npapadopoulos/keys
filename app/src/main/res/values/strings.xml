@@ -75,4 +75,18 @@
     <string name="apply">Apply</string>
     <string name="users">Users</string>
     <string name="admin">Admin</string>
+    <string name="keybox">Key Box</string>
+    <string name="office">Office</string>
+    <string name="location">Location</string>
+    <string name="purpose">Purpose</string>
+    <string name="building">Building</string>
+    <string name="apartment">Apartment</string>
+    <string name="postbox">Postbox</string>
+    <string name="meter_cabinet">Meter Cabinet</string>
+    <string name="cleaning">Cleaning</string>
+    <string name="other">Other</string>
+    <string name="external_partner">External Partner</string>
+    <string name="maintenance">Maintenance</string>
+    <string name="viewing">Viewing</string>
+    <string name="inspection">Inspection</string>
 </resources>

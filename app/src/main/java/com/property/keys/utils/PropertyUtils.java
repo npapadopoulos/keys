@@ -62,8 +62,8 @@ public class PropertyUtils {
         new TaskExecutor().executeAsync(new PropertyUpdateTask(activity, property, keyId, null, Action.DELETED_KEY));
     }
 
-    public static void generateKey(Activity activity, Property property) {
-        new TaskExecutor().executeAsync(new KeyGenerateTask(activity, property));
+    public static void generateKey(Activity activity, Property property, String location, String purpose) {
+        new TaskExecutor().executeAsync(new KeyGenerateTask(activity, property, location, purpose));
     }
 
 //    public static void createMap(Context context, Bundle savedInstanceState, MapView view, Property property) {

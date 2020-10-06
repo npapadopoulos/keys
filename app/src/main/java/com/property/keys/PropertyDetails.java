@@ -13,6 +13,8 @@ import android.provider.MediaStore;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -78,7 +80,7 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
     @Override
     public void onStart() {
         super.onStart();
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null && adapter == null) {
             attachRecyclerViewAdapter();
         }
         FirebaseAuth.getInstance().addAuthStateListener(this);
@@ -148,6 +150,7 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
 
         boolean isAdmin = user.getRole() == Role.ADMIN;
         if (isAdmin) {
+            binding.addNewKey.setVisibility(View.VISIBLE);
             binding.propertyImage.setOnClickListener(this::updateImage);
             addOnScrollListener();
             binding.addNewKey.setOnClickListener(this::addNewKey);
@@ -220,11 +223,20 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
     }
 
     private void addNewKey(View v) {
+        View dialog = getLayoutInflater().inflate(R.layout.create_key_dialog, null);
+
+        RadioGroup location = dialog.findViewById(R.id.location);
+        RadioGroup purpose = dialog.findViewById(R.id.purpose);
+
         new MaterialAlertDialogBuilder(this)
-                .setMessage("Are you sure you want to add new key?")
-                .setPositiveButton("Yes", (dialogInterface, i) -> PropertyUtils.generateKey(this, property))
+                .setView(dialog)
+                .setPositiveButton("Add new key", (dialogInterface, i) -> {
+                    CharSequence locationValue = ((RadioButton) dialog.findViewById(location.getCheckedRadioButtonId())).getText();
+                    CharSequence purposeValue = ((RadioButton) dialog.findViewById(purpose.getCheckedRadioButtonId())).getText();
+                    PropertyUtils.generateKey(this, property, locationValue.toString(), purposeValue.toString());
+                })
                 .setBackground(ContextCompat.getDrawable(this, R.drawable.white_card_background))
-                .setNegativeButton("No", Utils::onClick)
+                .setNegativeButton("Cancel", Utils::onClick)
                 .setCancelable(false)
                 .setOnKeyListener((d, keyCode, event) -> {
                     if (keyCode == KeyEvent.KEYCODE_BACK) {
@@ -283,7 +295,9 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
 
     @Override
     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-        attachRecyclerViewAdapter();
+        if (adapter == null) {
+            attachRecyclerViewAdapter();
+        }
     }
 
     @Override

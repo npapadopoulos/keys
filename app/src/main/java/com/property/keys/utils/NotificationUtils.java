@@ -6,6 +6,7 @@ import android.os.Build;
 import androidx.annotation.RequiresApi;
 
 import com.property.keys.entities.Action;
+import com.property.keys.entities.Key;
 import com.property.keys.entities.Property;
 import com.property.keys.entities.User;
 import com.property.keys.tasks.TaskExecutor;
@@ -21,47 +22,47 @@ public class NotificationUtils {
     }
 
     public static void create(Activity activity, Property property, Action action) {
-        create(activity, property.getId(), property.getName(), action);
+        create(activity, property, null, action);
     }
 
-    public static void create(Activity activity, String propertyId, String propertyName, Action action) {
-        User currentUser = UserUtils.getLocalUser(activity.getApplicationContext());
+    public static void create(Activity activity, Property property, Key key, Action action) {
+        User user = UserUtils.getLocalUser(activity.getApplicationContext());
         String description;
         switch (action) {
             case ADDED_PROPERTY: {
-                description = currentUser.getFirstName() + " added new property '" + propertyName + "'.";
+                description = user.getFirstName() + " added new property '" + property.getName() + "'.";
                 break;
             }
             case DELETED_PROPERTY: {
-                description = currentUser.getFirstName() + " deleted property '" + propertyName + "'.";
+                description = user.getFirstName() + " deleted property '" + property.getName() + "'.";
                 break;
             }
             case MOVED_TO_TRASH_PROPERTY: {
-                description = currentUser.getFirstName() + " moved property '" + propertyName + "' to trash.";
+                description = user.getFirstName() + " moved property '" + property.getName() + "' to trash.";
                 break;
             }
             case RESTORED_FROM_TRASH_PROPERTY: {
-                description = currentUser.getFirstName() + " restored property '" + propertyName + "' from trash.";
+                description = user.getFirstName() + " restored property '" + property.getName() + "' from trash.";
                 break;
             }
             case UPDATED_PROPERTY: {
-                description = currentUser.getFirstName() + " updated property '" + propertyName + "'.";
+                description = user.getFirstName() + " updated property '" + property.getName() + "'.";
                 break;
             }
             case ADDED_KEY: {
-                description = currentUser.getFirstName() + " added new key for property '" + propertyName + "'.";
+                description = user.getFirstName() + " added new key for property '" + property.getName() + "'.";
                 break;
             }
             case DELETED_KEY: {
-                description = currentUser.getFirstName() + " deleted key from property '" + propertyName + "'.";
+                description = user.getFirstName() + " deleted key from property '" + property.getName() + "'.";
                 break;
             }
             case CHECKED_IN: {
-                description = currentUser.getFirstName() + " checked in key for property '" + propertyName + "'.";
+                description = user.getFirstName() + " checked in key for property '" + property.getName() + "'.";
                 break;
             }
             case CHECKED_OUT: {
-                description = currentUser.getFirstName() + " checked out key for property '" + propertyName + "'.";
+                description = user.getFirstName() + " checked out key for property '" + property.getName() + "'.";
                 break;
             }
             default:
@@ -72,7 +73,9 @@ public class NotificationUtils {
                 NotificationCreateTask.builder()
                         .activity(activity)
                         .description(description)
-                        .propertyId(propertyId)
+                        .user(user)
+                        .property(property)
+                        .key(key)
                         .action(action)
                         .build());
     }

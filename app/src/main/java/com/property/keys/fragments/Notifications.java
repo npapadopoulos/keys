@@ -158,7 +158,7 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
     @Override
     public void onStart() {
         super.onStart();
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null && adapter == null) {
             attachRecyclerViewAdapter();
         }
         FirebaseAuth.getInstance().addAuthStateListener(this);
@@ -172,7 +172,9 @@ public class Notifications extends Fragment implements FirebaseAuth.AuthStateLis
 
     @Override
     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-        attachRecyclerViewAdapter();
+        if (adapter == null) {
+            attachRecyclerViewAdapter();
+        }
     }
 
     private void attachRecyclerViewAdapter() {

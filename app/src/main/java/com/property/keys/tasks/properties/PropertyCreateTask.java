@@ -39,7 +39,7 @@ public class PropertyCreateTask extends AbstractAsyncTask {
                 .addOnCompleteListener(activity, task -> {
                     if (task.isSuccessful()) {
                         try {
-                            NotificationUtils.create(activity, property.getId(), property.getName(), Action.ADDED_PROPERTY);
+                            NotificationUtils.create(activity, property, Action.ADDED_PROPERTY);
                             Intent next = new Intent(activity, Container.class);
                             next.putExtra("selected", "Properties");
                             startActivity.accept(next);

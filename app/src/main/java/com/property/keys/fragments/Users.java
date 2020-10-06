@@ -71,7 +71,7 @@ public class Users extends Fragment implements FirebaseAuth.AuthStateListener {
     @Override
     public void onStart() {
         super.onStart();
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null && adapter == null) {
             attachRecyclerViewAdapter();
         }
         FirebaseAuth.getInstance().addAuthStateListener(this);
@@ -85,7 +85,9 @@ public class Users extends Fragment implements FirebaseAuth.AuthStateListener {
 
     @Override
     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-        attachRecyclerViewAdapter();
+        if (adapter == null) {
+            attachRecyclerViewAdapter();
+        }
     }
 
     private void attachRecyclerViewAdapter() {

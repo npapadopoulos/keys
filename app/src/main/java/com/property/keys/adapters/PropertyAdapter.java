@@ -59,15 +59,15 @@ public class PropertyAdapter extends FirebaseRecyclerAdapter<Property, PropertyH
 
     @Override
     public void onDataChanged() {
-        if (isAdmin) {
-            if (getItemCount() == 0) {
-                background.setVisibility(View.VISIBLE);
-                if (deleteProperties != null) {
-                    deleteProperties.setVisibility(View.GONE);
-                }
-            } else {
-                background.setVisibility(View.INVISIBLE);
-                if (deleteProperties != null) {
+        if (getItemCount() == 0) {
+            background.setVisibility(View.VISIBLE);
+            if (deleteProperties != null) {
+                deleteProperties.setVisibility(View.GONE);
+            }
+        } else {
+            background.setVisibility(View.INVISIBLE);
+            if (deleteProperties != null) {
+                if (isAdmin) {
                     deleteProperties.setVisibility(View.VISIBLE);
                 }
             }
@@ -90,12 +90,10 @@ public class PropertyAdapter extends FirebaseRecyclerAdapter<Property, PropertyH
 
     @Override
     public void postFilterUpdate(int count) {
-        if (isAdmin) {
-            if (count == 0) {
-                background.setVisibility(View.VISIBLE);
-            } else {
-                background.setVisibility(View.INVISIBLE);
-            }
+        if (count == 0) {
+            background.setVisibility(View.VISIBLE);
+        } else {
+            background.setVisibility(View.INVISIBLE);
         }
     }
 }

@@ -144,7 +144,7 @@ public class Trash extends Fragment implements FirebaseAuth.AuthStateListener, R
     @Override
     public void onStart() {
         super.onStart();
-        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null && adapter == null) {
             attachRecyclerViewAdapter(propertiesQuery, true);
         }
         FirebaseAuth.getInstance().addAuthStateListener(this);
