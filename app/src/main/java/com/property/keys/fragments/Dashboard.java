@@ -1,11 +1,13 @@
 package com.property.keys.fragments;
 
+import android.content.Context;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
@@ -70,18 +72,21 @@ public class Dashboard extends Fragment {
         toolbar.setEnabled(true);
         toolbar.setVisibility(View.VISIBLE);
 
+        final ProgressBar progressBar = getActivity().findViewById(R.id.progressBar);
+        final Context context = requireContext();
+
         keysQuery.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                getActivity().findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.VISIBLE);
                 List<Key> temp = new ArrayList<>();
                 dataSnapshot.getChildren().forEach(child -> temp.add(child.getValue(Key.class)));
 
                 keysPerStatus.clear();
                 keysPerStatus.putAll(temp.stream().collect(groupingBy(key -> key.getCheckedInDate() != null)));
 
-                setPieChartData(keysPerStatus);
-                getActivity().findViewById(R.id.progressBar).setVisibility(View.GONE);
+                setPieChartData(keysPerStatus, context);
+                progressBar.setVisibility(View.GONE);
             }
 
             @Override
@@ -121,7 +126,7 @@ public class Dashboard extends Fragment {
         this.pieChart.setEntryLabelTextSize(15f);
     }
 
-    private void setPieChartData(Map<Boolean, List<Key>> data) {
+    private void setPieChartData(Map<Boolean, List<Key>> data, Context context) {
         ArrayList<PieEntry> entries = new ArrayList<>();
 
         data.forEach((key, values) -> entries.add(new PieEntry(values.size(), key ? "Busy" : "Available")));
@@ -148,8 +153,8 @@ public class Dashboard extends Fragment {
 
         // add a lot of colors
         ArrayList<Integer> colors = new ArrayList<>();
-        colors.add(ContextCompat.getColor(requireContext(), R.color.red_600));
-        colors.add(ContextCompat.getColor(requireContext(), R.color.green));
+        colors.add(ContextCompat.getColor(context, R.color.red_600));
+        colors.add(ContextCompat.getColor(context, R.color.green));
 
         dataSet.setColors(colors);
 

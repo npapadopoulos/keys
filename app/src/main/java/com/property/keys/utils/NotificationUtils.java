@@ -2,6 +2,7 @@ package com.property.keys.utils;
 
 import android.app.Activity;
 import android.os.Build;
+import android.text.TextUtils;
 
 import androidx.annotation.RequiresApi;
 
@@ -58,7 +59,7 @@ public class NotificationUtils {
                 break;
             }
             case CHECKED_IN: {
-                description = "checked in " + key.getPurpose() + " key of property '" + property.getName() + "' for " + key.getCheckInReason() + (key.getEstimatedCheckInDate() != null ? " and will return back to " + key.getLocation() + " on " + key.getEstimatedCheckInDate() : "") + ".";
+                description = "checked in " + key.getPurpose() + " key of property '" + property.getName() + "' for " + key.getCheckInReason() + (!TextUtils.isEmpty(key.getEstimatedCheckInDate()) ? " and will return back to " + key.getLocation() + " on " + key.getEstimatedCheckInDate() : "") + ".";
                 break;
             }
             case CHECKED_OUT: {

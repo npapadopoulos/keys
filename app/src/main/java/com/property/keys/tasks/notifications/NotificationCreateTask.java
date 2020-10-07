@@ -105,7 +105,7 @@ public class NotificationCreateTask extends AbstractAsyncTask {
                     .userId(user.getId())
                     .firstName(user.getFirstName())
                     .lastName(user.getLastName())
-                    .description(description.substring(0, 1).toUpperCase() + description.substring(1).toLowerCase())
+                    .description(description.substring(0, 1).toUpperCase() + description.substring(1))
                     .key(key)
                     .build();
 
