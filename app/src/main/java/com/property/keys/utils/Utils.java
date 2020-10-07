@@ -164,10 +164,14 @@ public class Utils {
     public static String addCountryCodeIfMissing(String phoneNumber) {
         //Cyprus case
         if ((phoneNumber.startsWith("+357") && phoneNumber.length() == 12)
-                || (phoneNumber.startsWith("00357") && phoneNumber.length() == 13)) {
+                || (phoneNumber.startsWith("00357") && phoneNumber.length() == 13)
+                || (phoneNumber.startsWith("+44") && phoneNumber.length() == 11)
+                || (phoneNumber.startsWith("0044") && phoneNumber.length() == 12)) {
             return phoneNumber;
         } else if (phoneNumber.length() == 8) {
             return "+357" + phoneNumber;
+        } else if (phoneNumber.length() == 10) {
+            return "+44" + phoneNumber;
         } else {
             return phoneNumber;
         }
