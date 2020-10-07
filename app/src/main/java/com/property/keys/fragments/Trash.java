@@ -17,7 +17,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.appbar.AppBarLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
@@ -43,7 +42,7 @@ import com.property.keys.utils.Utils;
 import lombok.Getter;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
-public class Trash extends Fragment implements FirebaseAuth.AuthStateListener, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener, AppBarLayout.OnOffsetChangedListener {
+public class Trash extends Fragment implements FirebaseAuth.AuthStateListener, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
 
     @NonNull
     protected static final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
@@ -80,9 +79,8 @@ public class Trash extends Fragment implements FirebaseAuth.AuthStateListener, R
         linearLayoutManager.setReverseLayout(true);
 
         bottomNavigationMenu.setItemSelected(bottomNavigationMenu.getSelectedItemId(), false);
-        navigation.getCheckedItem().setChecked(false);
-        toolbar.setEnabled(true);
-        toolbar.setVisibility(View.VISIBLE);
+        this.toolbar.setEnabled(true);
+        this.toolbar.setVisibility(View.VISIBLE);
 
         binding.deletedPropertyList.setLayoutManager(linearLayoutManager);
         binding.deletedPropertyList.setItemAnimator(new DefaultItemAnimator());
@@ -145,7 +143,7 @@ public class Trash extends Fragment implements FirebaseAuth.AuthStateListener, R
     public void onStart() {
         super.onStart();
         if (FirebaseAuth.getInstance().getCurrentUser() != null && adapter == null) {
-            attachRecyclerViewAdapter(propertiesQuery, true);
+            attachRecyclerViewAdapter();
         }
         FirebaseAuth.getInstance().addAuthStateListener(this);
     }
@@ -159,14 +157,14 @@ public class Trash extends Fragment implements FirebaseAuth.AuthStateListener, R
     @Override
     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
         if (adapter == null) {
-            attachRecyclerViewAdapter(propertiesQuery, true);
+            attachRecyclerViewAdapter();
         }
     }
 
-    private void attachRecyclerViewAdapter(Query query, boolean filter) {
+    private void attachRecyclerViewAdapter() {
         FirebaseRecyclerOptions<Property> options =
                 new FirebaseRecyclerOptions.Builder<Property>()
-                        .setQuery(query, Property.class)
+                        .setQuery(propertiesQuery, Property.class)
                         .setLifecycleOwner(this)
                         .build();
 
@@ -230,10 +228,5 @@ public class Trash extends Fragment implements FirebaseAuth.AuthStateListener, R
 
             }
         }
-    }
-
-    @Override
-    public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) {
-
     }
 }

@@ -9,7 +9,6 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
-import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
@@ -41,7 +40,7 @@ import java.util.Map;
 import static java.util.stream.Collectors.groupingBy;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
-public class Dashboard extends Fragment implements ActivityCompat.OnRequestPermissionsResultCallback {
+public class Dashboard extends Fragment {
     private static final String TAG = Dashboard.class.getSimpleName();
 
     private ChipNavigationBar bottomNavigationMenu;
@@ -67,7 +66,7 @@ public class Dashboard extends Fragment implements ActivityCompat.OnRequestPermi
         bottomNavigationMenu.setItemSelected(R.id.bottom_navigation_dashboard, true);
         navigation.setCheckedItem(R.id.navigationDashboard);
         navigation.getCheckedItem().setChecked(true);
-        toolbar.setTitle("Dashboard");
+        this.toolbar.setTitle("Dashboard");
         toolbar.setEnabled(true);
         toolbar.setVisibility(View.VISIBLE);
 

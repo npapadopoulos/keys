@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -36,11 +37,13 @@ public class Users extends Fragment implements FirebaseAuth.AuthStateListener {
     private Container container;
 
     private ChipNavigationBar bottomNavigationMenu;
+    private NavigationView navigation;
     private MaterialToolbar toolbar;
     private String userId;
 
-    public Users(ChipNavigationBar bottomNavigationMenu, MaterialToolbar toolbar) {
+    public Users(ChipNavigationBar bottomNavigationMenu, NavigationView navigation, MaterialToolbar toolbar) {
         this.bottomNavigationMenu = bottomNavigationMenu;
+        this.navigation = navigation;
         this.toolbar = toolbar;
     }
 
@@ -48,10 +51,14 @@ public class Users extends Fragment implements FirebaseAuth.AuthStateListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentUsersBinding.inflate(getLayoutInflater(), container, false);
+
+        navigation.setCheckedItem(R.id.navigationUsers);
+        navigation.getCheckedItem().setChecked(true);
         bottomNavigationMenu.setItemSelected(bottomNavigationMenu.getSelectedItemId(), false);
-        toolbar.setTitle("Users");
-        toolbar.setEnabled(true);
-        toolbar.setVisibility(View.VISIBLE);
+
+        this.toolbar.setTitle("Users");
+        this.toolbar.setEnabled(true);
+        this.toolbar.setVisibility(View.VISIBLE);
         this.container = (Container) getActivity();
 
         userId = UserUtils.getLocalUser(requireContext()).getId();

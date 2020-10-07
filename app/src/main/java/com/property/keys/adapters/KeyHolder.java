@@ -73,14 +73,14 @@ public class KeyHolder extends RecyclerView.ViewHolder implements Holder {
             }
 
             checkedInDate.setText(key.getCheckedInDate());
-            checkedInDetails.setText(userFullName + " the key for " + key.getCheckinReason() + ".");
+            checkedInDetails.setText(userFullName + " the key for " + key.getCheckInReason() + ".");
             keyDetails.setBackground(ContextCompat.getDrawable(context, R.drawable.key_busy_background));
         } else {
             checkedInDate.setText("");
             checkedInDetails.setText("Key is available.");
             keyDetails.setBackground(ContextCompat.getDrawable(context, R.drawable.key_available_background));
         }
-        ImageUtils.syncAndloadImagesKey(context, key.getId(), qrCodeImage, (image) -> itemView.setOnClickListener(v -> {
+        ImageUtils.syncAndloadImagesKey(context, key.getId(), qrCodeImage, (image) -> itemView.setOnLongClickListener(v -> {
             Bitmap bitmap = BitmapFactory.decodeFile(image.getPath());
             Bitmap copiedBitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
 
@@ -94,6 +94,7 @@ public class KeyHolder extends RecyclerView.ViewHolder implements Holder {
             shareIntent.setType("image/jpeg");
 
             context.startActivity(Intent.createChooser(shareIntent, context.getResources().getText(R.string.print_qrcode)));
+            return true;
         }));
     }
 

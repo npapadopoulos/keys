@@ -17,7 +17,7 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/primaryColor"
             android:theme="@style/ToolbarDialog"
-            app:menu="@menu/add_property_menu"
+            app:menu="@menu/submit_menu"
             app:navigationIcon="@drawable/ic_baseline_close_24"
             app:title="@string/add_property"
             app:titleTextColor="@color/white_50" />

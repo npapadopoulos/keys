@@ -31,24 +31,16 @@ public class HistoryDetails implements Parcelable {
     private String userId;
     private String firstName;
     private String lastName;
-    private String propertyId;
-    private String propertyName;
-    private String keyId;
-    private String checkedInDate;
-    private String checkedOutDate;
-    private String reason;
+    private String description;
+    private Key key;
 
     protected HistoryDetails(Parcel in) {
         id = in.readString();
         userId = in.readString();
         firstName = in.readString();
         lastName = in.readString();
-        propertyId = in.readString();
-        propertyName = in.readString();
-        keyId = in.readString();
-        checkedInDate = in.readString();
-        checkedOutDate = in.readString();
-        reason = in.readString();
+        description = in.readString();
+        key = in.readParcelable(Key.class.getClassLoader());
     }
 
     @Override
@@ -62,11 +54,7 @@ public class HistoryDetails implements Parcelable {
         parcel.writeString(userId);
         parcel.writeString(firstName);
         parcel.writeString(lastName);
-        parcel.writeString(propertyId);
-        parcel.writeString(propertyName);
-        parcel.writeString(keyId);
-        parcel.writeString(checkedInDate);
-        parcel.writeString(checkedOutDate);
-        parcel.writeString(reason);
+        parcel.writeString(description);
+        parcel.writeParcelable(key, 0);
     }
 }

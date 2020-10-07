@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/historyContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp">
+
+    <RelativeLayout
+        android:id="@+id/historyForeground"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/white_card_background">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card"
+            style="@style/MaterialCardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:id="@+id/propertyImage"
+                    android:layout_width="110dp"
+                    android:layout_height="120dp"
+                    android:layout_margin="10dp"
+                    android:scaleType="centerInside"
+                    android:transitionName="propertyImage"
+                    app:srcCompat="@drawable/background" />
+
+                <TextView
+                    android:id="@+id/checkInDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_toEndOf="@id/propertyImage"
+                    android:gravity="end"
+                    android:maxLines="2"
+                    android:text="12/12/2020"
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textSize="14sp"
+                    android:transitionName="propertyAddress" />
+
+                <TextView
+                    android:id="@+id/description"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/checkInDate"
+                    android:layout_marginStart="10dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginEnd="10dp"
+                    android:layout_toEndOf="@id/propertyImage"
+                    android:text="Valeria key of property '' was checked in for cleaning and will be returned on 13/12/2020."
+                    android:textAppearance="?attr/textAppearanceBody2"
+                    android:textSize="14sp"
+                    android:transitionName="propertyAddress" />
+
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+    </RelativeLayout>
+</FrameLayout>

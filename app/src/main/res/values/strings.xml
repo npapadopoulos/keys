@@ -89,4 +89,8 @@
     <string name="maintenance">Maintenance</string>
     <string name="viewing">Viewing</string>
     <string name="inspection">Inspection</string>
+    <string name="reason">Reason</string>
+    <string name="check_in">Check In</string>
+    <string name="check_out">Check Out</string>
+    <string name="estimated_check_in_date">Estimated Check In Date</string>
 </resources>

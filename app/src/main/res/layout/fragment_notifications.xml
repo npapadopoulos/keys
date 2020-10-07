@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:orientation="vertical"
-        android:visibility="invisible">
+        android:visibility="gone">
 
         <ImageView
             android:layout_width="250dp"
@@ -65,6 +65,6 @@
         android:layout_marginBottom="50dp"
         android:contentDescription="@string/add_new_key"
         android:src="@drawable/clear"
-        android:visibility="invisible"
+        android:visibility="gone"
         app:backgroundTint="@color/primaryColor" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

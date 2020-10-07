@@ -295,11 +295,11 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
                 break;
             case R.id.navigationUsers:
                 tag = "users";
-                fragment = new Users(binding.bottomNavigationMenu, binding.toolbar);
+                fragment = new Users(binding.bottomNavigationMenu, binding.navigation, binding.toolbar);
                 break;
             case R.id.navigationHistory:
                 tag = "history";
-                fragment = new History(binding.bottomNavigationMenu, binding.toolbar);
+                fragment = new History(binding.bottomNavigationMenu, binding.navigation, binding.toolbar);
                 break;
             case R.id.navigationNotifications:
                 tag = "notifications";

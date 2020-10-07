@@ -30,39 +30,39 @@ public class NotificationUtils {
         String description;
         switch (action) {
             case ADDED_PROPERTY: {
-                description = user.getFirstName() + " added new property '" + property.getName() + "'.";
+                description = "added new property '" + property.getName() + "'.";
                 break;
             }
             case DELETED_PROPERTY: {
-                description = user.getFirstName() + " deleted property '" + property.getName() + "'.";
+                description = "deleted property '" + property.getName() + "'.";
                 break;
             }
             case MOVED_TO_TRASH_PROPERTY: {
-                description = user.getFirstName() + " moved property '" + property.getName() + "' to trash.";
+                description = "moved property '" + property.getName() + "' to trash.";
                 break;
             }
             case RESTORED_FROM_TRASH_PROPERTY: {
-                description = user.getFirstName() + " restored property '" + property.getName() + "' from trash.";
+                description = "restored property '" + property.getName() + "' from trash.";
                 break;
             }
             case UPDATED_PROPERTY: {
-                description = user.getFirstName() + " updated property '" + property.getName() + "'.";
+                description = "updated property '" + property.getName() + "'.";
                 break;
             }
             case ADDED_KEY: {
-                description = user.getFirstName() + " added new key for property '" + property.getName() + "'.";
+                description = "added new key for property '" + property.getName() + "'.";
                 break;
             }
             case DELETED_KEY: {
-                description = user.getFirstName() + " deleted key from property '" + property.getName() + "'.";
+                description = "deleted key from property '" + property.getName() + "'.";
                 break;
             }
             case CHECKED_IN: {
-                description = user.getFirstName() + " checked in key for property '" + property.getName() + "'.";
+                description = "checked in " + key.getPurpose() + " key of property '" + property.getName() + "' for " + key.getCheckInReason() + (key.getEstimatedCheckInDate() != null ? " and will return back to " + key.getLocation() + " on " + key.getEstimatedCheckInDate() : "") + ".";
                 break;
             }
             case CHECKED_OUT: {
-                description = user.getFirstName() + " checked out key for property '" + property.getName() + "'.";
+                description = "checked out " + key.getPurpose() + " key of property '" + property.getName() + "'.";
                 break;
             }
             default:

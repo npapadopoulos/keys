@@ -77,7 +77,7 @@ public class Profile extends Fragment {
 
         bottomNavigationMenu.setItemSelected(R.id.bottom_navigation_profile, true);
         navigation.getCheckedItem().setChecked(false);
-        toolbar.setTitle("Profile");
+        this.toolbar.setTitle("Profile");
 
         this.container = (Container) getActivity();
 

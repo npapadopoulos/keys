@@ -21,6 +21,7 @@ import com.property.keys.entities.User;
 import com.property.keys.tasks.AbstractAsyncTask;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -53,12 +54,10 @@ public class NotificationCreateTask extends AbstractAsyncTask {
      */
     @Override
     public void runInBackground() {
-        record(user);
-
         Notification notification = Notification.builder()
                 .id(UUID.randomUUID().toString())
                 .date(DATE_TIME_FORMATTER.format(LocalDateTime.now()))
-                .description(description)
+                .description(user.getFirstName() + " " + description)
                 .userId(user.getId())
                 .propertyId(property.getId())
                 .firstName(user.getFirstName())
@@ -68,6 +67,9 @@ public class NotificationCreateTask extends AbstractAsyncTask {
 
         update("notifications", notification.getId(), notification, task -> {
             if (task.isSuccessful()) {
+
+                record(user, notification, description);
+
                 firebaseDatabase.getReference("users").addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -96,20 +98,23 @@ public class NotificationCreateTask extends AbstractAsyncTask {
         });
     }
 
-    private void record(User user) {
-        if (key != null && key.getCheckinReason() != null && action == Action.CHECKED_IN || action == Action.CHECKED_OUT) {
+    private void record(User user, Notification notification, String description) {
+        if (action == Action.CHECKED_IN || action == Action.CHECKED_OUT) {
             HistoryDetails historyDetails = HistoryDetails.builder()
                     .id(UUID.randomUUID().toString())
                     .userId(user.getId())
                     .firstName(user.getFirstName())
                     .lastName(user.getLastName())
-                    .propertyId(property.getId())
-                    .propertyName(property.getName())
-                    .keyId(key.getId())
-                    .reason(key.getCheckinReason())
+                    .description(description.substring(0, 1).toUpperCase() + description.substring(1).toLowerCase())
+                    .key(key)
                     .build();
 
             update("history", historyDetails.getId(), historyDetails, task -> {
+                if (task.isSuccessful()) {
+                    firebaseDatabase.getReference("users").updateChildren(Collections.singletonMap("/" + user.getId() + "/history/" + historyDetails.getId(), historyDetails));
+                } else {
+                    Timber.tag(TAG).i("Failed to create history details '" + notification.getDescription() + "'.");
+                }
             });
 
         }

@@ -31,7 +31,6 @@ public class NotificationAdapter extends FirebaseRecyclerAdapter<Notification, N
         this.activity = activity;
         deleteNotifications = activity.findViewById(R.id.deleteNotifications);
         emptyNotifications = activity.findViewById(R.id.empty_notifications);
-
     }
 
     @Override
