@@ -21,9 +21,10 @@ public class Key implements Parcelable {
     private String checkedInDate;
     private String checkInReason;
     private String checkedOutDate;
-    private String estimatedCheckInDate;
+    private String estimatedCheckOutDate;
     private String lastCheckOutDate;
     private String lastCheckedInUser;
+    private String lastCheckedInUserId;
     private String location;
     private String purpose;
 
@@ -45,9 +46,10 @@ public class Key implements Parcelable {
         checkedInDate = in.readString();
         checkInReason = in.readString();
         checkedOutDate = in.readString();
-        estimatedCheckInDate = in.readString();
+        estimatedCheckOutDate = in.readString();
         lastCheckOutDate = in.readString();
         lastCheckedInUser = in.readString();
+        lastCheckedInUserId = in.readString();
         location = in.readString();
         purpose = in.readString();
     }
@@ -64,9 +66,10 @@ public class Key implements Parcelable {
         parcel.writeString(checkedInDate);
         parcel.writeString(checkInReason);
         parcel.writeString(checkedOutDate);
-        parcel.writeString(estimatedCheckInDate);
+        parcel.writeString(estimatedCheckOutDate);
         parcel.writeString(lastCheckOutDate);
         parcel.writeString(lastCheckedInUser);
+        parcel.writeString(lastCheckedInUserId);
         parcel.writeString(location);
         parcel.writeString(purpose);
     }

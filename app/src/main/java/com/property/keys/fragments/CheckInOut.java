@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,9 +21,12 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 
 import com.budiyev.android.codescanner.CodeScanner;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.database.FirebaseDatabase;
 import com.property.keys.PropertyDetails;
@@ -31,6 +35,7 @@ import com.property.keys.databinding.FragmentCheckinOutDialogBinding;
 import com.property.keys.entities.Action;
 import com.property.keys.entities.Key;
 import com.property.keys.entities.Property;
+import com.property.keys.entities.Role;
 import com.property.keys.entities.User;
 import com.property.keys.utils.ImageUtils;
 import com.property.keys.utils.NotificationUtils;
@@ -38,13 +43,13 @@ import com.property.keys.utils.UserUtils;
 import com.property.keys.utils.Utils;
 
 import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
 import lombok.RequiredArgsConstructor;
 
 import static com.property.keys.utils.Utils.DATE_TIME_FORMATTER;
+import static com.property.keys.utils.Utils.showDatePicker;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 @RequiredArgsConstructor
@@ -121,22 +126,35 @@ public class CheckInOut extends DialogFragment implements DialogInterface.OnDism
         if (key.getCheckedInDate() == null) {
             binding.reasonLabel.setVisibility(View.VISIBLE);
             binding.reason.setVisibility(View.VISIBLE);
-            binding.estimatedCheckInDate.setVisibility(View.VISIBLE);
+            binding.estimatedCheckOutDate.setVisibility(View.VISIBLE);
 
             binding.checkedInDate.setVisibility(View.GONE);
             binding.checkedInByUser.setVisibility(View.GONE);
+            binding.estimatedCheckOutDateValue.setVisibility(View.GONE);
         } else if (!key.getLastCheckedInUser().equalsIgnoreCase(user.getFirstName() + " " + user.getLastName())) {
             binding.reasonLabel.setVisibility(View.GONE);
             binding.reason.setVisibility(View.GONE);
-            binding.estimatedCheckInDate.setVisibility(View.GONE);
+            binding.estimatedCheckOutDate.setVisibility(View.GONE);
 
+            if (!TextUtils.isEmpty(key.getEstimatedCheckOutDate())) {
+                binding.estimatedCheckOutDateValue.setVisibility(View.VISIBLE);
+                binding.estimatedCheckOutDateValue.setText("Estimated Check out date: " + key.getEstimatedCheckOutDate() + ".");
+            } else {
+                binding.estimatedCheckOutDateValue.setVisibility(View.GONE);
+            }
             binding.checkedInDate.setText("Checked in on " + key.getCheckedInDate() + ".");
             binding.checkedInByUser.setText("Checked by " + key.getLastCheckedInUser() + " for " + key.getCheckInReason() + ".");
         } else {
             binding.reasonLabel.setVisibility(View.GONE);
             binding.reason.setVisibility(View.GONE);
-            binding.estimatedCheckInDate.setVisibility(View.GONE);
+            binding.estimatedCheckOutDate.setVisibility(View.GONE);
 
+            if (!TextUtils.isEmpty(key.getEstimatedCheckOutDate())) {
+                binding.estimatedCheckOutDateValue.setVisibility(View.VISIBLE);
+                binding.estimatedCheckOutDateValue.setText("Estimated Check out date: " + key.getEstimatedCheckOutDate() + ".");
+            } else {
+                binding.estimatedCheckOutDateValue.setVisibility(View.GONE);
+            }
             binding.checkedInDate.setText("Checked in on " + key.getCheckedInDate() + ".");
             binding.checkedInByUser.setText("Checked by you for " + key.getCheckInReason() + ".");
         }
@@ -159,11 +177,12 @@ public class CheckInOut extends DialogFragment implements DialogInterface.OnDism
                     reasonValid = Utils.validateText(binding.customReason, 20, 50);
                 }
                 if (reasonValid) {
-                    key.setEstimatedCheckInDate(binding.estimatedCheckInDate.getText().toString());
+                    key.setEstimatedCheckOutDate(binding.estimatedCheckOutDate.getText().toString());
                     key.setCheckedInDate(DATE_TIME_FORMATTER.format(LocalDateTime.now()));
                     key.setCheckInReason(reasonValue);
                     key.setCheckedOutDate(null);
                     key.setLastCheckedInUser(user.getFirstName() + " " + user.getLastName());
+                    key.setLastCheckedInUserId(user.getId());
                     updates.put("users/" + user.getId() + "/keys/" + key.getId(), key);
                     updates.put("keys/" + key.getId(), key);
                     updates.put("properties/" + key.getPropertyId() + "/keys/" + key.getId(), key);
@@ -176,9 +195,10 @@ public class CheckInOut extends DialogFragment implements DialogInterface.OnDism
                     requireContext().startActivity(propertyDetails);
                     dismiss();
                 }
-            } else if (key.getLastCheckedInUser().equalsIgnoreCase(user.getFirstName() + " " + user.getLastName())) {
+            } else if (user.getRole() == Role.ADMIN || key.getLastCheckedInUser().equalsIgnoreCase(user.getFirstName() + " " + user.getLastName())) {
                 key.setCheckInReason("Check out");
                 key.setCheckedInDate(null);
+                key.setEstimatedCheckOutDate(null);
                 key.setCheckedOutDate(DATE_TIME_FORMATTER.format(LocalDateTime.now()));
                 key.setLastCheckOutDate(key.getCheckedOutDate());
                 updates.put("users/" + user.getId() + "/keys/" + key.getId(), key);
@@ -191,6 +211,13 @@ public class CheckInOut extends DialogFragment implements DialogInterface.OnDism
                 propertyDetails.putExtra("property", property);
                 requireContext().startActivity(propertyDetails);
                 dismiss();
+            } else {
+                AlertDialog ok = new MaterialAlertDialogBuilder(requireContext())
+                        .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
+                        .setMessage("Key was checked in on " + key.getCheckedInDate() + " by " + key.getLastCheckedInUser() + ".")
+                        .setNeutralButton("Ok", Utils::onClick).create();
+                ok.setOnDismissListener(dialog -> dismiss());
+                ok.show();
             }
 
             submit.setEnabled(false);
@@ -199,17 +226,19 @@ public class CheckInOut extends DialogFragment implements DialogInterface.OnDism
 
         binding.checkInOutToolbar.setNavigationOnClickListener(v -> dismiss());
 
-        binding.estimatedCheckInDate.setOnClickListener(v -> {
-            final Calendar cldr = Calendar.getInstance();
-            int day = cldr.get(Calendar.DAY_OF_MONTH);
-            int month = cldr.get(Calendar.MONTH);
-            int year = cldr.get(Calendar.YEAR);
-            // date picker dialog
-            DatePickerDialog picker = new DatePickerDialog(requireContext(),
-                    (DatePickerDialog.OnDateSetListener) (view, year1, monthOfYear, dayOfMonth) -> binding.estimatedCheckInDate.setText(dayOfMonth + "/" + (monthOfYear + 1) + "/" + year1), year, month, day);
-            picker.getDatePicker().setMinDate(System.currentTimeMillis());
-            picker.show();
-        });
+        binding.estimatedCheckOutDate.setOnClickListener(v -> showDatePicker(requireContext(),
+                (DatePickerDialog.OnDateSetListener) (view, year, monthOfYear, dayOfMonth) -> {
+                    String updatedMonth = String.valueOf(monthOfYear);
+                    String updatedDay = String.valueOf(dayOfMonth);
+                    if (monthOfYear < 10) {
+                        updatedMonth = "0" + monthOfYear;
+                    }
+                    if (dayOfMonth < 10) {
+                        updatedDay = "0" + updatedDay;
+                    }
+                    binding.estimatedCheckOutDate.setText(updatedDay + "-" + updatedMonth + "-" + year);
+                },
+                null));
 
         binding.reason.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.other) {

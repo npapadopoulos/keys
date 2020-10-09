@@ -59,7 +59,7 @@ public class NotificationUtils {
                 break;
             }
             case CHECKED_IN: {
-                description = "checked in " + key.getPurpose() + " key of property '" + property.getName() + "' for " + key.getCheckInReason() + (!TextUtils.isEmpty(key.getEstimatedCheckInDate()) ? " and will return back to " + key.getLocation() + " on " + key.getEstimatedCheckInDate() : "") + ".";
+                description = "checked in " + key.getPurpose() + " key of property '" + property.getName() + "' for " + key.getCheckInReason() + (!TextUtils.isEmpty(key.getEstimatedCheckOutDate()) ? " and will return back to " + key.getLocation() + " on " + key.getEstimatedCheckOutDate() : "") + ".";
                 break;
             }
             case CHECKED_OUT: {

@@ -333,7 +333,7 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
                         .build();
 
         findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
-        adapter = new KeyAdapter(options, this, property.getName(), user);
+        adapter = new KeyAdapter(options, this, this.getSupportFragmentManager(), property.getName(), user);
 
         // Scroll to bottom on new messages
         adapter.registerAdapterDataObserver(new RecyclerView.AdapterDataObserver() {

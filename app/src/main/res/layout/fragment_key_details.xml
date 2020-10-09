@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/keyDetailsDialog"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bottom_sheet_background"
+    android:orientation="vertical"
+    app:behavior_hideable="false"
+    app:behavior_peekHeight="90dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/shareKey"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/share"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            app:icon="@drawable/ic_baseline_share_24"
+            app:iconGravity="start"
+            app:iconPadding="10dp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/editEstimatedCheckOutDate"
+            style="@style/Widget.MaterialComponents.Button.TextButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/update_estimated_check_out_date"
+            android:textAlignment="textStart"
+            android:textAllCaps="false"
+            app:icon="@drawable/ic_baseline_edit_24"
+            app:iconGravity="start"
+            app:iconPadding="10dp" />
+    </LinearLayout>
+</LinearLayout>

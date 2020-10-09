@@ -93,4 +93,6 @@
     <string name="check_in">Check In</string>
     <string name="check_out">Check Out</string>
     <string name="estimated_check_in_date">Estimated Check In Date</string>
+    <string name="share">Share</string>
+    <string name="update_estimated_check_out_date">Update Estimated Check Out Date</string>
 </resources>

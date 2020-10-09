@@ -1,9 +1,12 @@
 package com.property.keys.utils;
 
 import android.app.Activity;
+import android.app.DatePickerDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.text.TextUtils;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
@@ -17,9 +20,11 @@ import com.property.keys.helpers.RecyclerItemTouchHelper;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -39,7 +44,8 @@ public class Utils {
     private static final String TAG = Utils.class.getSimpleName();
 
     @Getter
-    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
+    public static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 
     private final static String EMAIL_PATTERN = "[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+";
     private final static String PASSWORD_PATTERN = "^" +
@@ -238,5 +244,20 @@ public class Utils {
         if (!CollectionUtils.isEmpty(missingPermissions)) {
             activity.requestPermissions(missingPermissions.toArray(new String[0]), PackageManager.PERMISSION_GRANTED);
         }
+    }
+
+    public static void showDatePicker(Context context, DatePickerDialog.OnDateSetListener listener, String selectedCheckOutDate) {
+        Calendar calendar = Calendar.getInstance();
+        if (!TextUtils.isEmpty(selectedCheckOutDate)) {
+            LocalDate dateToUpdate = LocalDate.from(DATE_FORMATTER.parse(selectedCheckOutDate));
+            calendar.set(dateToUpdate.getYear(), dateToUpdate.getMonthValue(), dateToUpdate.getDayOfMonth());
+        }
+        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        int month = calendar.get(Calendar.MONTH);
+        int year = calendar.get(Calendar.YEAR);
+        // date picker dialog
+        DatePickerDialog picker = new DatePickerDialog(context, listener, year, month, day);
+        picker.getDatePicker().setMinDate(System.currentTimeMillis());
+        picker.show();
     }
 }
