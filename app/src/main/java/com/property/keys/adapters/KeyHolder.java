@@ -18,7 +18,7 @@ import com.property.keys.R;
 import com.property.keys.entities.Key;
 import com.property.keys.entities.User;
 import com.property.keys.fragments.KeyDetails;
-import com.property.keys.utils.ImageUtils;
+import com.property.keys.utils.FileUtils;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class KeyHolder extends RecyclerView.ViewHolder implements Holder {
@@ -68,7 +68,7 @@ public class KeyHolder extends RecyclerView.ViewHolder implements Holder {
             checkedInDetails.setText("Key is available.");
             keyDetails.setBackground(ContextCompat.getDrawable(context, R.drawable.key_available_background));
         }
-        ImageUtils.syncAndloadImagesKey(context, key.getId(), qrCodeImage, (image) -> itemView.setOnLongClickListener(v -> {
+        FileUtils.syncAndloadImagesKey(context, key.getId(), qrCodeImage, (image) -> itemView.setOnLongClickListener(v -> {
             KeyDetails keyDetails = KeyDetails.newInstance(context, key, image.getPath(), propertyName);
             keyDetails.show(supportFragmentManager, "keyDetails");
             return true;

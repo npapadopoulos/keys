@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.property.keys.R;
 import com.property.keys.entities.HistoryDetails;
-import com.property.keys.utils.ImageUtils;
+import com.property.keys.utils.FileUtils;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class HistoryHolder extends RecyclerView.ViewHolder implements Holder {
@@ -38,7 +38,7 @@ public class HistoryHolder extends RecyclerView.ViewHolder implements Holder {
             checkInDate.setText(historyDetails.getKey().getCheckedInDate());
         }
         description.setText(historyDetails.getDescription());
-        ImageUtils.syncAndloadImagesProperty(context, historyDetails.getKey().getPropertyId(), propertyImage, false);
+        FileUtils.syncAndloadImagesProperty(context, historyDetails.getKey().getPropertyId(), propertyImage, false);
     }
 
     @Override

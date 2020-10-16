@@ -38,7 +38,7 @@ public class PropertyDeleteTask extends AbstractAsyncTask {
      * Deletes property from root properties and user's properties paths.
      */
     @Override
-    public void runInBackground() {
+    public Void doInBackground(Void... voids) {
         if (restore) {
             property.setDeleted(false);
             update(property, false);
@@ -54,6 +54,7 @@ public class PropertyDeleteTask extends AbstractAsyncTask {
             update(property, true);
             NotificationUtils.create(activity, property, Action.DELETED_PROPERTY);
         }
+        return null;
     }
 
     private void update(Property property, boolean delete) {

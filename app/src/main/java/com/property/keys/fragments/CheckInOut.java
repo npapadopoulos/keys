@@ -1,6 +1,5 @@
 package com.property.keys.fragments;
 
-import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -37,7 +36,7 @@ import com.property.keys.entities.Key;
 import com.property.keys.entities.Property;
 import com.property.keys.entities.Role;
 import com.property.keys.entities.User;
-import com.property.keys.utils.ImageUtils;
+import com.property.keys.utils.FileUtils;
 import com.property.keys.utils.NotificationUtils;
 import com.property.keys.utils.UserUtils;
 import com.property.keys.utils.Utils;
@@ -89,7 +88,7 @@ public class CheckInOut extends DialogFragment implements DialogInterface.OnDism
         FrameLayout propertyLayout = propertyDialog.findViewById(R.id.propertyContainer);
 
         ImageView propertyImage = propertyLayout.findViewById(R.id.propertyImage);
-        ImageUtils.loadImage(requireContext(), property.getId(), propertyImage);
+        FileUtils.loadImage(requireContext(), property.getId(), propertyImage);
 
         TextView propertyName = propertyLayout.findViewById(R.id.name);
         propertyName.setText(property.getName());
@@ -214,7 +213,7 @@ public class CheckInOut extends DialogFragment implements DialogInterface.OnDism
             } else {
                 AlertDialog ok = new MaterialAlertDialogBuilder(requireContext())
                         .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
-                        .setMessage("Key was checked in on " + key.getCheckedInDate() + " by " + key.getLastCheckedInUser() + ".")
+                        .setMessage("Unable to Check Out. Key was checked in on " + key.getCheckedInDate() + " by " + key.getLastCheckedInUser() + ".")
                         .setNeutralButton("Ok", Utils::onClick).create();
                 ok.setOnDismissListener(dialog -> dismiss());
                 ok.show();
@@ -227,7 +226,7 @@ public class CheckInOut extends DialogFragment implements DialogInterface.OnDism
         binding.checkInOutToolbar.setNavigationOnClickListener(v -> dismiss());
 
         binding.estimatedCheckOutDate.setOnClickListener(v -> showDatePicker(requireContext(),
-                (DatePickerDialog.OnDateSetListener) (view, year, monthOfYear, dayOfMonth) -> {
+                (view, year, monthOfYear, dayOfMonth) -> {
                     String updatedMonth = String.valueOf(monthOfYear);
                     String updatedDay = String.valueOf(dayOfMonth);
                     if (monthOfYear < 10) {

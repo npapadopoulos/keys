@@ -95,4 +95,17 @@
     <string name="estimated_check_in_date">Estimated Check In Date</string>
     <string name="share">Share</string>
     <string name="update_estimated_check_out_date">Update Estimated Check Out Date</string>
+    <string name="generate_report">Generate Report</string>
+    <string name="total_checked_in">Total Checked In</string>
+    <string name="checked_in_today">Checked In Today</string>
+    <string name="total_checked_out">Total Checked Out</string>
+    <string name="checked_out_today">Checked Out Today</string>
+    <string name="check_out_reasons">Check Out Reasons</string>
+    <string name="period">Period</string>
+    <string name="week">Week</string>
+    <string name="month">Month</string>
+    <string name="custom">Custom</string>
+    <string name="custom_period">Custom Period</string>
+    <string name="today">Today</string>
+    <string name="google_email_address">Google Email</string>
 </resources>

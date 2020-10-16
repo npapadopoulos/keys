@@ -32,6 +32,7 @@ public class HistoryDetails implements Parcelable {
     private String firstName;
     private String lastName;
     private String description;
+    private String created;
     private Key key;
 
     protected HistoryDetails(Parcel in) {
@@ -40,6 +41,7 @@ public class HistoryDetails implements Parcelable {
         firstName = in.readString();
         lastName = in.readString();
         description = in.readString();
+        created = in.readString();
         key = in.readParcelable(Key.class.getClassLoader());
     }
 
@@ -55,6 +57,7 @@ public class HistoryDetails implements Parcelable {
         parcel.writeString(firstName);
         parcel.writeString(lastName);
         parcel.writeString(description);
+        parcel.writeString(created);
         parcel.writeParcelable(key, 0);
     }
 }

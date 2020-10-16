@@ -23,7 +23,7 @@ import com.property.keys.Container;
 import com.property.keys.R;
 import com.property.keys.entities.Role;
 import com.property.keys.entities.User;
-import com.property.keys.utils.ImageUtils;
+import com.property.keys.utils.FileUtils;
 import com.property.keys.utils.UserUtils;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
@@ -113,7 +113,7 @@ public class UserHolder extends RecyclerView.ViewHolder implements Holder {
         lastName.setText(user.getLastName());
         adminCheck.setChecked(user.getRole() == Role.ADMIN);
         this.userId = user.getId();
-        ImageUtils.syncAndLoadImagesProfile(context, user.getId(), user.getFirstName(), user.getLastName(), userImage);
+        FileUtils.syncAndLoadImagesProfile(context, user.getId(), user.getFirstName(), user.getLastName(), userImage);
     }
 
     @Override

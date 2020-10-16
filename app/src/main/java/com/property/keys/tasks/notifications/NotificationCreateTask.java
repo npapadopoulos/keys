@@ -6,6 +6,7 @@ import android.os.Build;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -53,7 +54,7 @@ public class NotificationCreateTask extends AbstractAsyncTask {
      * Adds notification to all users who liked current property except of the user who acted on the property.
      */
     @Override
-    public void runInBackground() {
+    public Void doInBackground(Void... voids) {
         Notification notification = Notification.builder()
                 .id(UUID.randomUUID().toString())
                 .date(DATE_TIME_FORMATTER.format(LocalDateTime.now()))
@@ -96,6 +97,7 @@ public class NotificationCreateTask extends AbstractAsyncTask {
                 Timber.tag(TAG).i("Failed to create notification '" + notification.getDescription() + "'.");
             }
         });
+        return null;
     }
 
     private void record(User user, Notification notification, String description) {
@@ -106,10 +108,11 @@ public class NotificationCreateTask extends AbstractAsyncTask {
                     .firstName(user.getFirstName())
                     .lastName(user.getLastName())
                     .description(description.substring(0, 1).toUpperCase() + description.substring(1))
+                    .created(notification.getDate())
                     .key(key)
                     .build();
 
-            update("history", historyDetails.getId(), historyDetails, task -> {
+            update("history", historyDetails.getId(), historyDetails, (Task<Void> task) -> {
                 if (task.isSuccessful()) {
                     firebaseDatabase.getReference("users").updateChildren(Collections.singletonMap("/" + user.getId() + "/history/" + historyDetails.getId(), historyDetails));
                 } else {
@@ -122,7 +125,12 @@ public class NotificationCreateTask extends AbstractAsyncTask {
 
     private void update(String reference, String id, Object data, Consumer<Task<Void>> postUpdate) {
         DatabaseReference databaseReference = firebaseDatabase.getReference(reference);
-        databaseReference.child(id).setValue(data).addOnCompleteListener(activity, postUpdate::accept);
+        databaseReference.child(id).setValue(data).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                postUpdate.accept(task);
+            }
+        });
     }
 
 }

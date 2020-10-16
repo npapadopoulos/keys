@@ -24,7 +24,7 @@ import com.property.keys.Container;
 import com.property.keys.R;
 import com.property.keys.databinding.FragmentProfileBinding;
 import com.property.keys.entities.User;
-import com.property.keys.utils.ImageUtils;
+import com.property.keys.utils.FileUtils;
 import com.property.keys.utils.StorageUtils;
 import com.property.keys.utils.UserUtils;
 import com.property.keys.utils.Utils;
@@ -34,7 +34,7 @@ import java.util.function.Consumer;
 
 import timber.log.Timber;
 
-import static com.property.keys.utils.ImageUtils.REQUEST_IMAGE;
+import static com.property.keys.utils.FileUtils.REQUEST_IMAGE;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class Profile extends Fragment {
@@ -132,7 +132,7 @@ public class Profile extends Fragment {
             UserUtils.updateBasics(user, onUpdateFailed, onUpdateSucceeded);
         });
 
-        ImageUtils.syncAndLoadImagesProfile(getActivity(), user, binding.profileImage);
+        FileUtils.syncAndLoadImagesProfile(getActivity(), user, binding.profileImage);
         binding.addImage.setOnClickListener(this::updateImage);
         binding.profileImage.setOnClickListener(this::updateImage);
 
@@ -145,10 +145,10 @@ public class Profile extends Fragment {
             if (resultCode == Activity.RESULT_OK) {
                 try {
                     Bitmap image = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), data.getParcelableExtra("path"));
-                    ImageUtils.clearCache(getContext());
-                    ImageUtils.saveImage(getContext(), image, user.getId());
+                    FileUtils.clearCache(getContext());
+                    FileUtils.saveImage(getContext(), image, user.getId());
                     StorageUtils.uploadImage(user.getId(), "profile", image);
-                    ImageUtils.loadImage(getActivity(), user.getId(), binding.profileImage);
+                    FileUtils.loadImage(getActivity(), user.getId(), binding.profileImage);
 
                     Intent intent = new Intent();
                     intent.setAction("com.property.keys.PROFILE_IMAGE_UPDATED");
@@ -161,6 +161,6 @@ public class Profile extends Fragment {
     }
 
     private void updateImage(View v) {
-        ImageUtils.updateImage(this.getActivity(), this, user.getId(), false);
+        FileUtils.updateImage(this.getActivity(), this, user.getId(), false);
     }
 }

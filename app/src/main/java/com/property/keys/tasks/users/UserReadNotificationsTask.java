@@ -29,7 +29,7 @@ public class UserReadNotificationsTask extends AbstractAsyncTask {
     private String notificationId;
 
     @Override
-    public void runInBackground() {
+    public Void doInBackground(Void... voids) {
         userReference.child(userId).child("notifications").orderByChild("unread").equalTo(true)
                 .addListenerForSingleValueEvent(new ValueEventListener() {
 
@@ -56,5 +56,6 @@ public class UserReadNotificationsTask extends AbstractAsyncTask {
 
                     }
                 });
+        return null;
     }
 }

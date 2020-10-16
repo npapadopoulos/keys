@@ -20,7 +20,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.ismaeldivita.chipnavigation.ChipNavigationBar;
-import com.property.keys.Container;
 import com.property.keys.R;
 import com.property.keys.adapters.HistoryAdapter;
 import com.property.keys.databinding.FragmentHistoryBinding;
@@ -46,7 +45,6 @@ public class History extends Fragment implements FirebaseAuth.AuthStateListener 
 
     @Getter
     private HistoryAdapter adapter;
-    private Container container;
 
     public History(ChipNavigationBar bottomNavigationMenu, NavigationView navigation, MaterialToolbar toolbar) {
         this.bottomNavigationMenu = bottomNavigationMenu;
@@ -62,7 +60,6 @@ public class History extends Fragment implements FirebaseAuth.AuthStateListener 
         navigation.setCheckedItem(R.id.navigationHistory);
         navigation.getCheckedItem().setChecked(true);
         this.toolbar.setTitle("History");
-        this.container = (Container) getActivity();
 
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getActivity());
         linearLayoutManager.setStackFromEnd(true);

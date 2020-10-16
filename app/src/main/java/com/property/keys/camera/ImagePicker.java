@@ -22,7 +22,7 @@ import com.karumi.dexter.PermissionToken;
 import com.karumi.dexter.listener.PermissionRequest;
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.property.keys.R;
-import com.property.keys.utils.ImageUtils;
+import com.property.keys.utils.FileUtils;
 import com.yalantis.ucrop.UCrop;
 
 import java.io.File;
@@ -192,7 +192,7 @@ public class ImagePicker extends AppCompatActivity {
     }
 
     private void cropImage(Uri sourceUri) {
-        File newFile = ImageUtils.newFile(getExternalCacheDir(), id);
+        File newFile = FileUtils.newFile(getExternalCacheDir(), id);
         Uri destinationUri = Uri.fromFile(newFile);
 
         UCrop.Options options = new UCrop.Options();
@@ -226,7 +226,7 @@ public class ImagePicker extends AppCompatActivity {
         intent.putExtra("path", imagePath);
         setResult(Activity.RESULT_OK, intent);
         finish();
-        ImageUtils.clearCache(getApplicationContext(), null, imagePath.getPath().substring(imagePath.getPath().lastIndexOf("/") + 1));
+        FileUtils.clearCache(getApplicationContext(), null, imagePath.getPath().substring(imagePath.getPath().lastIndexOf("/") + 1));
     }
 
     private void setResultCancelled() {

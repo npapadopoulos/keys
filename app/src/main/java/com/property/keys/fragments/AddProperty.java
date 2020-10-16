@@ -26,7 +26,7 @@ import com.google.android.material.snackbar.Snackbar;
 import com.property.keys.R;
 import com.property.keys.databinding.FragmentAddPropertyBinding;
 import com.property.keys.entities.Property;
-import com.property.keys.utils.ImageUtils;
+import com.property.keys.utils.FileUtils;
 import com.property.keys.utils.PropertyUtils;
 import com.property.keys.utils.StorageUtils;
 import com.property.keys.utils.Utils;
@@ -40,7 +40,7 @@ import java.util.function.Consumer;
 
 import timber.log.Timber;
 
-import static com.property.keys.utils.ImageUtils.REQUEST_IMAGE;
+import static com.property.keys.utils.FileUtils.REQUEST_IMAGE;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class AddProperty extends DialogFragment {
@@ -107,7 +107,7 @@ public class AddProperty extends DialogFragment {
             return;
         }
 
-        File file = (File) ImageUtils.loadImage(requireContext(), generatedPropertyId, binding.propertyImage);
+        File file = (File) FileUtils.loadImage(requireContext(), generatedPropertyId, binding.propertyImage);
         if (file == null || !file.exists()) {
             Snackbar snackbar = Snackbar.make(binding.addPropertyDialog, "Property Image is not added.", Snackbar.LENGTH_SHORT);
             snackbar.getView().setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.red_600));
@@ -158,9 +158,9 @@ public class AddProperty extends DialogFragment {
             if (resultCode == Activity.RESULT_OK) {
                 try {
                     Bitmap image = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), data.getParcelableExtra("path"));
-                    ImageUtils.clearCache(requireContext());
-                    ImageUtils.saveImage(requireContext(), image, generatedPropertyId);
-                    ImageUtils.loadImage(requireContext(), generatedPropertyId, binding.propertyImage);
+                    FileUtils.clearCache(requireContext());
+                    FileUtils.saveImage(requireContext(), image, generatedPropertyId);
+                    FileUtils.loadImage(requireContext(), generatedPropertyId, binding.propertyImage);
                 } catch (IOException e) {
                     Timber.tag(TAG).e(e);
                 }
@@ -170,6 +170,6 @@ public class AddProperty extends DialogFragment {
     }
 
     private void updateImage(View v) {
-        ImageUtils.updateImage(getActivity(), this, generatedPropertyId, true);
+        FileUtils.updateImage(getActivity(), this, generatedPropertyId, true);
     }
 }

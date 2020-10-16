@@ -46,7 +46,7 @@ public class UserResetPasswordTask extends AbstractAsyncTask {
     private final Consumer<Task<AuthResult>> onResetFailed;
 
     @Override
-    public void runInBackground() {
+    public Void doInBackground(Void... voids) {
         firebaseAuth.signInWithCredential(credentialByPhone)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
@@ -85,5 +85,6 @@ public class UserResetPasswordTask extends AbstractAsyncTask {
                         onResetFailed.accept(task);
                     }
                 });
+        return null;
     }
 }

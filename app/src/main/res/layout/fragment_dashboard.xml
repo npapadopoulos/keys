@@ -10,9 +10,389 @@
     android:weightSum="1"
     tools:context=".fragments.Dashboard">
 
-    <com.github.mikephil.charting.charts.PieChart
-        android:id="@+id/pieChart"
+    <RelativeLayout
+        android:id="@+id/stats"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:padding="10dp"
+        android:visibility="visible">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/checkedInKeysTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="20dp"
+            android:elevation="5dp">
+
+            <RelativeLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="10dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/checkedInKeysTotalTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:text="@string/total_checked_in" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/checkedInKeysTotalValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/checkedInKeysTotalTitle"
+                    android:layout_centerVertical="true"
+                    android:text="0"
+                    android:textSize="12pt"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/checkedInKeysToday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/checkedInKeysTotal"
+            android:layout_alignParentStart="true"
+            android:layout_marginTop="20dp"
+            android:elevation="5dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/checkedInKeysTodayTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:text="@string/checked_in_today" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/checkedInKeysTodayValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/checkedInKeysTodayTitle"
+                    android:layout_centerVertical="true"
+                    android:text="0"
+                    android:textSize="12pt"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/checkedOutKeysTotal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_toEndOf="@id/checkedInKeysTotal"
+            android:elevation="5dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/checkedOutKeysTotalTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:text="@string/total_checked_out" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/checkedOutKeysTotalValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/checkedOutKeysTotalTitle"
+                    android:layout_centerVertical="true"
+                    android:text="0"
+                    android:textSize="12pt"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/checkedOutKeysToday"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/checkedOutKeysTotal"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_toEndOf="@id/checkedInKeysToday"
+            android:elevation="5dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/checkedOutKeysTodayTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:text="@string/checked_out_today" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/checkedOutKeysTodayValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/checkedOutKeysTodayTitle"
+                    android:layout_centerVertical="true"
+                    android:text="0"
+                    android:textSize="12pt"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!--        <com.google.android.material.card.MaterialCardView-->
+        <!--            android:id="@+id/checkedOutAverageDuration"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_below="@id/checkedInKeysToday"-->
+        <!--            android:layout_alignParentStart="true"-->
+        <!--            android:layout_marginTop="20dp"-->
+        <!--            android:elevation="5dp">-->
+
+        <!--            <RelativeLayout-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="match_parent"-->
+        <!--                android:padding="10dp">-->
+
+        <!--                <com.google.android.material.textview.MaterialTextView-->
+        <!--                    android:id="@+id/checkedOutAverageDurationTitle"-->
+        <!--                    android:layout_width="wrap_content"-->
+        <!--                    android:layout_height="wrap_content"-->
+        <!--                    android:layout_alignParentStart="true"-->
+        <!--                    android:layout_alignParentTop="true"-->
+        <!--                    android:text="Key Check Out Average Duration" />-->
+
+        <!--                <com.google.android.material.textview.MaterialTextView-->
+        <!--                    android:id="@+id/checkedOutAverageDurationValue"-->
+        <!--                    android:layout_width="wrap_content"-->
+        <!--                    android:layout_height="wrap_content"-->
+        <!--                    android:layout_below="@id/checkedOutAverageDurationTitle"-->
+        <!--                    android:layout_centerVertical="true"-->
+        <!--                    android:text="2 days"-->
+        <!--                    android:textSize="12pt"-->
+        <!--                    android:textStyle="bold" />-->
+        <!--            </RelativeLayout>-->
+
+        <!--        </com.google.android.material.card.MaterialCardView>-->
+
+        <!--        <com.google.android.material.card.MaterialCardView-->
+        <!--            android:id="@+id/totalKeys"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_below="@id/checkedOutKeysToday"-->
+        <!--            android:layout_alignParentStart="true"-->
+        <!--            android:layout_marginTop="20dp"-->
+        <!--            android:elevation="5dp">-->
+
+        <!--            <RelativeLayout-->
+        <!--                android:layout_width="match_parent"-->
+        <!--                android:layout_height="match_parent"-->
+        <!--                android:padding="10dp">-->
+
+        <!--                <com.google.android.material.textview.MaterialTextView-->
+        <!--                    android:id="@+id/totalKeysTitle"-->
+        <!--                    android:layout_width="wrap_content"-->
+        <!--                    android:layout_height="wrap_content"-->
+        <!--                    android:layout_alignParentStart="true"-->
+        <!--                    android:layout_alignParentTop="true"-->
+        <!--                    android:text="Total Keys" />-->
+
+        <!--                <com.google.android.material.textview.MaterialTextView-->
+        <!--                    android:id="@+id/totalKeysValue"-->
+        <!--                    android:layout_width="wrap_content"-->
+        <!--                    android:layout_height="wrap_content"-->
+        <!--                    android:layout_below="@id/totalKeysTitle"-->
+        <!--                    android:layout_centerVertical="true"-->
+        <!--                    android:text="25"-->
+        <!--                    android:textSize="12pt"-->
+        <!--                    android:textStyle="bold" />-->
+        <!--            </RelativeLayout>-->
+
+        <!--        </com.google.android.material.card.MaterialCardView>-->
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/checkoutReasons"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/checkedInKeysToday"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentEnd="true"
+            android:layout_marginTop="20dp"
+            android:elevation="5dp">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="10dp">
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/checkoutReasonsTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:text="@string/check_out_reasons" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/cleaning"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/checkoutReasonsTitle"
+                    android:layout_centerVertical="true"
+                    android:text="@string/cleaning"
+                    android:textSize="12pt"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/cleaningValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/checkoutReasonsTitle"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="10dp"
+                    android:text="0"
+                    android:textSize="12pt"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/externalPartner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/cleaning"
+                    android:layout_centerVertical="true"
+                    android:text="@string/external_partner"
+                    android:textSize="12pt"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/externalPartnerValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/cleaningValue"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="10dp"
+                    android:text="0"
+                    android:textSize="12pt"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/maintenance"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/externalPartner"
+                    android:layout_centerVertical="true"
+                    android:text="@string/maintenance"
+                    android:textSize="12pt"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/maintenanceValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/externalPartnerValue"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="10dp"
+                    android:text="0"
+                    android:textSize="12pt"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/viewing"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/maintenance"
+                    android:layout_centerVertical="true"
+                    android:text="@string/viewing"
+                    android:textSize="12pt"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/viewingValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/maintenanceValue"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="10dp"
+                    android:text="0"
+                    android:textSize="12pt"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/inspection"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/viewing"
+                    android:layout_centerVertical="true"
+                    android:text="@string/inspection"
+                    android:textSize="12pt"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/inspectionValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/viewingValue"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="10dp"
+                    android:text="0"
+                    android:textSize="12pt"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/other"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/inspection"
+                    android:layout_centerVertical="true"
+                    android:text="@string/other"
+                    android:textSize="12pt"
+                    android:textStyle="bold" />
+
+                <com.google.android.material.textview.MaterialTextView
+                    android:id="@+id/otherValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/inspectionValue"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginStart="10dp"
+                    android:text="0"
+                    android:textSize="12pt"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/generateReport"
+            style="@style/FloatingActionBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentBottom="true"
+            android:layout_margin="20dp"
+            android:src="@drawable/report"
+            android:visibility="visible" />
+    </RelativeLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

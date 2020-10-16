@@ -23,7 +23,7 @@ public class UserDeleteNotificationsTask extends AbstractAsyncTask {
     private String userId;
 
     @Override
-    public void runInBackground() {
+    public Void doInBackground(Void... voids) {
         Map<String, Object> updates = new HashMap<>();
         if (all && notificationId == null) {
             updates.put("/" + userId + "/notifications", null);
@@ -34,5 +34,6 @@ public class UserDeleteNotificationsTask extends AbstractAsyncTask {
         if (!updates.isEmpty()) {
             firebaseDatabase.getReference("users").updateChildren(updates);
         }
+        return null;
     }
 }

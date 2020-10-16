@@ -7,19 +7,26 @@ import android.content.DialogInterface;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.text.TextUtils;
+import android.view.View;
 
 import androidx.annotation.RequiresApi;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.core.util.Pair;
+import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.common.util.CollectionUtils;
+import com.google.android.material.datepicker.CalendarConstraints;
+import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.textfield.TextInputLayout;
 import com.property.keys.helpers.RecyclerItemTouchHelper;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -259,5 +266,22 @@ public class Utils {
         DatePickerDialog picker = new DatePickerDialog(context, listener, year, month, day);
         picker.getDatePicker().setMinDate(System.currentTimeMillis());
         picker.show();
+    }
+
+
+    public static void showDatePicker(FragmentManager fragmentManager,
+                                      MaterialPickerOnPositiveButtonClickListener<Pair<Long, Long>> onPositiveButtonClickListener,
+                                      DialogInterface.OnCancelListener onCancelListener,
+                                      View.OnClickListener negativeButtonClickListener) {
+        long now = Instant.now().toEpochMilli();
+        // date picker dialog
+        MaterialDatePicker<Pair<Long, Long>> picker = MaterialDatePicker.Builder.dateRangePicker()
+                .setTitleText("Select a date")
+                .setCalendarConstraints(new CalendarConstraints.Builder().setOpenAt(now).build())
+                .build();
+        picker.addOnPositiveButtonClickListener(onPositiveButtonClickListener);
+        picker.addOnCancelListener(onCancelListener);
+        picker.addOnNegativeButtonClickListener(negativeButtonClickListener);
+        picker.show(fragmentManager, "datePicker");
     }
 }

@@ -37,7 +37,7 @@ public class PropertyUpdateTask extends AbstractAsyncTask {
      * Note, processes liked/unlinked actions as well.
      */
     @Override
-    public void runInBackground() {
+    public Void doInBackground(Void... voids) {
         final Map<String, Object> updates = new HashMap<>();
         if (action == Action.DELETED_KEY && keyId != null) {
             property.getKeys().remove(keyId);
@@ -60,5 +60,6 @@ public class PropertyUpdateTask extends AbstractAsyncTask {
                         }
                     });
         }
+        return null;
     }
 }

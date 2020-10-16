@@ -26,7 +26,7 @@ public class UserUpdateTask extends AbstractAsyncTask {
     private User user;
 
     @Override
-    public void runInBackground() {
+    public Void doInBackground(Void... voids) {
         final Map<String, Object> updates = new HashMap<>();
         updates.put("/" + user.getId() + "/firstName/", user.getFirstName());
         updates.put("/" + user.getId() + "/lastName/", user.getLastName());
@@ -35,5 +35,6 @@ public class UserUpdateTask extends AbstractAsyncTask {
         firebaseDatabase.getReference("users").updateChildren(updates)
                 .addOnCompleteListener(onUpdateSucceeded::accept)
                 .addOnFailureListener(onUpdateFailed::accept);
+        return null;
     }
 }

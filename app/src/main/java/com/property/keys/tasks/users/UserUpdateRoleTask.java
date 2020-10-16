@@ -25,9 +25,10 @@ public class UserUpdateRoleTask extends AbstractAsyncTask {
     private boolean isAdmin;
 
     @Override
-    public void runInBackground() {
+    public Void doInBackground(Void... voids) {
         final Map<String, Object> updates = new HashMap<>();
         updates.put("/" + userId + "/role/", isAdmin ? ADMIN : BASIC);
         firebaseDatabase.getReference("users").updateChildren(updates);
+        return null;
     }
 }

@@ -27,8 +27,9 @@ public class UserPropertySearchSuggestionsUpdateTask extends AbstractAsyncTask {
     private List<String> propertySearchSuggestions;
 
     @Override
-    public void runInBackground() {
+    public Void doInBackground(Void... voids) {
         UserUtils.updateSuggestions(propertySearchSuggestions, context);
         firebaseDatabase.getReference("users").updateChildren(singletonMap("/" + userId + "/propertySearchSuggestions/", propertySearchSuggestions));
+        return null;
     }
 }

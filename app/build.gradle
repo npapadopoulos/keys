@@ -22,7 +22,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-//            shrinkResources true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
@@ -37,22 +37,52 @@ android {
             maven { url 'https://artifactory.cloud.mapquest.com/artifactory/et-android-binaries' }
         }
     }
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+    }
 }
+
+// Apply the Crashlytics Gradle plugin
+apply plugin: 'com.google.firebase.crashlytics'
+
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'com.google.firebase:firebase-auth:19.4.0'
     implementation 'com.google.firebase:firebase-storage:19.2.0'
     implementation 'com.google.zxing:javase:3.3.2'
+    implementation 'com.google.code.gson:gson:2.8.6'
+
+    implementation 'com.google.api-client:google-api-client:1.30.10'
+    compile 'com.google.android.gms:play-services-auth:18.1.0'
+
+    implementation 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
+    implementation 'com.google.apis:google-api-services-drive:v3-rev110-1.23.0'
+    implementation 'com.google.apis:google-api-services-sheets:v4-rev581-1.25.0'
+
+    // Import the BoM for the Firebase platform
+    implementation platform('com.google.firebase:firebase-bom:25.12.0')
+
+    // Declare the dependencies for the Crashlytics and Analytics libraries
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-analytics'
 
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
     compile 'com.github.Yalantis:SearchFilter:v1.0.4'
 
     implementation 'com.firebaseui:firebase-ui-database:6.3.0'
     implementation 'com.ismaeldivita.chipnavigation:chip-navigation-bar:1.3.2'
-    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.3.72'
+    implementation 'org.jetbrains.kotlin:kotlin-stdlib:1.4.10'
     implementation 'com.chaos.view:pinview:1.4.3'
     implementation 'com.karumi:dexter:6.2.1'
     implementation 'com.budiyev.android:code-scanner:2.1.0'

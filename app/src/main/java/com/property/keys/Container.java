@@ -48,7 +48,7 @@ import com.property.keys.fragments.Properties;
 import com.property.keys.fragments.Scanner;
 import com.property.keys.fragments.Trash;
 import com.property.keys.fragments.Users;
-import com.property.keys.utils.ImageUtils;
+import com.property.keys.utils.FileUtils;
 import com.property.keys.utils.NavigationUtils;
 import com.property.keys.utils.PropertyUtils;
 import com.property.keys.utils.UserUtils;
@@ -177,7 +177,7 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
         toggle.syncState();
 
         NavigationUtils.initNavigation(binding.navigation, user.getRole());
-        ImageUtils.syncAndLoadImagesProfile(this, user, navigationProfileImage);
+        FileUtils.syncAndLoadImagesProfile(this, user, navigationProfileImage);
 
         onImageChangedBroadcastReceiver = new OnImageChangedBroadcastReceiver();
         onImageChangedBroadcastReceiver.setUser(user);
@@ -349,7 +349,7 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            ImageUtils.syncAndLoadImagesProfile(context, user, imageView);
+            FileUtils.syncAndLoadImagesProfile(context, user, imageView);
         }
     }
 }

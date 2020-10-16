@@ -46,7 +46,7 @@ import com.property.keys.entities.Role;
 import com.property.keys.entities.User;
 import com.property.keys.filters.FirebaseRecyclerOptions;
 import com.property.keys.helpers.RecyclerItemTouchHelper;
-import com.property.keys.utils.ImageUtils;
+import com.property.keys.utils.FileUtils;
 import com.property.keys.utils.PropertyUtils;
 import com.property.keys.utils.StorageUtils;
 import com.property.keys.utils.UserUtils;
@@ -57,7 +57,7 @@ import java.io.IOException;
 import lombok.SneakyThrows;
 import timber.log.Timber;
 
-import static com.property.keys.utils.ImageUtils.REQUEST_IMAGE;
+import static com.property.keys.utils.FileUtils.REQUEST_IMAGE;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.AuthStateListener, RecyclerItemTouchHelper.RecyclerItemTouchHelperListener {
@@ -143,7 +143,7 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
         binding.address.setText(property.getAddress());
         binding.type.setText(property.getType());
 
-        ImageUtils.syncAndloadImagesProperty(this, property.getId(), binding.propertyImage, true);
+        FileUtils.syncAndloadImagesProperty(this, property.getId(), binding.propertyImage, true);
 
 //        PropertyUtils.createMap(this, savedInstanceState, binding.mapquestMapView, property);
         initLayoutManager();
@@ -219,7 +219,7 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
     }
 
     private void updateImage(View v) {
-        ImageUtils.updateImage(this, property.getId(), true);
+        FileUtils.updateImage(this, property.getId(), true);
     }
 
     private void addNewKey(View v) {
@@ -254,10 +254,10 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
             if (resultCode == Activity.RESULT_OK) {
                 try {
                     Bitmap image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getParcelableExtra("path"));
-                    ImageUtils.clearCache(getApplicationContext());
-                    ImageUtils.saveImage(getApplicationContext(), image, property.getId());
+                    FileUtils.clearCache(getApplicationContext());
+                    FileUtils.saveImage(getApplicationContext(), image, property.getId());
                     StorageUtils.uploadImage(property.getId(), "property", image);
-                    ImageUtils.loadImage(this, property.getId(), binding.propertyImage);
+                    FileUtils.loadImage(this, property.getId(), binding.propertyImage);
                     generateTitleTextColor(image);
                 } catch (IOException e) {
                     Timber.tag(TAG).e(e);

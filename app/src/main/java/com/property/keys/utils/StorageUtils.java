@@ -20,9 +20,9 @@ import java.util.function.Consumer;
 
 import timber.log.Timber;
 
-import static com.property.keys.utils.ImageUtils.generateDefaultProfileImage;
-import static com.property.keys.utils.ImageUtils.getImage;
-import static com.property.keys.utils.ImageUtils.loadImage;
+import static com.property.keys.utils.FileUtils.generateDefaultProfileImage;
+import static com.property.keys.utils.FileUtils.getImage;
+import static com.property.keys.utils.FileUtils.loadImage;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class StorageUtils {
@@ -52,7 +52,7 @@ public class StorageUtils {
 
     public static void downloadAndSaveImage(Context context, String id, String name, String firstName, String lastName, ImageView imageView, ImageGenerationType type,
                                             Consumer<File> onComplete) {
-        downloadImage(context, id, name, firstName, lastName, image -> ImageUtils.loadImage(context, image, imageView), imageView, type, onComplete);
+        downloadImage(context, id, name, firstName, lastName, image -> FileUtils.loadImage(context, image, imageView), imageView, type, onComplete);
     }
 
     public static void downloadImage(Context context, String id, String name, String firstName, String lastName, Consumer<Object> loader, ImageView imageView, ImageGenerationType type,
@@ -88,7 +88,7 @@ public class StorageUtils {
     }
 
     private static void saveAndLoadImage(Context context, String id, Consumer<Object> loader, Consumer<File> onComplete, Bitmap bitmap) {
-        File image = ImageUtils.saveImage(context, bitmap, id);
+        File image = FileUtils.saveImage(context, bitmap, id);
         if (loader != null && image != null) {
             loader.accept(image);
             if (onComplete != null) {

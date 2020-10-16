@@ -37,7 +37,7 @@ public class UserCreateTask extends AbstractAsyncTask {
     private final Consumer<Task<AuthResult>> onCreationFailed;
 
     @Override
-    public void runInBackground() {
+    public Void doInBackground(Void... voids) {
         String hashedPassword = Utils.hash(user.getPassword());
         firebaseAuth.createUserWithEmailAndPassword(user.getEmail(), hashedPassword)
                 .addOnCompleteListener(activity, task -> {
@@ -59,5 +59,6 @@ public class UserCreateTask extends AbstractAsyncTask {
                         onCreationFailed.accept(task);
                     }
                 });
+        return null;
     }
 }

@@ -24,7 +24,7 @@ import com.property.keys.PropertyDetails;
 import com.property.keys.R;
 import com.property.keys.entities.Notification;
 import com.property.keys.entities.Property;
-import com.property.keys.utils.ImageUtils;
+import com.property.keys.utils.FileUtils;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class NotificationHolder extends RecyclerView.ViewHolder implements Holder {
@@ -85,7 +85,7 @@ public class NotificationHolder extends RecyclerView.ViewHolder implements Holde
         description.setText(notification.getDescription());
         date.setText(notification.getDate());
         this.propertyId = notification.getPropertyId();
-        ImageUtils.syncAndLoadImagesProfile(context, notification.getUserId(), notification.getFirstName(), notification.getLastName(), userImage);
+        FileUtils.syncAndLoadImagesProfile(context, notification.getUserId(), notification.getFirstName(), notification.getLastName(), userImage);
     }
 
     @Override

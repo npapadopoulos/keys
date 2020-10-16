@@ -28,7 +28,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.property.keys.R;
 import com.property.keys.databinding.FragmentKeyDetailsBinding;
 import com.property.keys.entities.Key;
-import com.property.keys.utils.ImageUtils;
+import com.property.keys.utils.FileUtils;
 import com.property.keys.utils.Utils;
 
 import java.util.HashMap;
@@ -96,7 +96,7 @@ public class KeyDetails extends BottomSheetDialogFragment {
 
             addTitle(context, copiedBitmap, propertyName); //TODO configurable -> Settings Menu
 
-            Uri imageUri = FileProvider.getUriForFile(context, context.getPackageName() + ".provider", Objects.requireNonNull(ImageUtils.saveImage(context, copiedBitmap, "code-title")));
+            Uri imageUri = FileProvider.getUriForFile(context, context.getPackageName() + ".provider", Objects.requireNonNull(FileUtils.saveImage(context, copiedBitmap, "code-title")));
 
             Intent shareIntent = new Intent();
             shareIntent.setAction(Intent.ACTION_SEND);
@@ -112,7 +112,7 @@ public class KeyDetails extends BottomSheetDialogFragment {
             if (TextUtils.isEmpty(key.getEstimatedCheckOutDate())) {
                 AlertDialog ok = new MaterialAlertDialogBuilder(requireContext())
                         .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
-                        .setMessage("Key is available. Check In first so youc can update the estimated check out date.")
+                        .setMessage("Key is available. Check In first so you can update the estimated check out date.")
                         .setNeutralButton("Ok", Utils::onClick).create();
                 ok.setOnDismissListener(dialog -> dismiss());
                 ok.show();

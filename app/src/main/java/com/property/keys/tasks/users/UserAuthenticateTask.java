@@ -44,7 +44,7 @@ public class UserAuthenticateTask extends AbstractAsyncTask {
     private final Consumer<Exception> onFailed;
 
     @Override
-    public void runInBackground() {
+    public Void doInBackground(Void... voids) {
         firebaseAuth.signInWithEmailAndPassword(email, Utils.hash(password))
                 .addOnCompleteListener(activity, task -> {
                     if (task.isSuccessful()) {
@@ -78,6 +78,6 @@ public class UserAuthenticateTask extends AbstractAsyncTask {
                         onAuthenticationFailed.accept(task);
                     }
                 });
-
+        return null;
     }
 }

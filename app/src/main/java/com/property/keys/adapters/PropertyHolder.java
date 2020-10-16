@@ -19,7 +19,7 @@ import com.google.android.material.chip.Chip;
 import com.property.keys.PropertyDetails;
 import com.property.keys.R;
 import com.property.keys.entities.Property;
-import com.property.keys.utils.ImageUtils;
+import com.property.keys.utils.FileUtils;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class PropertyHolder extends RecyclerView.ViewHolder implements Holder {
@@ -75,7 +75,7 @@ public class PropertyHolder extends RecyclerView.ViewHolder implements Holder {
         busySum.setText(String.valueOf(property.getKeys().values().stream().filter(k -> k.getCheckedInDate() != null).count()));
         type.setText(property.getType());
         this.property = property;
-        ImageUtils.syncAndloadImagesProperty(activity, property.getId(), propertyImage, false);
+        FileUtils.syncAndloadImagesProperty(activity, property.getId(), propertyImage, false);
     }
 
     @Override

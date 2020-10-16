@@ -1,9 +1,11 @@
 package com.property.keys.tasks;
 
-public abstract class AbstractAsyncTask implements AsyncTask {
+import android.os.AsyncTask;
+
+public abstract class AbstractAsyncTask extends AsyncTask<Void, Void, Void> {
 
     @Override
-    public Void call() throws Exception {
+    public Void doInBackground(Void... voids) {
         return null;
     }
 }

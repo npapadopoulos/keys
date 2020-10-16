@@ -33,7 +33,7 @@ public class PropertyCreateTask extends AbstractAsyncTask {
     private final Consumer<Task<Void>> onCreationFailed;
 
     @Override
-    public void runInBackground() {
+    public Void doInBackground(Void... voids) {
         DatabaseReference properties = firebaseDatabase.getReference("properties");
         properties.child(property.getId()).setValue(property)
                 .addOnCompleteListener(activity, task -> {
@@ -51,5 +51,6 @@ public class PropertyCreateTask extends AbstractAsyncTask {
                         onCreationFailed.accept(task);
                     }
                 });
+        return null;
     }
 }

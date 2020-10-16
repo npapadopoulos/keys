@@ -34,7 +34,7 @@ public class PropertyMapCreateTask extends AbstractAsyncTask {
 
     @SneakyThrows
     @Override
-    public void runInBackground() {
+    public Void doInBackground(Void... voids) {
         String request = "http://www.mapquestapi.com/geocoding/v1/address?key="
                 + context.getResources().getResourceName(R.string.maps_key)
                 + "&location=" + URLEncoder.encode(property.getAddress(), "UTF-8") + "&thumbMaps=false";
@@ -63,12 +63,13 @@ public class PropertyMapCreateTask extends AbstractAsyncTask {
             // set map center and zoom
             box.moveCamera(CameraUpdateFactory.newLatLngZoom(A_PERICLEOUS_PROPERTIES_LTD, 14));
         });
+        return null;
     }
 //
 //    private class Geocoding extends AbstractAsyncTask {
 //
 //        @Override
-//        public void runInBackground() {
+//        public Void doInBackground(Void... voids) {
 //            JSONObject postData = new JSONObject();
 //            try {
 //                // JSONArray of start and finish

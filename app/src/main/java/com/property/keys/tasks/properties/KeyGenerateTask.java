@@ -32,11 +32,12 @@ public class KeyGenerateTask extends AbstractAsyncTask {
     private final String purpose;
 
     @Override
-    public void runInBackground() {
+    public Void doInBackground(Void... voids) {
         //TODO populate all fields
         Key key = Key.builder()
                 .id(UUID.randomUUID().toString())
                 .propertyId(property.getId())
+                .propertyName(property.getName())
                 .location(location)
                 .purpose(purpose)
                 .build();
@@ -51,5 +52,6 @@ public class KeyGenerateTask extends AbstractAsyncTask {
                         Timber.tag(TAG).i(task.getException(), "Failed to generated new key " + key.getId() + " for property '" + property.getName() + "'.");
                     }
                 });
+        return null;
     }
 }
