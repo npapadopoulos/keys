@@ -57,8 +57,16 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.2'
     implementation 'com.google.android.material:material:1.2.1'
-    implementation 'com.google.firebase:firebase-auth:19.4.0'
-    implementation 'com.google.firebase:firebase-storage:19.2.0'
+
+    // Import the BoM for the Firebase platform
+    implementation platform('com.google.firebase:firebase-bom:25.12.0')
+    // Declare the dependencies for the Crashlytics and Analytics libraries
+    // When using the BoM, you don't specify versions in Firebase library dependencies
+    implementation 'com.google.firebase:firebase-crashlytics'
+    implementation 'com.google.firebase:firebase-analytics'
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-storage'
+
     implementation 'com.google.zxing:javase:3.3.2'
     implementation 'com.google.code.gson:gson:2.8.6'
 
@@ -68,14 +76,6 @@ dependencies {
     implementation 'com.google.oauth-client:google-oauth-client-jetty:1.23.0'
     implementation 'com.google.apis:google-api-services-drive:v3-rev110-1.23.0'
     implementation 'com.google.apis:google-api-services-sheets:v4-rev581-1.25.0'
-
-    // Import the BoM for the Firebase platform
-    implementation platform('com.google.firebase:firebase-bom:25.12.0')
-
-    // Declare the dependencies for the Crashlytics and Analytics libraries
-    // When using the BoM, you don't specify versions in Firebase library dependencies
-    implementation 'com.google.firebase:firebase-crashlytics'
-    implementation 'com.google.firebase:firebase-analytics'
 
 //    debugImplementation 'com.squareup.leakcanary:leakcanary-android:2.4'
     compile 'com.github.Yalantis:SearchFilter:v1.0.4'
@@ -88,17 +88,14 @@ dependencies {
     implementation 'com.budiyev.android:code-scanner:2.1.0'
 
     implementation 'com.mikhaellopez:circularimageview:4.2.0'
-    implementation 'androidx.navigation:navigation-fragment:2.3.0'
-    implementation 'androidx.navigation:navigation-ui:2.3.0'
+    implementation 'androidx.navigation:navigation-fragment:2.3.1'
+    implementation 'androidx.navigation:navigation-ui:2.3.1'
     implementation 'androidx.palette:palette:1.0.0'
     compileOnly 'org.projectlombok:lombok:1.18.12'
     annotationProcessor 'org.projectlombok:lombok:1.18.12'
     implementation 'androidmads.library.qrgenearator:QRGenearator:1.0.4'
     compile 'com.github.arimorty:floatingsearchview:2.1.1'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
-
-    //TODO https://github.com/Krupen/FabulousFilter
-    //compile 'com.allattentionhere:fabulousfilter:0.0.5'
 
     //Glide
     implementation 'com.github.bumptech.glide:glide:4.11.0'

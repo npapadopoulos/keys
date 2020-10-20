@@ -68,10 +68,10 @@
         android:layout_height="wrap_content"
         android:layout_gravity="bottom|end"
         android:layout_marginBottom="50dp"
-        android:visibility="gone"
         android:contentDescription="@string/add_property"
         android:src="@drawable/plus"
-        android:transitionName="addNew" />
+        android:transitionName="addNew"
+        android:visibility="gone" />
 
     <com.arlib.floatingsearchview.FloatingSearchView
         android:id="@+id/floatingSearchView"

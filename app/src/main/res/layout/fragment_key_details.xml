@@ -4,8 +4,8 @@
     android:id="@+id/keyDetailsDialog"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/bottom_sheet_background"
     android:orientation="vertical"
+    android:theme="@style/BottomSheetTheme"
     app:behavior_hideable="false"
     app:behavior_peekHeight="90dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
@@ -26,9 +26,11 @@
             android:text="@string/share"
             android:textAlignment="textStart"
             android:textAllCaps="false"
+            android:textColor="@color/black"
             app:icon="@drawable/ic_baseline_share_24"
             app:iconGravity="start"
-            app:iconPadding="10dp" />
+            app:iconPadding="10dp"
+            app:iconTint="@color/primaryColor" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/editEstimatedCheckOutDate"
@@ -38,8 +40,10 @@
             android:text="@string/update_estimated_check_out_date"
             android:textAlignment="textStart"
             android:textAllCaps="false"
+            android:textColor="@color/black"
             app:icon="@drawable/ic_baseline_edit_24"
             app:iconGravity="start"
-            app:iconPadding="10dp" />
+            app:iconPadding="10dp"
+            app:iconTint="@color/primaryColor" />
     </LinearLayout>
 </LinearLayout>
