@@ -108,4 +108,6 @@
     <string name="custom_period">Custom Period</string>
     <string name="today">Today</string>
     <string name="google_email_address">Google Email</string>
+    <string name="google_email">Google Email</string>
+    <string name="role">Role</string>
 </resources>

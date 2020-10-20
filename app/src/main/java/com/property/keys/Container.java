@@ -39,6 +39,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.property.keys.databinding.ActivityContainerBinding;
 import com.property.keys.entities.Notification;
 import com.property.keys.entities.Property;
+import com.property.keys.entities.Role;
 import com.property.keys.entities.User;
 import com.property.keys.fragments.Dashboard;
 import com.property.keys.fragments.History;
@@ -154,6 +155,7 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
         ImageView navigationProfileImage = view.findViewById(R.id.navigationProfileImage);
         TextView firstNameLabel = view.findViewById(R.id.firstName);
         TextView lastNameLabel = view.findViewById(R.id.lastName);
+        TextView roleLabel = view.findViewById(R.id.role);
 
         User user = UserUtils.getLocalUser(getApplicationContext());
 
@@ -169,6 +171,13 @@ public class Container extends AppCompatActivity implements NavigationView.OnNav
 
         firstNameLabel.setText(user.getFirstName());
         lastNameLabel.setText(user.getLastName());
+        if (user.getRole() == Role.ADMIN) {
+            roleLabel.setText("Admin");
+            roleLabel.setVisibility(View.VISIBLE);
+        } else {
+            roleLabel.setVisibility(View.GONE);
+            roleLabel.setText("");
+        }
 
         setSupportActionBar(binding.toolbar);
 

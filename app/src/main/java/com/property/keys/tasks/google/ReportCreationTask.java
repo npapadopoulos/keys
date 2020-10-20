@@ -1,6 +1,6 @@
 package com.property.keys.tasks.google;
 
-import android.app.Activity;
+import android.content.Context;
 import android.os.Build;
 
 import androidx.annotation.RequiresApi;
@@ -28,6 +28,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.property.keys.R;
 import com.property.keys.entities.HistoryDetails;
 import com.property.keys.tasks.AbstractAsyncTask;
+import com.property.keys.utils.UserUtils;
 
 import java.io.IOException;
 import java.time.Instant;
@@ -56,15 +57,18 @@ public class ReportCreationTask extends AbstractAsyncTask {
     private static final String TOKENS_DIRECTORY_PATH = "tokens";
 
     private final String fileName;
-    private final Activity activity;
+    private final Context context;
     private final DataSnapshot dataSnapshot;
     private final long from;
     private final long to;
+    private String googleEmail;
     private final Consumer<Pair<LocalDateTime, LocalDateTime>> onEmptyResult;
 
     @SneakyThrows
     @Override
     public Void doInBackground(Void... voids) {
+
+        UserUtils.setGoogleEmail(context, googleEmail);
         LocalDateTime fromDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(from), ZoneId.systemDefault());
         LocalDateTime toDate = LocalDateTime.ofInstant(Instant.ofEpochMilli(to), ZoneId.systemDefault());
         Spreadsheet spreadsheet = new Spreadsheet().setProperties(new SpreadsheetProperties().setTitle(fileName));
@@ -139,7 +143,7 @@ public class ReportCreationTask extends AbstractAsyncTask {
             Permission userPermission = new Permission()
                     .setType("user")
                     .setRole("writer")
-                    .setEmailAddress("n2.papadopoulos@gmail.com"); //TODO change to application account email when created as well as firebase account
+                    .setEmailAddress(googleEmail);
             drive.permissions().create(response.getSpreadsheetId(), userPermission)
                     .setFields("id")
                     .queue(batch, callback);
@@ -153,7 +157,7 @@ public class ReportCreationTask extends AbstractAsyncTask {
 
     @SneakyThrows
     private Credential getCredentials() {
-        return GoogleCredential.fromStream(activity.getResources().openRawResource(R.raw.credentials))
+        return GoogleCredential.fromStream(context.getResources().openRawResource(R.raw.credentials))
                 .createScoped(SheetsScopes.all());
     }
 }

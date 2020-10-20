@@ -80,7 +80,7 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
     @Override
     public void onStart() {
         super.onStart();
-        if (FirebaseAuth.getInstance().getCurrentUser() != null && adapter == null) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             attachRecyclerViewAdapter();
         }
         FirebaseAuth.getInstance().addAuthStateListener(this);
@@ -143,7 +143,7 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
         binding.address.setText(property.getAddress());
         binding.type.setText(property.getType());
 
-        FileUtils.syncAndloadImagesProperty(this, property.getId(), binding.propertyImage, true);
+        FileUtils.syncAndLoadImagesProperty(this, property.getId(), binding.propertyImage, true);
 
 //        PropertyUtils.createMap(this, savedInstanceState, binding.mapquestMapView, property);
         initLayoutManager();
@@ -254,7 +254,6 @@ public class PropertyDetails extends AppCompatActivity implements FirebaseAuth.A
             if (resultCode == Activity.RESULT_OK) {
                 try {
                     Bitmap image = MediaStore.Images.Media.getBitmap(this.getContentResolver(), data.getParcelableExtra("path"));
-                    FileUtils.clearCache(getApplicationContext());
                     FileUtils.saveImage(getApplicationContext(), image, property.getId());
                     StorageUtils.uploadImage(property.getId(), "property", image);
                     FileUtils.loadImage(this, property.getId(), binding.propertyImage);

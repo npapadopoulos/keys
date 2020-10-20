@@ -22,8 +22,6 @@ import com.property.keys.utils.FileUtils;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
 public class KeyHolder extends RecyclerView.ViewHolder implements Holder {
-    private final int DIALOG_REQUEST_CODE = 201;
-    private final Activity activity;
     private final FragmentManager supportFragmentManager;
 
     private ImageView qrCodeImage;
@@ -44,7 +42,6 @@ public class KeyHolder extends RecyclerView.ViewHolder implements Holder {
         keyDetails = itemView.findViewById(R.id.keyDetails);
 
         this.supportFragmentManager = supportFragmentManager;
-        this.activity = activity;
         this.user = user;
     }
 
@@ -68,7 +65,7 @@ public class KeyHolder extends RecyclerView.ViewHolder implements Holder {
             checkedInDetails.setText("Key is available.");
             keyDetails.setBackground(ContextCompat.getDrawable(context, R.drawable.key_available_background));
         }
-        FileUtils.syncAndloadImagesKey(context, key.getId(), qrCodeImage, (image) -> itemView.setOnLongClickListener(v -> {
+        FileUtils.syncAndLoadImagesKey(context, key.getId(), qrCodeImage, (image) -> itemView.setOnLongClickListener(v -> {
             KeyDetails keyDetails = KeyDetails.newInstance(context, key, image.getPath(), propertyName);
             keyDetails.show(supportFragmentManager, "keyDetails");
             return true;

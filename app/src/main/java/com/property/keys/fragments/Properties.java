@@ -314,7 +314,7 @@ public class Properties extends Fragment implements FirebaseAuth.AuthStateListen
     @Override
     public void onStart() {
         super.onStart();
-        if (FirebaseAuth.getInstance().getCurrentUser() != null && adapter == null) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
             attachRecyclerViewAdapter(propertiesQuery, true);
         }
         FirebaseAuth.getInstance().addAuthStateListener(this);

@@ -16,10 +16,12 @@ import androidx.core.util.Pair;
 import androidx.fragment.app.Fragment;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.checkbox.MaterialCheckBox;
 import com.google.android.material.datepicker.MaterialPickerOnPositiveButtonClickListener;
 import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.snackbar.Snackbar;
+import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
@@ -30,7 +32,6 @@ import com.property.keys.Container;
 import com.property.keys.R;
 import com.property.keys.databinding.FragmentDashboardBinding;
 import com.property.keys.entities.HistoryDetails;
-import com.property.keys.entities.User;
 import com.property.keys.tasks.TaskExecutor;
 import com.property.keys.tasks.google.ReportCreationTask;
 import com.property.keys.utils.UserUtils;
@@ -44,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -51,6 +53,7 @@ import lombok.SneakyThrows;
 
 import static com.property.keys.utils.Utils.DATE_TIME_FORMATTER;
 import static com.property.keys.utils.Utils.showDatePicker;
+import static com.property.keys.utils.Utils.validateEmail;
 import static java.util.stream.Collectors.groupingBy;
 
 @RequiresApi(api = Build.VERSION_CODES.R)
@@ -60,10 +63,9 @@ public class Dashboard extends Fragment {
     private ChipNavigationBar bottomNavigationMenu;
     private NavigationView navigation;
     private MaterialToolbar toolbar;
-    private static final Query historyQuery = firebaseDatabase.getReference("history").orderByKey();
 
     private static final FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-    private User user;
+    private static final Query historyQuery = firebaseDatabase.getReference("history").orderByKey();
 
     public Dashboard(ChipNavigationBar bottomNavigationMenu, NavigationView navigation, MaterialToolbar toolbar) {
         this.bottomNavigationMenu = bottomNavigationMenu;
@@ -76,7 +78,6 @@ public class Dashboard extends Fragment {
                              Bundle savedInstanceState) {
         FragmentDashboardBinding binding = FragmentDashboardBinding.inflate(getLayoutInflater(), container, false);
 
-        user = UserUtils.getLocalUser(requireContext());
         bottomNavigationMenu.setItemSelected(R.id.bottom_navigation_dashboard, true);
         navigation.setCheckedItem(R.id.navigationDashboard);
         navigation.getCheckedItem().setChecked(true);
@@ -167,6 +168,14 @@ public class Dashboard extends Fragment {
 
         AtomicBoolean customPeriodChecked = new AtomicBoolean(false);
         RadioGroup period = generateReportDialog.findViewById(R.id.period);
+
+        MaterialCheckBox rememberGoogleEmail = generateReportDialog.findViewById(R.id.rememberGoogleEmail);
+        Optional<String> rememberGoogleEmailValue = UserUtils.getGoogleEmail(requireContext());
+        TextInputLayout googleEmail = generateReportDialog.findViewById(R.id.googleEmail);
+        rememberGoogleEmailValue.ifPresent(s -> {
+            googleEmail.getEditText().setText(s);
+            rememberGoogleEmail.setChecked(true);
+        });
         period.setOnCheckedChangeListener((group, checkedId) -> {
             if (!customPeriodChecked.get() && checkedId == R.id.customPeriod) {
                 MaterialPickerOnPositiveButtonClickListener<Pair<Long, Long>> onPositiveButtonClickListener = (Pair<Long, Long> range) -> {
@@ -196,11 +205,13 @@ public class Dashboard extends Fragment {
                         from.set(now.minus(30, ChronoUnit.DAYS).toEpochMilli());
                         to.set(toEpochMilli);
                     }
-                    new TaskExecutor().executeAsync(new ReportCreationTask(fileName, requireActivity(), dataSnapshot, from.get(), to.get(), instantInstantPair -> {
-                        String description = "No history found for period from " + DATE_TIME_FORMATTER.format(instantInstantPair.first) + " to " + DATE_TIME_FORMATTER.format(instantInstantPair.second) + ".";
-                        Snackbar.make(((Container) requireActivity()).getPlaceSnackBar(), description, Snackbar.LENGTH_SHORT).show();
-                    }));
-                    Snackbar.make(((Container) requireActivity()).getPlaceSnackBar(), "You will notified by email once the report is ready.", Snackbar.LENGTH_SHORT).show();
+                    new TaskExecutor().executeAsync(new ReportCreationTask(fileName, requireActivity(), dataSnapshot, from.get(), to.get(),
+                            rememberGoogleEmail.isChecked() && validateEmail(googleEmail) ? googleEmail.getEditText().getText().toString() : null,
+                            instantInstantPair -> {
+                                String description = "No history found for period from " + DATE_TIME_FORMATTER.format(instantInstantPair.first) + " to " + DATE_TIME_FORMATTER.format(instantInstantPair.second) + ".";
+                                Snackbar.make(((Container) requireActivity()).getPlaceSnackBar(), description, Snackbar.LENGTH_SHORT).show();
+                            }));
+                    Snackbar.make(((Container) requireActivity()).getPlaceSnackBar(), "You will notified by email to provided google email once the report is ready.", Snackbar.LENGTH_SHORT).show();
                 })
                 .setBackground(ContextCompat.getDrawable(requireContext(), R.drawable.white_card_background))
                 .setNegativeButton("Cancel", Utils::onClick)

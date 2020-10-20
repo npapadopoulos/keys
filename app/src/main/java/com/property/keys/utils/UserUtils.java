@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Consumer;
 
 import static java.util.Collections.emptySet;
@@ -175,6 +176,17 @@ public class UserUtils {
 
     public static boolean rememberCredentials(Context context) {
         return context.getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE).getBoolean("remember", false);
+    }
+
+    public static Optional<String> getGoogleEmail(Context context) {
+        return Optional.ofNullable(context.getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE).getString("googleEmail", null));
+    }
+
+    public static void setGoogleEmail(Context context, String googleEmail) {
+        SharedPreferences sharedPreferences = context.getSharedPreferences("sharedPrefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString("googleEmail", googleEmail);
+        editor.apply();
     }
 
     //used by Profile Fragment, do not update remember credentials

@@ -75,7 +75,7 @@ public class PropertyHolder extends RecyclerView.ViewHolder implements Holder {
         busySum.setText(String.valueOf(property.getKeys().values().stream().filter(k -> k.getCheckedInDate() != null).count()));
         type.setText(property.getType());
         this.property = property;
-        FileUtils.syncAndloadImagesProperty(activity, property.getId(), propertyImage, false);
+        FileUtils.syncAndLoadImagesProperty(activity, property.getId(), propertyImage, false);
     }
 
     @Override

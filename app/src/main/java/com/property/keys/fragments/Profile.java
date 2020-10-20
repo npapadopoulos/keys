@@ -23,6 +23,7 @@ import com.ismaeldivita.chipnavigation.ChipNavigationBar;
 import com.property.keys.Container;
 import com.property.keys.R;
 import com.property.keys.databinding.FragmentProfileBinding;
+import com.property.keys.entities.Role;
 import com.property.keys.entities.User;
 import com.property.keys.utils.FileUtils;
 import com.property.keys.utils.StorageUtils;
@@ -82,6 +83,14 @@ public class Profile extends Fragment {
         this.container = (Container) getActivity();
 
         user = UserUtils.getLocalUser(getActivity().getApplicationContext());
+
+        if (user.getRole() == Role.ADMIN) {
+            binding.role.setText("Admin");
+            binding.role.setVisibility(View.VISIBLE);
+        } else {
+            binding.role.setText("");
+            binding.role.setVisibility(View.GONE);
+        }
 
         TextInputEditText firstNameEditText = (TextInputEditText) binding.firstName.getEditText();
         TextInputEditText lastNameEditText = (TextInputEditText) binding.lastName.getEditText();
@@ -145,7 +154,6 @@ public class Profile extends Fragment {
             if (resultCode == Activity.RESULT_OK) {
                 try {
                     Bitmap image = MediaStore.Images.Media.getBitmap(getActivity().getContentResolver(), data.getParcelableExtra("path"));
-                    FileUtils.clearCache(getContext());
                     FileUtils.saveImage(getContext(), image, user.getId());
                     StorageUtils.uploadImage(user.getId(), "profile", image);
                     FileUtils.loadImage(getActivity(), user.getId(), binding.profileImage);

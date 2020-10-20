@@ -143,43 +143,43 @@ public class FileUtils {
     }
 
     public static void clearCache(Context context) {
-        clearCache(context, null, "");
+        clearCache(context, null, "", "");
     }
 
-    public static void clearCache(Context context, File directory, String name) {
+    public static void clearCache(Context context, File directory, String dirName, String fileName) {
         File path = directory;
         if (path == null)
             path = new File(context.getExternalCacheDir(), "images");
         if (path.exists() && path.isDirectory()) {
             for (File child : path.listFiles()) {
-                if (child.isDirectory() && child.getName().equals(name))
-                    clearCache(context, child, name);
-                if (!child.getName().equals(name)) {
+                if (!child.isDirectory() && !child.getName().equals(fileName)) {
                     boolean deleted = child.delete();
                     if (deleted)
                         Timber.tag(TAG).i("File " + child.getAbsolutePath() + " has been deleted");
+                } else if (child.getName().equals(dirName)) {
+                    clearCache(context, child, dirName, fileName);
                 }
             }
         }
     }
 
     public static void syncAndLoadImagesProfile(Context context, User user, ImageView imageView) {
-        syncAndloadImages(context, "profile", user.getId(), user.getFirstName(), user.getLastName(), imageView, false, ImageGenerationType.PROFILE, null);
+        syncAndLoadImages(context, "profile", user.getId(), user.getFirstName(), user.getLastName(), imageView, false, ImageGenerationType.PROFILE, null);
     }
 
     public static void syncAndLoadImagesProfile(Context context, @NonNull String name, String firstName, String lastName, ImageView imageView) {
-        syncAndloadImages(context, "profile", name, firstName, lastName, imageView, false, ImageGenerationType.PROFILE, null);
+        syncAndLoadImages(context, "profile", name, firstName, lastName, imageView, false, ImageGenerationType.PROFILE, null);
     }
 
-    public static void syncAndloadImagesProperty(Context context, @NonNull String name, ImageView imageView, boolean useBackground) {
-        syncAndloadImages(context, "property", name, null, null, imageView, useBackground, ImageGenerationType.NONE, null);
+    public static void syncAndLoadImagesProperty(Context context, @NonNull String name, ImageView imageView, boolean useBackground) {
+        syncAndLoadImages(context, "property", name, null, null, imageView, useBackground, ImageGenerationType.NONE, null);
     }
 
-    public static void syncAndloadImagesKey(Context context, @NonNull String name, ImageView imageView, Consumer<File> onComplete) {
-        syncAndloadImages(context, "key", name, null, null, imageView, false, ImageGenerationType.KEY, onComplete);
+    public static void syncAndLoadImagesKey(Context context, @NonNull String name, ImageView imageView, Consumer<File> onComplete) {
+        syncAndLoadImages(context, "key", name, null, null, imageView, false, ImageGenerationType.KEY, onComplete);
     }
 
-    private static void syncAndloadImages(Context context, String directory, @NonNull String name, String firstName, String lastName, ImageView imageView, boolean useBackground,
+    private static void syncAndLoadImages(Context context, String directory, @NonNull String name, String firstName, String lastName, ImageView imageView, boolean useBackground,
                                           ImageGenerationType type,
                                           Consumer<File> onComplete) {
         File image = getImage(context, name);

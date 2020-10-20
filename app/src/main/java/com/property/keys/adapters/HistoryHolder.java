@@ -38,7 +38,7 @@ public class HistoryHolder extends RecyclerView.ViewHolder implements Holder {
             checkInDate.setText(historyDetails.getKey().getCheckedInDate());
         }
         description.setText(historyDetails.getDescription());
-        FileUtils.syncAndloadImagesProperty(context, historyDetails.getKey().getPropertyId(), propertyImage, false);
+        FileUtils.syncAndLoadImagesProperty(context, historyDetails.getKey().getPropertyId(), propertyImage, false);
     }
 
     @Override

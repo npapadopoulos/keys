@@ -158,7 +158,6 @@ public class AddProperty extends DialogFragment {
             if (resultCode == Activity.RESULT_OK) {
                 try {
                     Bitmap image = MediaStore.Images.Media.getBitmap(requireContext().getContentResolver(), data.getParcelableExtra("path"));
-                    FileUtils.clearCache(requireContext());
                     FileUtils.saveImage(requireContext(), image, generatedPropertyId);
                     FileUtils.loadImage(requireContext(), generatedPropertyId, binding.propertyImage);
                 } catch (IOException e) {

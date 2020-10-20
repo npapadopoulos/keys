@@ -226,7 +226,7 @@ public class ImagePicker extends AppCompatActivity {
         intent.putExtra("path", imagePath);
         setResult(Activity.RESULT_OK, intent);
         finish();
-        FileUtils.clearCache(getApplicationContext(), null, imagePath.getPath().substring(imagePath.getPath().lastIndexOf("/") + 1));
+        FileUtils.clearCache(getApplicationContext(), null, id, imagePath.getPath().substring(imagePath.getPath().lastIndexOf("/") + 1));
     }
 
     private void setResultCancelled() {
